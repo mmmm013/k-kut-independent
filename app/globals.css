@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --kk-bg:       #0a0a0a;
+  --kk-surface:  #111111;
+  --kk-amber:    #D4A017;
+  --kk-amber-lt: #C8A882;
+  --kk-red:      #C0392B;
+  --kk-text:     #F5e6c8;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--kk-bg);
+  color: var(--kk-text);
+}
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #050505; }
+::-webkit-scrollbar-thumb { background: var(--kk-amber); border-radius: 3px; }
