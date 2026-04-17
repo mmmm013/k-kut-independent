@@ -2,6 +2,24 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 
+/**
+ * ── Audio prereqs for the preview player ────────────────────────────────────
+ * SB_TRACKS is the public base URL for the Supabase "tracks" bucket.
+ *
+ * REQUIRED (Supabase Storage):
+ *   1. Bucket "tracks" must be set to PUBLIC in the Supabase dashboard.
+ *      (Storage → tracks → bucket settings → Make public)
+ *   2. Each previewUrl below must match an actual file path in the bucket.
+ *      Current expected paths (all at bucket root):
+ *        kleigh--solace.mp3, perfect-day.mp3, wanna-know-you.mp3,
+ *        jump.mp3, kleigh--waterfall.mp3, kleigh--nightfall.mp3
+ *   3. NEXT_PUBLIC_SUPABASE_URL must be set in Vercel env vars.
+ *      (Vercel → Project → Settings → Environment Variables)
+ *
+ * To verify: open one URL in a browser tab:
+ *   ${SUPABASE_URL}/storage/v1/object/public/tracks/kleigh--solace.mp3
+ * ─────────────────────────────────────────────────────────────────────────────
+ */
 // Base URL for Supabase Storage public track files (NEXT_PUBLIC_ vars are inlined at build time)
 const SB_TRACKS = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/tracks`;
 

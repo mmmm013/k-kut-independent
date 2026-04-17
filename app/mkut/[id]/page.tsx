@@ -3,9 +3,19 @@
 /**
  * mini-KUT View Page — /mkut/[id]
  *
- * Calls the `play-m-kut` Supabase edge function with the asset ID.
+ * Calls the `play-m-kut` Supabase edge function with the mini-KUT asset ID.
  * mini-KUTs are text micro-assets tied to song sections; the edge function
  * resolves the associated audio (K-KUT or K-kut variant) and returns a signed URL.
+ *
+ * REQUIRED for audio to work:
+ *   1. Supabase edge function `play-m-kut` must be deployed.
+ *      (Supabase Dashboard → Edge Functions → play-m-kut)
+ *   2. The m_kut_asset row must exist and be linked to an active k_kut_asset.
+ *   3. The linked k_kut_asset must have audio_qc_status = 'pass'.
+ *   4. NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY
+ *      must be set in Vercel env vars.
+ *
+ * Request body sent to play-m-kut: { mk_id: <m_kut_asset_id> }
  */
 
 import { use, useEffect, useState } from 'react';
@@ -53,7 +63,8 @@ export default function MiniKutPage({ params }: { params: Promise<{ id: string }
               'Content-Type': 'application/json',
               Authorization: `Bearer ${session?.access_token ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY}`,
             },
-            body: JSON.stringify({ k_kut_id: id }),
+            // mk_id: the mini-KUT asset ID — play-m-kut resolves the associated audio from this
+            body: JSON.stringify({ mk_id: id }),
           }
         );
 

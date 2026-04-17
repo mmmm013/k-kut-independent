@@ -3,9 +3,19 @@
 /**
  * K-KUT Playback / Redemption Page — /k/[id]
  *
- * Calls the `play-k-kut` Supabase edge function with the asset ID.
+ * Calls the `play-k-kut` Supabase edge function with the code ID.
  * Returns a signed audio URL (TTL 1 hr) + meta.
- * Audio QC must be 'pass' and status must be 'active' for the asset to resolve.
+ *
+ * REQUIRED for audio to work:
+ *   1. Supabase edge function `play-k-kut` must be deployed.
+ *      (Supabase Dashboard → Edge Functions → play-k-kut)
+ *   2. The k_kut_asset row must have audio_qc_status = 'pass'.
+ *   3. The k_kut_codes row must have status = 'active'.
+ *   4. NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY
+ *      must be set in Vercel env vars.
+ *   5. The audio file referenced by the asset must exist in Supabase Storage.
+ *
+ * Request body sent to play-k-kut: { k_kut_id: <code_id> }
  */
 
 import { use, useEffect, useState } from 'react';
