@@ -184,6 +184,48 @@ const previewCatalog: PreviewItem[] = [
     isPromoSafe: false,
   },
   {
+    id: "kkut-gratitude-01",
+    title: "K-KUT · Steady Thanks",
+    artist: "G Putnam Music",
+    sentiment: "gratitude",
+    purposeTags: ["send", "express"],
+    format: "kkut",
+    durationLabel: "0:44",
+    confidenceHint: "sincere, grounded, full delivery",
+    description: "Longer gratitude K-KUT when thanks deserves more than a taste.",
+    previewUrl: `${SB_TRACKS}/wanna-know-you.mp3`,
+    messengerFit: ["private link", "email", "gift"],
+    isPromoSafe: false,
+  },
+  {
+    id: "kkut-energy-01",
+    title: "K-KUT · High Energy",
+    artist: "G Putnam Music",
+    sentiment: "energy",
+    purposeTags: ["feel", "explore", "send"],
+    format: "kkut",
+    durationLabel: "0:45",
+    confidenceHint: "full hype, bold, high-drive",
+    description: "The complete energy section — for peak momentum and celebration.",
+    previewUrl: `${SB_TRACKS}/kleigh--waterfall.mp3`,
+    messengerFit: ["private link", "story", "gift"],
+    isPromoSafe: false,
+  },
+  {
+    id: "kkut-hope-01",
+    title: "K-KUT · Hope",
+    artist: "G Putnam Music",
+    sentiment: "hope",
+    purposeTags: ["feel", "send", "express"],
+    format: "kkut",
+    durationLabel: "0:44",
+    confidenceHint: "forward motion, emotional lift",
+    description: "A longer K-KUT when you need the full feeling of possibility.",
+    previewUrl: `${SB_TRACKS}/kleigh--solace.mp3`,
+    messengerFit: ["private link", "gift", "email"],
+    isPromoSafe: false,
+  },
+  {
     id: "kkut-hurt-01",
     title: "K-KUT · Wounded & Willing",
     artist: "G Putnam Music",
@@ -195,6 +237,20 @@ const previewCatalog: PreviewItem[] = [
     description: "A longer K-KUT when the user needs something real.",
     previewUrl: `${SB_TRACKS}/kleigh--nightfall.mp3`,
     messengerFit: ["private link", "gift"],
+    isPromoSafe: false,
+  },
+  {
+    id: "kkut-peace-01",
+    title: "K-KUT · Melancholy Blues",
+    artist: "G Putnam Music",
+    sentiment: "peace",
+    purposeTags: ["feel", "explore", "send"],
+    format: "kkut",
+    durationLabel: "0:44",
+    confidenceHint: "quiet, inward, full stillness",
+    description: "The complete peaceful section — for reflection and inward calm.",
+    previewUrl: `${SB_TRACKS}/kleigh--solace.mp3`,
+    messengerFit: ["private link", "self-use", "gift"],
     isPromoSafe: false,
   },
 ];
@@ -399,9 +455,14 @@ export default function KKutPage() {
 
   function startCheckout() {
     if (!selectedItem) return;
-    window.location.href = `/api/checkout/sovereign?item=${encodeURIComponent(
-      selectedItem.id
-    )}&format=${encodeURIComponent(selectedItem.format)}`;
+    // Route directly to the K-KUT or mini-KUT playback page.
+    // K-KUT catalog slugs (e.g. kkut-love-01) play directly from Storage.
+    // Mini-KUT catalog slugs go to the mkut page (edge function path).
+    if (selectedItem.format === "kkut") {
+      window.location.href = `/k/${selectedItem.id}`;
+    } else {
+      window.location.href = `/mkut/${selectedItem.id}`;
+    }
   }
 
   function submitFirstFree() {
@@ -409,6 +470,11 @@ export default function KKutPage() {
     alert(
       `First one free recorded for ${selectedItem.title}. Follow up cadence: 3 touches in 3 weeks to ${userEmail}.`
     );
+    if (selectedItem.format === "kkut") {
+      window.location.href = `/k/${selectedItem.id}`;
+    } else {
+      window.location.href = `/mkut/${selectedItem.id}`;
+    }
   }
 
   return (

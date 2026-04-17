@@ -3,24 +3,44 @@
 /**
  * K-KUT Playback / Redemption Page — /k/[id]
  *
- * Calls the `play-k-kut` Supabase edge function with the code ID.
- * Returns a signed audio URL (TTL 1 hr) + meta.
+ * Two modes:
  *
- * REQUIRED for audio to work:
- *   1. Supabase edge function `play-k-kut` must be deployed.
- *      (Supabase Dashboard → Edge Functions → play-k-kut)
- *   2. The k_kut_asset row must have audio_qc_status = 'pass'.
- *   3. The k_kut_codes row must have status = 'active'.
- *   4. NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY
- *      must be set in Vercel env vars.
- *   5. The audio file referenced by the asset must exist in Supabase Storage.
+ * 1. CATALOG DIRECT-PLAY (no edge function, no DB required):
+ *    If [id] is a known catalog slug (e.g. "kkut-love-01"), audio is served
+ *    directly from the public Supabase Storage "tracks" bucket.
+ *    Requires: bucket is PUBLIC and NEXT_PUBLIC_SUPABASE_URL is set.
  *
- * Request body sent to play-k-kut: { k_kut_id: <code_id> }
+ * 2. EDGE-FUNCTION / CODE REDEMPTION (full production flow):
+ *    If [id] is a UUID code from k_kut_codes, the play-k-kut edge function
+ *    is called to produce a signed URL.
+ *    Requires: edge function deployed, k_kut_asset row with audio_qc_status='pass',
+ *    k_kut_codes row with status='active', and both env vars set.
  */
 
 import { use, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { createClient } from '../../../lib/supabase/browser';
+
+// ── Catalog: known K-KUT IDs → Storage filename + display metadata ────────────
+// Add entries here whenever a new K-KUT is ready in the tracks bucket.
+const BASE_TRACKS = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/tracks`;
+
+interface CatalogEntry {
+  filename: string;
+  title: string;
+  artist: string;
+  variant: string;
+}
+
+const CATALOG_AUDIO: Record<string, CatalogEntry> = {
+  'kkut-love-01':      { filename: 'perfect-day.mp3',       title: 'K-KUT · Love Renews',       artist: 'KLEIGH',         variant: 'Vocal + Music' },
+  'kkut-apology-01':   { filename: 'jump.mp3',               title: 'K-KUT · Open Hands',        artist: 'G Putnam Music', variant: 'Vocal + Music' },
+  'kkut-hurt-01':      { filename: 'kleigh--nightfall.mp3',  title: 'K-KUT · Wounded & Willing', artist: 'G Putnam Music', variant: 'Vocal + Music' },
+  'kkut-gratitude-01': { filename: 'wanna-know-you.mp3',     title: 'K-KUT · Steady Thanks',     artist: 'G Putnam Music', variant: 'Vocal + Music' },
+  'kkut-energy-01':    { filename: 'kleigh--waterfall.mp3',  title: 'K-KUT · High Energy',       artist: 'G Putnam Music', variant: 'Vocal + Music' },
+  'kkut-hope-01':      { filename: 'kleigh--solace.mp3',     title: 'K-KUT · Hope',              artist: 'G Putnam Music', variant: 'Vocal + Music' },
+  'kkut-peace-01':     { filename: 'kleigh--solace.mp3',     title: 'K-KUT · Melancholy Blues',  artist: 'G Putnam Music', variant: 'Vocal + Music' },
+};
 
 interface PlayMeta {
   id: string;
@@ -33,6 +53,7 @@ interface PlayMeta {
 
 interface PlayResponse {
   signed_url: string;
+  /** 0 means direct-play (no expiry); positive value = seconds until expiry */
   expires_in: number;
   meta: PlayMeta;
 }
@@ -44,7 +65,27 @@ export default function KKutPlayPage({ params }: { params: Promise<{ id: string 
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function fetchSignedUrl() {
+    async function load() {
+      // ── Mode 1: Catalog direct-play (no edge function required) ──────────────
+      const catalog = CATALOG_AUDIO[id];
+      if (catalog) {
+        setData({
+          signed_url: `${BASE_TRACKS}/${catalog.filename}`,
+          expires_in: 0,
+          meta: {
+            id,
+            variant: catalog.variant,
+            structure_tag: catalog.title,
+            pix_pck_id: id,
+            mime_type: 'audio/mpeg',
+            duration_ms: null,
+          },
+        });
+        setLoading(false);
+        return;
+      }
+
+      // ── Mode 2: Edge-function / code redemption ───────────────────────────────
       try {
         const supabase = createClient();
         const { data: { session } } = await supabase.auth.getSession();
@@ -75,7 +116,7 @@ export default function KKutPlayPage({ params }: { params: Promise<{ id: string 
       }
     }
 
-    fetchSignedUrl();
+    load();
   }, [id]);
 
   return (
@@ -123,9 +164,11 @@ export default function KKutPlayPage({ params }: { params: Promise<{ id: string 
                 Your browser does not support audio playback.
               </audio>
 
-              <p className="text-xs text-[#C8A882]/60 text-center">
-                Link valid for {Math.round(data.expires_in / 60)} minutes
-              </p>
+              {data.expires_in > 0 && (
+                <p className="text-xs text-[#C8A882]/60 text-center">
+                  Link valid for {Math.round(data.expires_in / 60)} minutes
+                </p>
+              )}
             </div>
           )}
         </div>
