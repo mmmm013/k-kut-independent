@@ -25,16 +25,16 @@ import { createClient } from '../../../lib/supabase/browser';
 
 interface KKutCode {
   id: string;
-  item_type: string;  // STI | BTI | FP
-  status: string;     // active | inactive | …
+  item_type: 'STI' | 'BTI' | 'FP' | string;
+  status: 'active' | 'inactive' | string;
 }
 
 interface KKutAsset {
   id: string;
   pix_pck_id: string;
   structure_tag: string;
-  variant: string;           // e.g. VOCAL_MUSIC | MUSIC_ONLY
-  audio_qc_status: string;   // pass | fail | pending
+  variant: 'VOCAL_MUSIC' | 'MUSIC_ONLY' | string;
+  audio_qc_status: 'pass' | 'fail' | 'pending' | string;
   duration_ms: number | null;
   k_kut_codes: KKutCode[];
 }
@@ -78,6 +78,7 @@ function variantLabel(v: string): string {
 /**
  * Sort structure_tags by earliest-appearing section in the canonical order.
  * Tags that don't appear in the canonical list sort to the end.
+ * Delimiters used in structure_tag values: space, →, or hyphen.
  */
 function sectionSortKey(tag: string): number {
   const parts = tag.split(/[\s→\-]+/);
@@ -166,9 +167,9 @@ export default function PixInventoryPage({ params }: { params: Promise<{ id: str
           if (pixRow) {
             setPixMeta({ title: pixRow.title ?? null, artist: pixRow.artist ?? null });
           } else {
-            // Humanise the slug as a fallback label
-            const humanised = slug.replace(/[-_]+/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase());
-            setPixMeta({ title: humanised, artist: null });
+            // Humanize the slug as a fallback label
+            const humanized = slug.replace(/[-_]+/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase());
+            setPixMeta({ title: humanized, artist: null });
           }
         }
 
