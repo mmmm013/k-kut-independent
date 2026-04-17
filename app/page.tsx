@@ -2,6 +2,9 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 
+// Base URL for Supabase Storage public track files (NEXT_PUBLIC_ vars are inlined at build time)
+const SB_TRACKS = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/tracks`;
+
 type Purpose =
   | "send"
   | "express"
@@ -46,7 +49,7 @@ const previewCatalog: PreviewItem[] = [
     durationLabel: "0:18",
     confidenceHint: "warm, romantic, hopeful",
     description: "A gentle first taste for love-led sharing.",
-    previewUrl: "/pix/kleigh--solace.mp3",
+    previewUrl: `${SB_TRACKS}/kleigh--solace.mp3`,
     messengerFit: ["text", "DM", "email"],
     isPromoSafe: true,
   },
@@ -60,7 +63,7 @@ const previewCatalog: PreviewItem[] = [
     durationLabel: "0:16",
     confidenceHint: "playful, direct, modern",
     description: "A bright emotional hook with instant clarity.",
-    previewUrl: "/pix/perfect-day.mp3",
+    previewUrl: `${SB_TRACKS}/perfect-day.mp3`,
     messengerFit: ["text", "story", "share link"],
     isPromoSafe: true,
   },
@@ -74,7 +77,7 @@ const previewCatalog: PreviewItem[] = [
     durationLabel: "0:20",
     confidenceHint: "sincere, grounded, mature",
     description: "Short, respectful gratitude that feels real.",
-    previewUrl: "/pix/wanna-know-you.mp3",
+    previewUrl: `${SB_TRACKS}/wanna-know-you.mp3`,
     messengerFit: ["text", "email", "gift"],
     isPromoSafe: true,
   },
@@ -88,7 +91,7 @@ const previewCatalog: PreviewItem[] = [
     durationLabel: "0:19",
     confidenceHint: "humble, clear, restorative",
     description: "For when words alone are not enough.",
-    previewUrl: "/pix/jump.mp3",
+    previewUrl: `${SB_TRACKS}/jump.mp3`,
     messengerFit: ["text", "private link", "email"],
     isPromoSafe: true,
   },
@@ -102,7 +105,7 @@ const previewCatalog: PreviewItem[] = [
     durationLabel: "0:17",
     confidenceHint: "bold, high-drive, fun",
     description: "A strong pulse for hype, momentum, or celebration.",
-    previewUrl: "/pix/kleigh--waterfall.mp3",
+    previewUrl: `${SB_TRACKS}/kleigh--waterfall.mp3`,
     messengerFit: ["story", "group text", "link"],
     isPromoSafe: true,
   },
@@ -116,7 +119,7 @@ const previewCatalog: PreviewItem[] = [
     durationLabel: "0:21",
     confidenceHint: "hurt, honest, still open",
     description: "Pain with dignity and emotional truth.",
-    previewUrl: "/pix/kleigh--nightfall.mp3",
+    previewUrl: `${SB_TRACKS}/kleigh--nightfall.mp3`,
     messengerFit: ["private link", "email", "text"],
     isPromoSafe: true,
   },
@@ -130,7 +133,7 @@ const previewCatalog: PreviewItem[] = [
     durationLabel: "0:19",
     confidenceHint: "soft, reflective, calming",
     description: "A quiet, inward emotional place.",
-    previewUrl: "/pix/kleigh--solace.mp3",
+    previewUrl: `${SB_TRACKS}/kleigh--solace.mp3`,
     messengerFit: ["self-use", "private link"],
     isPromoSafe: true,
   },
@@ -144,7 +147,7 @@ const previewCatalog: PreviewItem[] = [
     durationLabel: "0:43",
     confidenceHint: "the fullest romantic section",
     description: "Longer exact-audio K-KUT for a fully delivered feeling.",
-    previewUrl: "/pix/perfect-day.mp3",
+    previewUrl: `${SB_TRACKS}/perfect-day.mp3`,
     messengerFit: ["private link", "gift"],
     isPromoSafe: false,
   },
@@ -158,7 +161,7 @@ const previewCatalog: PreviewItem[] = [
     durationLabel: "0:46",
     confidenceHint: "heavier sincerity, more emotional room",
     description: "A longer exact-audio section for meaningful repair.",
-    previewUrl: "/pix/jump.mp3",
+    previewUrl: `${SB_TRACKS}/jump.mp3`,
     messengerFit: ["private link", "email"],
     isPromoSafe: false,
   },
@@ -172,7 +175,7 @@ const previewCatalog: PreviewItem[] = [
     durationLabel: "0:48",
     confidenceHint: "deep honesty, serious feeling",
     description: "A longer K-KUT when the user needs something real.",
-    previewUrl: "/pix/kleigh--nightfall.mp3",
+    previewUrl: `${SB_TRACKS}/kleigh--nightfall.mp3`,
     messengerFit: ["private link", "gift"],
     isPromoSafe: false,
   },
