@@ -2,6 +2,27 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 
+/**
+ * ── Audio prereqs for the preview player ────────────────────────────────────
+ * SB_TRACKS is the public base URL for the Supabase "tracks" bucket.
+ *
+ * REQUIRED (Supabase Storage):
+ *   1. Bucket "tracks" must be set to PUBLIC in the Supabase dashboard.
+ *      (Storage → tracks → bucket settings → Make public)
+ *   2. Each previewUrl below must match an actual file path in the bucket.
+ *      Current expected paths (all at bucket root):
+ *        kleigh--solace.mp3, perfect-day.mp3, wanna-know-you.mp3,
+ *        jump.mp3, kleigh--waterfall.mp3, kleigh--nightfall.mp3
+ *   3. NEXT_PUBLIC_SUPABASE_URL must be set in Vercel env vars.
+ *      (Vercel → Project → Settings → Environment Variables)
+ *
+ * To verify: open one URL in a browser tab:
+ *   ${SUPABASE_URL}/storage/v1/object/public/tracks/kleigh--solace.mp3
+ * ─────────────────────────────────────────────────────────────────────────────
+ */
+// Base URL for Supabase Storage public track files (NEXT_PUBLIC_ vars are inlined at build time)
+const SB_TRACKS = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/tracks`;
+
 type Purpose =
   | "send"
   | "express"
@@ -46,7 +67,7 @@ const previewCatalog: PreviewItem[] = [
     durationLabel: "0:18",
     confidenceHint: "warm, romantic, hopeful",
     description: "A gentle first taste for love-led sharing.",
-    previewUrl: "/pix/kleigh--solace.mp3",
+    previewUrl: `${SB_TRACKS}/kleigh--solace.mp3`,
     messengerFit: ["text", "DM", "email"],
     isPromoSafe: true,
   },
@@ -60,7 +81,7 @@ const previewCatalog: PreviewItem[] = [
     durationLabel: "0:16",
     confidenceHint: "playful, direct, modern",
     description: "A bright emotional hook with instant clarity.",
-    previewUrl: "/pix/perfect-day.mp3",
+    previewUrl: `${SB_TRACKS}/perfect-day.mp3`,
     messengerFit: ["text", "story", "share link"],
     isPromoSafe: true,
   },
@@ -74,7 +95,7 @@ const previewCatalog: PreviewItem[] = [
     durationLabel: "0:20",
     confidenceHint: "sincere, grounded, mature",
     description: "Short, respectful gratitude that feels real.",
-    previewUrl: "/pix/wanna-know-you.mp3",
+    previewUrl: `${SB_TRACKS}/wanna-know-you.mp3`,
     messengerFit: ["text", "email", "gift"],
     isPromoSafe: true,
   },
@@ -88,7 +109,7 @@ const previewCatalog: PreviewItem[] = [
     durationLabel: "0:19",
     confidenceHint: "humble, clear, restorative",
     description: "For when words alone are not enough.",
-    previewUrl: "/pix/jump.mp3",
+    previewUrl: `${SB_TRACKS}/jump.mp3`,
     messengerFit: ["text", "private link", "email"],
     isPromoSafe: true,
   },
@@ -102,7 +123,7 @@ const previewCatalog: PreviewItem[] = [
     durationLabel: "0:17",
     confidenceHint: "bold, high-drive, fun",
     description: "A strong pulse for hype, momentum, or celebration.",
-    previewUrl: "/pix/kleigh--waterfall.mp3",
+    previewUrl: `${SB_TRACKS}/kleigh--waterfall.mp3`,
     messengerFit: ["story", "group text", "link"],
     isPromoSafe: true,
   },
@@ -116,7 +137,7 @@ const previewCatalog: PreviewItem[] = [
     durationLabel: "0:21",
     confidenceHint: "hurt, honest, still open",
     description: "Pain with dignity and emotional truth.",
-    previewUrl: "/pix/kleigh--nightfall.mp3",
+    previewUrl: `${SB_TRACKS}/kleigh--nightfall.mp3`,
     messengerFit: ["private link", "email", "text"],
     isPromoSafe: true,
   },
@@ -130,7 +151,7 @@ const previewCatalog: PreviewItem[] = [
     durationLabel: "0:19",
     confidenceHint: "soft, reflective, calming",
     description: "A quiet, inward emotional place.",
-    previewUrl: "/pix/kleigh--solace.mp3",
+    previewUrl: `${SB_TRACKS}/kleigh--solace.mp3`,
     messengerFit: ["self-use", "private link"],
     isPromoSafe: true,
   },
@@ -144,7 +165,7 @@ const previewCatalog: PreviewItem[] = [
     durationLabel: "0:43",
     confidenceHint: "the fullest romantic section",
     description: "Longer exact-audio K-KUT for a fully delivered feeling.",
-    previewUrl: "/pix/perfect-day.mp3",
+    previewUrl: `${SB_TRACKS}/perfect-day.mp3`,
     messengerFit: ["private link", "gift"],
     isPromoSafe: false,
   },
@@ -158,8 +179,50 @@ const previewCatalog: PreviewItem[] = [
     durationLabel: "0:46",
     confidenceHint: "heavier sincerity, more emotional room",
     description: "A longer exact-audio section for meaningful repair.",
-    previewUrl: "/pix/jump.mp3",
+    previewUrl: `${SB_TRACKS}/jump.mp3`,
     messengerFit: ["private link", "email"],
+    isPromoSafe: false,
+  },
+  {
+    id: "kkut-gratitude-01",
+    title: "K-KUT · Steady Thanks",
+    artist: "G Putnam Music",
+    sentiment: "gratitude",
+    purposeTags: ["send", "express"],
+    format: "kkut",
+    durationLabel: "0:44",
+    confidenceHint: "sincere, grounded, full delivery",
+    description: "Longer gratitude K-KUT when thanks deserves more than a taste.",
+    previewUrl: `${SB_TRACKS}/wanna-know-you.mp3`,
+    messengerFit: ["private link", "email", "gift"],
+    isPromoSafe: false,
+  },
+  {
+    id: "kkut-energy-01",
+    title: "K-KUT · High Energy",
+    artist: "G Putnam Music",
+    sentiment: "energy",
+    purposeTags: ["feel", "explore", "send"],
+    format: "kkut",
+    durationLabel: "0:45",
+    confidenceHint: "full hype, bold, high-drive",
+    description: "The complete energy section — for peak momentum and celebration.",
+    previewUrl: `${SB_TRACKS}/kleigh--waterfall.mp3`,
+    messengerFit: ["private link", "story", "gift"],
+    isPromoSafe: false,
+  },
+  {
+    id: "kkut-hope-01",
+    title: "K-KUT · Hope",
+    artist: "G Putnam Music",
+    sentiment: "hope",
+    purposeTags: ["feel", "send", "express"],
+    format: "kkut",
+    durationLabel: "0:44",
+    confidenceHint: "forward motion, emotional lift",
+    description: "A longer K-KUT when you need the full feeling of possibility.",
+    previewUrl: `${SB_TRACKS}/kleigh--solace.mp3`,
+    messengerFit: ["private link", "gift", "email"],
     isPromoSafe: false,
   },
   {
@@ -172,8 +235,22 @@ const previewCatalog: PreviewItem[] = [
     durationLabel: "0:48",
     confidenceHint: "deep honesty, serious feeling",
     description: "A longer K-KUT when the user needs something real.",
-    previewUrl: "/pix/kleigh--nightfall.mp3",
+    previewUrl: `${SB_TRACKS}/kleigh--nightfall.mp3`,
     messengerFit: ["private link", "gift"],
+    isPromoSafe: false,
+  },
+  {
+    id: "kkut-peace-01",
+    title: "K-KUT · Melancholy Blues",
+    artist: "G Putnam Music",
+    sentiment: "peace",
+    purposeTags: ["feel", "explore", "send"],
+    format: "kkut",
+    durationLabel: "0:44",
+    confidenceHint: "quiet, inward, full stillness",
+    description: "The complete peaceful section — for reflection and inward calm.",
+    previewUrl: `${SB_TRACKS}/kleigh--solace.mp3`,
+    messengerFit: ["private link", "self-use", "gift"],
     isPromoSafe: false,
   },
 ];
@@ -378,9 +455,14 @@ export default function KKutPage() {
 
   function startCheckout() {
     if (!selectedItem) return;
-    window.location.href = `/api/checkout/sovereign?item=${encodeURIComponent(
-      selectedItem.id
-    )}&format=${encodeURIComponent(selectedItem.format)}`;
+    // Route directly to the K-KUT or mini-KUT playback page.
+    // K-KUT catalog slugs (e.g. kkut-love-01) play directly from Storage.
+    // Mini-KUT catalog slugs go to the mkut page (edge function path).
+    if (selectedItem.format === "kkut") {
+      window.location.href = `/k/${selectedItem.id}`;
+    } else {
+      window.location.href = `/mkut/${selectedItem.id}`;
+    }
   }
 
   function submitFirstFree() {
@@ -388,6 +470,11 @@ export default function KKutPage() {
     alert(
       `First one free recorded for ${selectedItem.title}. Follow up cadence: 3 touches in 3 weeks to ${userEmail}.`
     );
+    if (selectedItem.format === "kkut") {
+      window.location.href = `/k/${selectedItem.id}`;
+    } else {
+      window.location.href = `/mkut/${selectedItem.id}`;
+    }
   }
 
   return (

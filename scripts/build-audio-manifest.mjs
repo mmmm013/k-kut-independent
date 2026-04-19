@@ -1,13 +1,17 @@
 import { createClient } from '@supabase/supabase-js'
 import fs from 'node:fs/promises'
 
-const supabaseUrl = 'https://tlbqzzhhypixfbejoucr.supabase.co'
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
 const supabaseKey =
   process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY
 const bucket = 'tracks'
 
 // set this true if the bucket is public
 const IS_PUBLIC_BUCKET = true
+
+if (!supabaseUrl) {
+  throw new Error('Missing NEXT_PUBLIC_SUPABASE_URL in environment')
+}
 
 if (!supabaseKey) {
   throw new Error(

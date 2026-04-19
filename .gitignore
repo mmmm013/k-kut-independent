@@ -4,4 +4,6 @@ out/
 .env
 .env.*
 !.env.example
+.env.local
+.vercel/
 .DS_Store
