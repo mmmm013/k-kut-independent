@@ -46,7 +46,7 @@ let fadeOutTimer = null;
 
 async function loadMicroCut() {
   try {
-    const response = await fetch("http://localhost:8090/mks");
+    const response = await fetch("https://api.k-kut.com/mks"); // 🔥 FIXED FOR PRODUCTION
     const data = await response.json();
 
     document.getElementById("debug").innerText =
