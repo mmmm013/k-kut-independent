@@ -1,0 +1,191 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Micro-KUT Player — Signature Delivery</title>
+</head>
+
+<body style="font-family:sans-serif;padding:30px;position:relative;overflow:hidden;">
+
+<h1>Micro-KUT Player — Signature Delivery</h1>
+
+<p id="status" style="color:red;font-weight:bold;">
+LOADING CONTROL GATE…
+</p>
+
+<audio id="audio"></audio>
+
+<audio id="twinkle" src="https://cdn.jsdelivr.net/gh/terkelg/experiments/audio/chime.mp3"></audio>
+
+<br><br>
+
+<button id="playButton" disabled onclick="playMicroCut()">
+▶ Play
+</button>
+
+<pre id="debug" style="margin-top:20px;background:#f4f4f4;padding:12px;white-space:pre-wrap"></pre>
+
+<div id="twinkleFX" style="
+position:absolute;
+top:50%;
+left:50%;
+width:0;
+height:0;
+border-radius:50%;
+background:radial-gradient(circle, rgba(255,255,255,0.9) 0%, rgba(0,150,255,0.4) 40%, transparent 70%);
+transform:translate(-50%,-50%);
+opacity:0;
+pointer-events:none;
+"></div>
+
+<script>
+let microCut = null;
+let stopTimer = null;
+let fadeInTimer = null;
+let fadeOutTimer = null;
+
+async function loadMicroCut() {
+  try {
+    const response = await fetch("http://localhost:8090/mks");
+    const data = await response.json();
+
+    document.getElementById("debug").innerText =
+      JSON.stringify(data, null, 2);
+
+    if (!Array.isArray(data) || data.length === 0) {
+      blockPlayback("AUDIO BLOCKED: no micro-cut returned from backend");
+      return;
+    }
+
+    microCut = data[0];
+
+    if (!microCut.playable || !microCut.audio_url) {
+      blockPlayback(microCut.reason || "AUDIO BLOCKED: source not approved");
+      return;
+    }
+
+    document.getElementById("status").innerText =
+      "APPROVED: signature delivery ready";
+    document.getElementById("status").style.color = "green";
+    document.getElementById("playButton").disabled = false;
+
+  } catch (error) {
+    blockPlayback("AUDIO BLOCKED: backend unavailable");
+  }
+}
+
+function clearTimers() {
+  clearTimeout(stopTimer);
+  clearInterval(fadeInTimer);
+  clearInterval(fadeOutTimer);
+}
+
+function blockPlayback(message) {
+  clearTimers();
+
+  const audio = document.getElementById("audio");
+  audio.pause();
+  audio.src = "";
+  audio.load();
+
+  document.getElementById("status").innerText = message;
+  document.getElementById("status").style.color = "red";
+  document.getElementById("playButton").disabled = true;
+}
+
+function playMicroCut() {
+  if (!microCut || !microCut.playable || !microCut.audio_url) {
+    return;
+  }
+
+  clearTimers();
+
+  const audio = document.getElementById("audio");
+
+  const startSeconds = microCut.start_ms / 1000;
+  const endSeconds = microCut.end_ms / 1000;
+  const durationMilliseconds = Math.max(0, (endSeconds - startSeconds) * 1000);
+
+  const fadeMilliseconds = 200;
+  const fadeStepMilliseconds = 20;
+
+  audio.pause();
+  audio.src = "";
+  audio.load();
+
+  audio.src = microCut.audio_url;
+
+  audio.onloadedmetadata = () => {
+    audio.currentTime = startSeconds;
+    audio.volume = 0;
+
+    audio.play();
+
+    let fadeInElapsed = 0;
+
+    fadeInTimer = setInterval(() => {
+      fadeInElapsed += fadeStepMilliseconds;
+      audio.volume = Math.min(1, fadeInElapsed / fadeMilliseconds);
+
+      if (fadeInElapsed >= fadeMilliseconds) {
+        clearInterval(fadeInTimer);
+      }
+    }, fadeStepMilliseconds);
+
+    stopTimer = setTimeout(() => {
+      triggerTwinkle();
+
+      let fadeOutRemaining = fadeMilliseconds;
+
+      fadeOutTimer = setInterval(() => {
+        fadeOutRemaining -= fadeStepMilliseconds;
+        audio.volume = Math.max(0, fadeOutRemaining / fadeMilliseconds);
+
+        if (fadeOutRemaining <= 0) {
+          clearInterval(fadeOutTimer);
+          audio.pause();
+          audio.currentTime = startSeconds;
+          audio.volume = 1;
+        }
+      }, fadeStepMilliseconds);
+    }, durationMilliseconds);
+  };
+}
+
+function triggerTwinkle() {
+  const twinkle = document.getElementById("twinkle");
+  const effect = document.getElementById("twinkleFX");
+
+  twinkle.currentTime = 0;
+  twinkle.volume = 0.5;
+  twinkle.play();
+
+  effect.style.opacity = 1;
+  effect.style.width = "20px";
+  effect.style.height = "20px";
+
+  let size = 20;
+  let opacity = 1;
+
+  const animation = setInterval(() => {
+    size += 15;
+    opacity -= 0.08;
+
+    effect.style.width = size + "px";
+    effect.style.height = size + "px";
+    effect.style.opacity = opacity;
+
+    if (opacity <= 0) {
+      clearInterval(animation);
+      effect.style.opacity = 0;
+      effect.style.width = "0";
+      effect.style.height = "0";
+    }
+  }, 30);
+}
+
+loadMicroCut();
+</script>
+
+</body>
+</html>
