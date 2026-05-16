@@ -7,3 +7,7 @@ out/
 .env.local
 .vercel/
 .DS_Store
+.vercel
+KKUT_KEYS_INPUT.txt
+.env.production.local
+.env.vercel
