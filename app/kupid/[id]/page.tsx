@@ -16,6 +16,10 @@
 import { use, useEffect, useState } from 'react';
 
 import KfUnitPlayer from '../../_components/KfUnitPlayer';
+import {
+  KF_REFERENCE_NOTICE,
+  KF_REFERENCE_UI_ENABLED,
+} from '../../../lib/kf/reference-mode';
 import { createClient } from '../../../lib/supabase/browser';
 import {
   formatDuration,
@@ -56,6 +60,15 @@ export default function KupidDeliveryPage({ params }: { params: Promise<{ id: st
     let alive = true;
 
     async function load() {
+      // Reference surface, off by default — never query while disabled.
+      if (!KF_REFERENCE_UI_ENABLED) {
+        if (alive) {
+          setError(KF_REFERENCE_NOTICE.message);
+          setLoading(false);
+        }
+        return;
+      }
+
       try {
         const supabase = createClient();
         const { data, error: queryError } = await supabase

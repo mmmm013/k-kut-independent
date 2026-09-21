@@ -2,6 +2,10 @@ import { NextResponse } from "next/server";
 
 import { createClient } from "../../../../lib/supabase/server";
 import { buildKfInventory, summarize } from "../../../../lib/kf/inventory";
+import {
+  KF_REFERENCE_NOTICE,
+  KF_REFERENCE_UI_ENABLED,
+} from "../../../../lib/kf/reference-mode";
 import { KF_THEMES, KF_UNIT_TYPES, KfTheme, KfUnitType } from "../../../../lib/kf/types";
 
 export const dynamic = "force-dynamic";
@@ -36,6 +40,12 @@ export const dynamic = "force-dynamic";
  * here can widen access beyond what the browser could already read.
  */
 export async function GET(req: Request) {
+  // Reference surface, off by default. See lib/kf/reference-mode.ts — this
+  // endpoint bypasses the governed publication bridge and must not serve.
+  if (!KF_REFERENCE_UI_ENABLED) {
+    return NextResponse.json({ ok: false, ...KF_REFERENCE_NOTICE }, { status: 403 });
+  }
+
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 

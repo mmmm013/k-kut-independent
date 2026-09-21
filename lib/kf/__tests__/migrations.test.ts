@@ -1,5 +1,10 @@
 /**
- * Migration file sanity.
+ * Reference-schema file sanity.
+ *
+ * These files are NOT deployed. They live under reference/NOT-DEPLOYED/ and
+ * are kept as a reference implementation only — see that directory's README.
+ * The tests still run because the content assertions are what caught a
+ * zero-byte RLS migration, and that value does not depend on deployment.
  *
  * An empty .sql file applies to PostgreSQL without error, so "the migration
  * ran" proves nothing. A scripted edit once truncated the RLS migration to
@@ -16,14 +21,20 @@ import fs from 'node:fs';
 import path from 'node:path';
 import test from 'node:test';
 
-const MIGRATIONS = path.join(process.cwd(), 'supabase', 'migrations');
+// Moved out of supabase/migrations in the containment commit: that path is the
+// Supabase CLI's scan target, and leaving these files there kept a destructive
+// `supabase db push` one command away. They are reference only.
+const MIGRATIONS = path.join(process.cwd(), 'reference', 'NOT-DEPLOYED', 'kf-schema');
 
 function read(file: string): string {
   return fs.readFileSync(path.join(MIGRATIONS, file), 'utf8');
 }
 
 function migrationFiles(): string[] {
-  return fs.readdirSync(MIGRATIONS).filter((f) => f.endsWith('.sql')).sort();
+  return fs
+    .readdirSync(MIGRATIONS)
+    .filter((f) => f.endsWith('.sql') && f !== 'seed.sql')
+    .sort();
 }
 
 test('every migration exists and carries real SQL', () => {
@@ -110,4 +121,38 @@ test('the governed lineage is expressed, not shortcut', () => {
   assert.ok(lineage.includes('create table if not exists public.nkk_assets'), 'no NKK layer');
   assert.ok(lineage.includes('kf_assert_within_parent_kk'), 'no containment trigger');
   assert.match(lineage, /source_audio_sha256 ~ ''\^\[0-9a-f\]\{64\}\$''/, 'no SHA-256 format check');
+});
+
+test('the reference schema stays out of the Supabase CLI scan path', () => {
+  // supabase/migrations is what `supabase db push` reads. Nothing may live
+  // there: the live project already holds the legacy corpus these files assume
+  // is absent.
+  assert.ok(
+    !fs.existsSync(path.join(process.cwd(), 'supabase', 'migrations')),
+    'supabase/migrations exists again — `supabase db push` would pick it up',
+  );
+  assert.ok(
+    fs.existsSync(path.join(MIGRATIONS, 'SUPERSEDED_MANIFEST.json')),
+    'breadcrumb manifest missing from the reference directory',
+  );
+});
+
+test('every reference surface is off unless deliberately enabled', () => {
+  const mode = fs.readFileSync(
+    path.join(process.cwd(), 'lib', 'kf', 'reference-mode.ts'), 'utf8',
+  );
+  assert.match(mode, /NEXT_PUBLIC_KF_REFERENCE_UI === '1'/);
+
+  for (const surface of [
+    path.join('app', 'api', 'kf', 'inventory', 'route.ts'),
+    path.join('app', 'kf', 'page.tsx'),
+    path.join('app', 'llf', '[id]', 'page.tsx'),
+    path.join('app', 'kupid', '[id]', 'page.tsx'),
+  ]) {
+    const body = fs.readFileSync(path.join(process.cwd(), surface), 'utf8');
+    assert.ok(
+      body.includes('KF_REFERENCE_UI_ENABLED'),
+      `${surface} is not behind the reference kill switch`,
+    );
+  }
 });
