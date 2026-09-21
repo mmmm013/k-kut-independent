@@ -3,23 +3,39 @@
 /**
  * PIX Inventory Page — /pix/[id]
  *
- * Displays the complete K-KUT catalog for one PIX (master track).
+ * Displays the complete KUT Family inventory for one PIX (master track):
+ * K-KUT, mini-KUT, LineFeel and K-kUpId.
  *
  * Rules enforced visibly:
- *   • Audio QC must be "pass" before any KUT is playable (silo gate).
+ *   • Audio QC must be "pass" before any unit is playable (silo gate).
  *   • Both variants surface: Vocal + Music and Music Only.
  *   • Sections shown in canonical GPM order.
- *   • mini-KUTs listed below the K-KUT catalog.
+ *   • Every KUT Family unit type is listed, not just K-KUT.
  *
  * Data sources (Supabase anon key, subject to your RLS policies):
  *   • k_kut_assets   — one row per section-combo × variant
  *   • k_kut_codes    — redeemable code rows linked to assets
- *   • m_kut_assets   — mini-KUT text micro-assets (optional table)
+ *   • m_kut_assets   — mini-KUT text micro-assets
+ *   • llf_assets     — LineFeel single-line audio units
+ *   • kupid_assets   — K-kUpId romance-level units
+ *
+ * For the family-wide view across every PIX, see /kf.
  */
 
 import { use, useEffect, useState } from 'react';
 import Link from 'next/link';
+
 import { createClient } from '../../../lib/supabase/browser';
+import {
+  formatDuration,
+  isVocalVariant,
+  normalizeQc,
+  sectionSortKey,
+  unitColor,
+  unitLabel,
+  variantLabel,
+} from '../../../lib/kf/classify';
+import { KfUnitType } from '../../../lib/kf/types';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -47,53 +63,28 @@ interface MiniKutAsset {
   audio_qc_status: string | null;
 }
 
+interface LlfAsset {
+  id: string;
+  structure_tag: string | null;
+  variant: string | null;
+  line_text: string | null;
+  audio_qc_status: string | null;
+  duration_ms: number | null;
+}
+
+interface KupidAsset {
+  id: string;
+  structure_tag: string | null;
+  romance_level: number | null;
+  level_code: string | null;
+  audio_qc_status: string | null;
+  duration_ms: number | null;
+}
+
 interface PixMeta {
   title: string | null;
   artist: string | null;
   pix_id?: string;
-}
-
-// ── Constants ─────────────────────────────────────────────────────────────────
-
-const SECTION_ORDER = [
-  'Intro', 'V1', 'Pre1', 'Ch1', 'V2', 'Pre2', 'Ch2', 'BR', 'Ch3', 'Outro',
-];
-
-// Variant display labels — covers both common naming conventions
-const VARIANT_LABEL: Record<string, string> = {
-  VOCAL_MUSIC: 'Vocal + Music',
-  MUSIC_ONLY: 'Music Only',
-  vocal_music: 'Vocal + Music',
-  music_only: 'Music Only',
-  vocal: 'Vocal + Music',
-  instrumental: 'Music Only',
-};
-
-function variantLabel(v: string): string {
-  return VARIANT_LABEL[v] ?? v;
-}
-
-// ── Helpers ───────────────────────────────────────────────────────────────────
-
-/**
- * Sort structure_tags by earliest-appearing section in the canonical order.
- * Tags that don't appear in the canonical list sort to the end.
- * Delimiters used in structure_tag values: space, →, or hyphen.
- */
-function sectionSortKey(tag: string): number {
-  const parts = tag.split(/[\s→\-]+/);
-  for (const part of parts) {
-    const idx = SECTION_ORDER.indexOf(part.trim());
-    if (idx !== -1) return idx;
-  }
-  return SECTION_ORDER.length;
-}
-
-function formatDuration(ms: number): string {
-  const s = Math.round(ms / 1000);
-  const m = Math.floor(s / 60);
-  const rem = s % 60;
-  return `${m}:${rem.toString().padStart(2, '0')}`;
 }
 
 function activeCode(asset: KKutAsset): KKutCode | undefined {
@@ -134,6 +125,8 @@ export default function PixInventoryPage({ params }: { params: Promise<{ id: str
 
   const [assets, setAssets] = useState<KKutAsset[]>([]);
   const [mkuts, setMkuts] = useState<MiniKutAsset[]>([]);
+  const [llfs, setLlfs] = useState<LlfAsset[]>([]);
+  const [kupids, setKupids] = useState<KupidAsset[]>([]);
   const [pixMeta, setPixMeta] = useState<PixMeta>({ title: null, artist: null });
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -181,6 +174,24 @@ export default function PixInventoryPage({ params }: { params: Promise<{ id: str
           .order('mk_type', { ascending: true });
 
         setMkuts((mkutRows ?? []) as MiniKutAsset[]);
+
+        // ── LineFeel units (best-effort — table may not yet exist) ───────────
+        const { data: llfRows } = await supabase
+          .from('llf_assets')
+          .select('id, structure_tag, variant, line_text, audio_qc_status, duration_ms')
+          .eq('pix_pck_id', id)
+          .order('structure_tag', { ascending: true });
+
+        setLlfs((llfRows ?? []) as LlfAsset[]);
+
+        // ── K-kUpId units (best-effort — table may not yet exist) ────────────
+        const { data: kupidRows } = await supabase
+          .from('kupid_assets')
+          .select('id, structure_tag, romance_level, level_code, audio_qc_status, duration_ms')
+          .eq('pix_pck_id', id)
+          .order('romance_level', { ascending: true });
+
+        setKupids((kupidRows ?? []) as KupidAsset[]);
       } catch (e) {
         setError(e instanceof Error ? e.message : 'Failed to load PIX inventory');
       } finally {
@@ -204,8 +215,11 @@ export default function PixInventoryPage({ params }: { params: Promise<{ id: str
     (a, b) => sectionSortKey(a) - sectionSortKey(b) || a.localeCompare(b),
   );
 
-  const passCount = assets.filter((a) => a.audio_qc_status === 'pass').length;
+  const passCount = assets.filter((a) => normalizeQc(a.audio_qc_status) === 'pass').length;
   const totalCount = assets.length;
+
+  // The PIX is "empty" only when no KUT Family unit at all exists for it.
+  const familyTotal = assets.length + mkuts.length + llfs.length + kupids.length;
 
   // ── Render ───────────────────────────────────────────────────────────────
   return (
@@ -216,6 +230,9 @@ export default function PixInventoryPage({ params }: { params: Promise<{ id: str
           ← K-KUT
         </Link>
         <nav className="flex gap-4 text-sm text-[#C8A882]">
+          <Link href="/kf" className="hover:text-[#D4A017] transition-colors">
+            KUT Family
+          </Link>
           <Link href="/invention" className="hover:text-[#D4A017] transition-colors">
             Inventions
           </Link>
@@ -247,9 +264,9 @@ export default function PixInventoryPage({ params }: { params: Promise<{ id: str
         )}
 
         {/* ── Empty ── */}
-        {!loading && !error && assets.length === 0 && (
+        {!loading && !error && familyTotal === 0 && (
           <div className="rounded-xl border border-white/10 bg-[#111] p-8 text-center">
-            <p className="text-[#F5e6c8] font-semibold mb-2">No K-KUT assets found</p>
+            <p className="text-[#F5e6c8] font-semibold mb-2">No KUT Family units found</p>
             <p className="text-sm text-[#C8A882]">
               PIX <code className="text-[#D4A017]">{id}</code> has no assets in inventory yet.
             </p>
@@ -259,7 +276,7 @@ export default function PixInventoryPage({ params }: { params: Promise<{ id: str
           </div>
         )}
 
-        {!loading && !error && assets.length > 0 && (
+        {!loading && !error && familyTotal > 0 && (
           <>
             {/* ── PIX header ── */}
             <section>
@@ -273,6 +290,7 @@ export default function PixInventoryPage({ params }: { params: Promise<{ id: str
 
               {/* Stats row */}
               <div className="flex flex-wrap gap-3 mt-4">
+                <StatChip label="KUT Family units" value={String(familyTotal)} />
                 <StatChip label="K-KUTs" value={String(totalCount)} />
                 <StatChip label="Audio QC Pass" value={String(passCount)} accent />
                 {totalCount - passCount > 0 && (
@@ -280,6 +298,12 @@ export default function PixInventoryPage({ params }: { params: Promise<{ id: str
                 )}
                 {mkuts.length > 0 && (
                   <StatChip label="mini-KUTs" value={String(mkuts.length)} />
+                )}
+                {llfs.length > 0 && (
+                  <StatChip label="LineFeels" value={String(llfs.length)} />
+                )}
+                {kupids.length > 0 && (
+                  <StatChip label="K-kUpIds" value={String(kupids.length)} />
                 )}
               </div>
 
@@ -295,6 +319,7 @@ export default function PixInventoryPage({ params }: { params: Promise<{ id: str
             </section>
 
             {/* ── K-KUT Catalog ── */}
+            {assets.length > 0 && (
             <section>
               <h2 className="text-lg font-bold text-[#F5e6c8] mb-1 uppercase tracking-widest text-sm">
                 K-KUT Catalog
@@ -308,8 +333,8 @@ export default function PixInventoryPage({ params }: { params: Promise<{ id: str
                   const group = grouped.get(tag)!;
                   // Sort variants: VOCAL_MUSIC first
                   const sorted = [...group].sort((a, b) => {
-                    const aIsVocal = a.variant.toLowerCase().includes('vocal');
-                    const bIsVocal = b.variant.toLowerCase().includes('vocal');
+                    const aIsVocal = isVocalVariant(a.variant);
+                    const bIsVocal = isVocalVariant(b.variant);
                     return aIsVocal === bIsVocal ? 0 : aIsVocal ? -1 : 1;
                   });
 
@@ -383,6 +408,7 @@ export default function PixInventoryPage({ params }: { params: Promise<{ id: str
                 })}
               </div>
             </section>
+            )}
 
             {/* ── mini-KUT Catalog ── */}
             {mkuts.length > 0 && (
@@ -411,7 +437,7 @@ export default function PixInventoryPage({ params }: { params: Promise<{ id: str
                         </p>
                       )}
                       <div className="mt-auto pt-1">
-                        {mk.audio_qc_status === 'pass' ? (
+                        {normalizeQc(mk.audio_qc_status) === 'pass' ? (
                           <Link
                             href={`/mkut/${mk.id}`}
                             className="text-xs text-[#D4A017] hover:underline font-semibold"
@@ -428,6 +454,53 @@ export default function PixInventoryPage({ params }: { params: Promise<{ id: str
                   ))}
                 </div>
               </section>
+            )}
+            {/* ── LineFeel Catalog ── */}
+            {llfs.length > 0 && (
+              <UnitSection
+                unit="sK"
+                blurb="Single lyric lines delivered as audio — the smallest audible unit in the KUT Family."
+              >
+                {llfs.map((llf) => (
+                  <UnitRow
+                    key={llf.id}
+                    unit="sK"
+                    title={llf.line_text ?? llf.structure_tag ?? 'LineFeel'}
+                    structureTag={llf.structure_tag}
+                    variant={llf.variant}
+                    durationMs={llf.duration_ms}
+                    qcStatus={llf.audio_qc_status}
+                    href={`/llf/${llf.id}`}
+                  />
+                ))}
+              </UnitSection>
+            )}
+
+            {/* ── K-kUpId Catalog ── */}
+            {kupids.length > 0 && (
+              <UnitSection
+                unit="KUPID"
+                blurb="K-KUTs curated and signed for a romance level. A standalone invention, not a delivery vehicle."
+              >
+                {kupids.map((kupid) => (
+                  <UnitRow
+                    key={kupid.id}
+                    unit="KUPID"
+                    title={
+                      kupid.level_code
+                        ? `K-kUpId · ${kupid.level_code}`
+                        : kupid.romance_level
+                          ? `K-kUpId · Level ${kupid.romance_level}`
+                          : 'K-kUpId'
+                    }
+                    structureTag={kupid.structure_tag}
+                    variant={null}
+                    durationMs={kupid.duration_ms}
+                    qcStatus={kupid.audio_qc_status}
+                    href={`/kupid/${kupid.id}`}
+                  />
+                ))}
+              </UnitSection>
             )}
           </>
         )}
@@ -465,6 +538,83 @@ function StatChip({
     >
       <span className={accent ? 'text-emerald-300' : 'text-[#F5e6c8]'}>{value}</span>
       <span className="opacity-70">{label}</span>
+    </div>
+  );
+}
+
+function UnitSection({
+  unit,
+  blurb,
+  children,
+}: {
+  unit: KfUnitType;
+  blurb: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <section>
+      <h2
+        className="text-lg font-bold mb-1 uppercase tracking-widest text-sm"
+        style={{ color: unitColor(unit) }}
+      >
+        {unitLabel(unit)} Catalog
+      </h2>
+      <p className="text-xs text-[#C8A882] mb-6">{blurb}</p>
+      <div className="flex flex-col gap-3">{children}</div>
+    </section>
+  );
+}
+
+function UnitRow({
+  unit,
+  title,
+  structureTag,
+  variant,
+  durationMs,
+  qcStatus,
+  href,
+}: {
+  unit: KfUnitType;
+  title: string;
+  structureTag: string | null;
+  variant: string | null;
+  durationMs: number | null;
+  qcStatus: string | null;
+  href: string;
+}) {
+  const qc = normalizeQc(qcStatus);
+
+  return (
+    <div className="rounded-xl border border-white/10 bg-[#111] px-5 py-4 flex items-center justify-between gap-4 flex-wrap">
+      <div className="flex flex-col gap-1.5 min-w-0">
+        <span className="text-[#F5e6c8] text-sm font-semibold truncate">{title}</span>
+        <div className="flex items-center gap-2 flex-wrap">
+          <QcBadge status={qc} />
+          {structureTag && (
+            <span className="font-mono text-[10px] text-[#C8A882]/60">{structureTag}</span>
+          )}
+          {variant && (
+            <span className="text-[10px] text-[#C8A882]/50">{variantLabel(variant)}</span>
+          )}
+          {durationMs && (
+            <span className="text-[10px] text-[#C8A882]/50">{formatDuration(durationMs)}</span>
+          )}
+        </div>
+      </div>
+
+      {qc === 'pass' ? (
+        <Link
+          href={href}
+          className="shrink-0 px-5 py-2 rounded-full text-sm font-bold text-[#0a0a0a] hover:opacity-90 transition-opacity"
+          style={{ backgroundColor: unitColor(unit) }}
+        >
+          Play
+        </Link>
+      ) : (
+        <span className="shrink-0 text-xs text-[#C8A882]/40 font-semibold">
+          {qc === 'fail' ? 'QC Fail' : 'Pending'}
+        </span>
+      )}
     </div>
   );
 }

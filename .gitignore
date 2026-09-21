@@ -11,3 +11,5 @@ out/
 KKUT_KEYS_INPUT.txt
 .env.production.local
 .env.vercel
+.test-out/
+tsconfig.tsbuildinfo
