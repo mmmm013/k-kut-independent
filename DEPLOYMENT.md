@@ -1,5 +1,28 @@
 # Deployment readiness — what blocks full launch
 
+> ## ⛔ STOP — DO NOT RUN `supabase db push` AGAINST THE LIVE PROJECT
+>
+> Added 2026-09-21 after reading the owner's Current-II Authority map and the
+> BLK/KK text-generation freeze. **The migrations in this repo were written
+> against an empty database and are unsafe against project `vwlzubxshjjonabpeagd`.**
+>
+> | Live object | Reality | What our migrations would do |
+> |---|---|---|
+> | `k_kuts` | a **table** with 42,971 rows (legacy candidate corpus, held outside public authority) | migrations 200/400/600 `drop view if exists public.k_kuts` then create a view of that name — this **errors on a table**, aborting mid-run and leaving partial schema |
+> | `m_kut_assets` | **34,251 live rows** | migrations 400/500 `ALTER` it, adding columns to production data |
+> | `llf_assets` | unknown | migration 600 issues `drop table ... cascade` |
+>
+> **A `BLK/KK text generation` freeze is ACTIVE** (`ACTIVE_OWNER_AUTHORIZED_FREEZE`,
+> effective 2026-08-30). It blocks mass candidate creation and automated
+> promotion. `supabase/seed.sql` creates mass candidates and is squarely inside
+> the blocked scope. All four unlock prerequisites are `DRAFT_PENDING_OWNER_LOCK`.
+>
+> **The governed catalog authorizes ZERO public IIs** — 2 canary records, both
+> `TRIAGE`, `0 STAGE`. The storefront correctly offers nothing.
+>
+> Nothing here may be applied until the owner's own sequence runs: prepare and
+> test in a rollback-only transaction, then separate explicit authorization.
+
 Status as of the KUT Family inventory work. Each item below was **verified
 against the code or a real PostgreSQL 16**, not assumed. Ordered by what stops
 money and delivery first.
@@ -112,13 +135,9 @@ unavailable.
 > `/api/kf/inventory`. If `unavailable` lists all four tables, the migrations
 > have not landed yet. If it comes back with counts, they have.
 
-```bash
-supabase link --project-ref <your-project-ref>
-supabase db push --dry-run   # read it first
-supabase db push
-```
-
-All four are idempotent, so re-running is safe.
+**Superseded — see the STOP notice at the top of this file.** These migrations
+must not be pushed to `vwlzubxshjjonabpeagd`. They assume an empty database;
+the live project already holds the legacy corpus they would collide with.
 
 ---
 
@@ -164,10 +183,20 @@ a 500 with a clear message if it is absent at runtime.
 
 ## Shortest path to taking money
 
-1. Stand up the `kut-renders` bucket and cut real section audio into it. (#1)
-2. `supabase db push`. (#5)
-3. Insert real assets, tag each with a theme, activate one code each.
-4. Add Stripe Checkout + webhook that flips a code to `active`. (#2)
-5. Gate `/admin/play`. (#4)
+**Withdrawn.** This sequence was written before the Current-II Authority map
+was available and every step of it is now known to be wrong:
+
+- a `kut-renders` bucket is unnecessary — `kuts` (21 objects), `ii-delivery`
+  (3,872) and the private `mk-products` (21,329) already exist; `tracks` holds
+  701 objects and is public
+- `supabase db push` is unsafe (see the STOP notice)
+- "tag each with a theme" conflates theme with element identity, which the
+  GPMx model explicitly forbids
+- nothing may be released while the freeze is active and zero IIs reach STAGE
+
+The owner's own controlled sequence governs instead: contain the direct routes,
+test in a rollback-only transaction, obtain separate explicit authorization,
+breadcrumb the superseded artifacts, then reaffirm **one LT-PIX at a time**
+through the locked worksheet and review gate.
 
 Steps 1–3 make the inventory real. Step 4 makes it earn.

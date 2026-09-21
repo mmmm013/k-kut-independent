@@ -23,6 +23,7 @@ import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 
 import { themeColor, unitColor, unitLabel, formatDuration } from '../../lib/kf/classify';
+import { KF_REFERENCE_NOTICE, KF_REFERENCE_UI_ENABLED } from '../../lib/kf/reference-mode';
 import {
   KF_THEMES,
   KF_UNIT_TYPES,
@@ -395,6 +396,8 @@ function KfInventory() {
 }
 
 export default function KfInventoryPage() {
+  if (!KF_REFERENCE_UI_ENABLED) return <ReferenceDisabled />;
+
   return (
     <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-[#C8A882]">Loading inventory…</div>}>
       <KfInventory />
@@ -443,5 +446,29 @@ function FilterChip({
     >
       {label}
     </button>
+  );
+}
+
+/** Shown when the reference surfaces are disabled, which is the default. */
+function ReferenceDisabled() {
+  return (
+    <div className="min-h-screen flex flex-col">
+      <header className="flex items-center justify-between px-6 py-4 border-b border-white/10">
+        <Link href="/" className="text-[#D4A017] font-bold text-lg hover:opacity-80">← K-KUT</Link>
+      </header>
+      <main className="flex-1 flex items-center justify-center px-6 py-16">
+        <div className="w-full max-w-lg rounded-xl border border-[#D4A017]/30 bg-[#111] p-6">
+          <p className="text-xs uppercase tracking-widest text-[#D4A017] mb-2">
+            {KF_REFERENCE_NOTICE.code}
+          </p>
+          <h1 className="text-xl font-bold text-[#F5e6c8] mb-3">
+            {KF_REFERENCE_NOTICE.title}
+          </h1>
+          <p className="text-sm text-[#C8A882] leading-relaxed">
+            {KF_REFERENCE_NOTICE.message}
+          </p>
+        </div>
+      </main>
+    </div>
   );
 }

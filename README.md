@@ -143,7 +143,7 @@ An untagged unit reads as `null`, never as a guess. A gap shows as a zero.
 
 | Route | What it shows |
 |---|---|
-| `/kf` | Theme coverage matrix + the whole KUT Family inventory. Filters: `?pix=`, `?type=KUT\|mK\|LLF\|KUPID`, `?theme=love\|apology\|…`. |
+| `/kf` | **Reference only, off by default.** Theme coverage matrix + the whole KUT Family inventory. Filters: `?pix=`, `?type=KUT\|mK\|LLF\|KUPID`, `?theme=love\|apology\|…`. |
 | `/pix/[id]` | One PIX's inventory, all four unit types, in canonical section order. |
 | `/api/kf/inventory` | The same data as JSON. Anon key, so RLS decides visibility. |
 | `/api/hug/[id]` | HUG delivery. Service role, reads the `k_kuts` SSOT, blocks source audio. |
@@ -167,6 +167,11 @@ test runner against the output — no test framework to install.
 ---
 
 ## Database migrations
+
+> **The KUT Family schema is not deployed.** It was moved to
+> `reference/NOT-DEPLOYED/kf-schema/` because `supabase/migrations/` is the
+> Supabase CLI's scan path and these files are unsafe against the live project.
+> Read `reference/NOT-DEPLOYED/README.md` before touching any of it.
 
 This project uses Supabase for the database.
 

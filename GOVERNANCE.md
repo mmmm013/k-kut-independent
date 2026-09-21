@@ -34,25 +34,34 @@ boundary. It publishes what GPMC has already frozen. Earlier migrations called
 
 ---
 
-## 2. The governed lineage
+## 2. The governed lineage — corrected 2026-09-21
+
+The capture rooms carry the operative chain, and it is deeper than either
+earlier document showed:
 
 ```
-LT-PIX  ->  KK  ->  NKK  ->  N-sK  ->  N-mK
+LT-PIX → KK → DKK → NKK → naked sK → sK → mK
 ```
 
-> No mK or sK may lose its exact NKK, KK, and LT-PIX ancestry. **No direct
-> KK-to-sK or KK/NKK-to-mK shortcut is authoritative.**
+verbatim from `66_mK_AUDIO_CAPTURE_ROOM.html`:
 
-Migrations 100–400 pointed `m_kut_assets`, `llf_assets` and `kupid_assets`
-straight at `k_kut_assets` — exactly the forbidden shortcut — and had no NKK
-layer. Migration 500 adds `nkk_assets` and re-parents the children onto it.
+> PARENT AUTHORITY: sK ← NKK ← DKK ← KK
+> **NEVER: LT-PIX → sK directly. NEVER: LT-PIX → mK directly.**
+> LOCK: mK derives from naked sK. sK derives from NKK.
 
-**Containment:** a child may never escape its parent's bounds. Upstream rejects
-`APPROVED_BOUNDARY_OUTSIDE_SOURCE_KK`, and the mK rule is
-`MK_MUST_RETAIN_LTPIX_SRC_KK_PATH_SHA_AND_MAY_NOT_ESCAPE_SOURCE_KK_BOUNDS`.
-Enforced here by the `nkk_assets_within_parent` trigger.
+**DKK and "naked sK" appear in no other document supplied.** They are real
+objects with real ids in the queue — `DKK_KK_PARENT_AWAKE_BLK1_1dd6609ea3aa794a`,
+`NAKED_sK_000001`, `NKK_000001`, `sK_000001`, `mKQ_000001`.
 
----
+This settles the earlier open question: **NKK is real.** It also means both
+prior diagrams were incomplete — the V010 gate's `LT-PIX → KK → NKK → N-sK → N-mK`
+omits DKK and naked sK, and the Improved GPMx model's `SSOT → KK → sK → mK`
+omits three layers.
+
+`nkk_assets` in the reference schema is therefore directionally right and still
+wrong in shape: no DKK, no naked-sK, and children hung off the wrong parent.
+
+**Containment still holds:** a child may never escape its parent's bounds.
 
 ## 3. Identity is by hash, never by title
 
@@ -141,6 +150,54 @@ invention", which would make it a KK rather than an sK. Not guessed at.
 
 ---
 
+## 5b. Candidate ≠ approval — the control point
+
+From `03_GD_THEME_VETTING_ROOM.html`, verbatim:
+
+> Every LT-PIX / KK selected for any theme remains **CANDIDATE ONLY** until GD
+> vets it. Theme match ≠ approval. Tag match ≠ approval. MetaGrab match ≠
+> approval. MGS match ≠ approval. **Audio boundary pass ≠ approval.**
+
+That last clause names the exact defect in this repo's KUT Family surfaces:
+they treat `audio_qc_status = 'pass'` — an audio boundary pass — as playable.
+It is not approval and never was. The surfaces are now off by default behind
+`NEXT_PUBLIC_KF_REFERENCE_UI`; see `reference/NOT-DEPLOYED/README.md`.
+
+GD decisions in the vetting room: `APPROVE THEME FIT` · `HOLD` · `REPLACE` ·
+`WRONG THEME`.
+
+## 5c. 13HUGz is the send-use vocabulary
+
+Not emotions — **send occasions**, multi-valued and weighted per object:
+
+> Top 13HUGz use: Just Because Care (100%)
+> Other possible uses: Just Because Care (100%) | Friends (100%) |
+> Thinking of You (69%) | Just Because Smile (62%) | Long Week (59%) |
+> New Baby (55%)
+
+Observed so far: Just Because Care · Friends · Thinking of You · Long Week ·
+New Baby · Bad Day Support · Miss Them · Just Because Smile · First Day Nerves ·
+Make It Right. The seed catalog is 13 containers × 8 seeds = 104 candidates, so
+three more names exist beyond the sample.
+
+A Top-50 send-reason ranking sits above this; rank 1 is *"I'm thinking of you"* →
+theme **Thinking of You**. Each theme carries `public_need`, `positive_signals`
+and `blocked_signals` in the 13HUGZ rules CSV.
+
+**The seven themes in the reference schema match none of this vocabulary.**
+
+## 5d. The real bottleneck is audio, not schema
+
+From `01_GD_AUDIO_FIRST_NKK_SEND_USE_REVIEW_ROOM.html`:
+
+> Playable rows: **25** | No-audio rows held: **4,040**
+
+Of 4,065 review objects, 25 have playable audio. Canonical counts elsewhere:
+**429 LT-PIX · 2,611 KK · 3,040 objects**.
+
+No floor expressed in units — 13 per container per theme or any other number —
+is reachable from 25 playable objects. Capture is the constraint.
+
 ## 6. Per-KK gates upstream
 
 A KK is reviewable only when both pass:
@@ -196,8 +253,16 @@ This is why `/api/bot/moments` is named as it is.
 Named upstream or in conversation but not resolvable from the supplied files —
 not guessed at anywhere in this codebase:
 
-`FM` · `MGS` · `TUGs` · `VOC` · `13HUGz.com` · the exact relationship of
-`GPMx` (pipeline namespace) to `GPMC` (write authority)
+`FM` (appears as a family id, `FM-100391228`) · `TUGs` beyond the Tier-2
+meaning · the three unobserved 13HUGz container names · whether `13HUGz.com`
+is the storefront for that vocabulary · `ii_key` / what an II physically is
+
+Resolved since: **VOC** = Voice of Customer (the Listen rooms capture and save
+VOC decisions; a reported issue earns one free corrected element). **MGS** =
+multi-gated semantic — 13 dimensions, ≥30 confirmed assertions, ≥3 congruent
+user-visible tags, contraindication review, no numeric-only shortcut.
+**GPMx** is the enterprise; **4PE is its governed operating system**.
+**DKK** and **naked sK** are lineage layers, newly evidenced.
 
 `TEXT Loop Runs` are partially resolved: they are where sK candidates are
 found, and `sk_assets.text_loop_run_id` records which run surfaced each one.
