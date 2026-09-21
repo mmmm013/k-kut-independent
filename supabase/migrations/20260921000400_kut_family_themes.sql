@@ -31,12 +31,32 @@ comment on type public.kf_theme is
 -- ── Add the column to every container ────────────────────────────────────────
 alter table public.k_kut_assets add column if not exists theme public.kf_theme;
 alter table public.m_kut_assets add column if not exists theme public.kf_theme;
-alter table public.llf_assets   add column if not exists theme public.kf_theme;
+-- Guarded: migration 600 turns llf_assets into a VIEW over sk_assets, and a
+-- view takes neither indexes, RLS, nor new columns. Skipped once that has run.
+do $$
+begin
+  if (select table_type from information_schema.tables
+      where table_schema = 'public' and table_name = 'llf_assets') = 'BASE TABLE' then
+    execute $stmt$alter table public.llf_assets add column if not exists theme public.kf_theme$stmt$;
+  end if;
+end
+$$;
+
 alter table public.kupid_assets add column if not exists theme public.kf_theme;
 
 create index if not exists k_kut_assets_theme_idx on public.k_kut_assets (theme);
 create index if not exists m_kut_assets_theme_idx on public.m_kut_assets (theme);
-create index if not exists llf_assets_theme_idx   on public.llf_assets (theme);
+-- Guarded: migration 600 turns llf_assets into a VIEW over sk_assets, and a
+-- view takes neither indexes, RLS, nor new columns. Skipped once that has run.
+do $$
+begin
+  if (select table_type from information_schema.tables
+      where table_schema = 'public' and table_name = 'llf_assets') = 'BASE TABLE' then
+    execute $stmt$create index if not exists llf_assets_theme_idx on public.llf_assets (theme)$stmt$;
+  end if;
+end
+$$;
+
 create index if not exists kupid_assets_theme_idx on public.kupid_assets (theme);
 
 -- ── Republish the SSOT with the theme column ─────────────────────────────────
@@ -46,6 +66,7 @@ create index if not exists kupid_assets_theme_idx on public.kupid_assets (theme)
 -- kf_theme_coverage is dropped first: an earlier revision of this migration
 -- built it on top of k_kuts, and that dependency would block the drop below on
 -- re-run. It is recreated at the end of this file, independent of k_kuts.
+drop view if exists public.kf_theme_satisfaction;
 drop view if exists public.kf_theme_coverage;
 drop view if exists public.k_kuts;
 

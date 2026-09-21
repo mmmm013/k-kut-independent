@@ -14,6 +14,7 @@
  */
 
 import {
+  KF_DEFAULT_MINIMUM,
   KF_THEMES,
   KF_UNIT_TYPES,
   KfFamilyCount,
@@ -128,21 +129,25 @@ function mapMiniKut(row: Row): KfInventoryItem {
   };
 }
 
-function mapLineFeel(row: Row): KfInventoryItem {
+function mapShortKut(row: Row): KfInventoryItem {
   const blocked = gate(row, true);
   const id = String(row.id ?? '');
 
   return {
     id,
-    unit_type: 'LLF',
+    unit_type: 'sK',
     pix_pck_id: row.pix_pck_id ? String(row.pix_pck_id) : null,
     structure_tag: row.structure_tag ? String(row.structure_tag) : null,
     variant: row.variant ? String(row.variant) : null,
     theme: resolveTheme(row),
     audio_qc_status: normalizeQc(row.audio_qc_status),
     duration_ms: typeof row.duration_ms === 'number' ? row.duration_ms : null,
-    label: row.line_text ? String(row.line_text) : 'LineFeel',
-    href: blocked ? null : unitHref('LLF', id),
+    label: row.line_text
+      ? String(row.line_text)
+      : row.sk_subtype
+        ? String(row.sk_subtype)
+        : 'short-KUT',
+    href: blocked ? null : unitHref('sK', id),
     playable: !blocked,
     blocked_reason: blocked,
   };
@@ -182,7 +187,12 @@ function mapKupid(row: Row): KfInventoryItem {
  * Every theme is always returned, including ones with no inventory at all, so
  * a gap shows as a zero rather than as a missing row.
  */
-function themeCoverage(items: KfInventoryItem[]): KfThemeCoverage[] {
+type MinimumsByTheme = Partial<Record<KfTheme, Partial<Record<KfUnitType, number>>>>;
+
+function themeCoverage(
+  items: KfInventoryItem[],
+  minimums: MinimumsByTheme,
+): KfThemeCoverage[] {
   return KF_THEMES.map((theme: KfTheme) => {
     const containers = Object.fromEntries(
       KF_UNIT_TYPES.map((unit) => [
@@ -193,16 +203,83 @@ function themeCoverage(items: KfInventoryItem[]): KfThemeCoverage[] {
       ]),
     ) as Record<KfUnitType, number>;
 
-    const missing = KF_UNIT_TYPES.filter((unit) => containers[unit] === 0);
+    const floors = minimums[theme] ?? {};
+    const required = Object.fromEntries(
+      KF_UNIT_TYPES.map((unit) => [unit, floors[unit] ?? 0]),
+    ) as Record<KfUnitType, number>;
+
+    const shortfall = Object.fromEntries(
+      KF_UNIT_TYPES.map((unit) => [
+        unit,
+        Math.max(required[unit] - containers[unit], 0),
+      ]),
+    ) as Record<KfUnitType, number>;
+
+    const missing = KF_UNIT_TYPES.filter((unit) => shortfall[unit] > 0);
+
+    const stillNeeded = missing
+      .map((unit) => `${unitLabel(unit)} needs ${shortfall[unit]}`)
+      .join(', ');
+
+    const hasFloor = KF_UNIT_TYPES.some((unit) => required[unit] > 0);
 
     return {
       theme,
       label: THEME_META[theme].label,
       containers,
+      required,
+      shortfall,
       missing,
-      satisfied: missing.length === 0,
+      still_needed: stillNeeded || null,
+      has_floor: hasFloor,
+      // No floor means unmeasured, never satisfied: an absent requirement must
+      // not read as a met one.
+      satisfied: hasFloor && missing.length === 0,
     };
   });
+}
+
+/**
+ * The floor, per theme per container, read from kf_theme_minimums so raising it
+ * needs no deploy.
+ *
+ * Deliberately per-theme rather than one global number: Holidays are excluded
+ * from the 13-floor, so a theme with no row required nothing of it. Collapsing
+ * to a single number would silently impose the 13-floor on them.
+ *
+ * Falls back to the documented default for every theme only when the table is
+ * unreachable, so a missing table reports real shortfalls rather than pretending
+ * the catalog is complete.
+ */
+async function readMinimums(supabase: QueryableClient): Promise<MinimumsByTheme> {
+  const { rows, available } = await readTable(
+    supabase,
+    'kf_theme_minimums',
+    'theme, unit_type, minimum',
+    null,
+  );
+
+  if (!available || rows.length === 0) {
+    const fallback: MinimumsByTheme = {};
+    for (const theme of KF_THEMES) {
+      fallback[theme] = {
+        KUT: KF_DEFAULT_MINIMUM,
+        sK: KF_DEFAULT_MINIMUM,
+        mK: KF_DEFAULT_MINIMUM,
+      };
+    }
+    return fallback;
+  }
+
+  const byTheme: MinimumsByTheme = {};
+  for (const row of rows) {
+    const theme = String(row.theme) as KfTheme;
+    const unit = String(row.unit_type) as KfUnitType;
+    if (!(KF_THEMES as readonly string[]).includes(theme)) continue;
+    if (!(KF_UNIT_TYPES as readonly string[]).includes(unit)) continue;
+    byTheme[theme] = { ...(byTheme[theme] ?? {}), [unit]: Number(row.minimum) || 0 };
+  }
+  return byTheme;
 }
 
 function rollup(items: KfInventoryItem[]): KfFamilyCount[] {
@@ -249,7 +326,7 @@ export async function buildKfInventory(
   const unavailable: string[] = [];
   const items: KfInventoryItem[] = [];
 
-  const [kut, mk, llf, kupid] = await Promise.all([
+  const [kut, mk, sk, kupid] = await Promise.all([
     readTable(
       supabase,
       'k_kut_assets',
@@ -264,8 +341,8 @@ export async function buildKfInventory(
     ),
     readTable(
       supabase,
-      'llf_assets',
-      'id, pix_pck_id, structure_tag, variant, line_text, theme, audio_qc_status, duration_ms, llf_audio_url',
+      'sk_assets',
+      'id, pix_pck_id, sk_subtype, structure_tag, variant, line_text, theme, audio_qc_status, duration_ms, sk_audio_url',
       pixPckId,
     ),
     readTable(
@@ -282,8 +359,8 @@ export async function buildKfInventory(
   if (mk.available) items.push(...mk.rows.map(mapMiniKut));
   else unavailable.push('m_kut_assets');
 
-  if (llf.available) items.push(...llf.rows.map(mapLineFeel));
-  else unavailable.push('llf_assets');
+  if (sk.available) items.push(...sk.rows.map(mapShortKut));
+  else unavailable.push('sk_assets');
 
   if (kupid.available) items.push(...kupid.rows.map(mapKupid));
   else unavailable.push('kupid_assets');
@@ -298,7 +375,7 @@ export async function buildKfInventory(
     return (a.structure_tag ?? '').localeCompare(b.structure_tag ?? '');
   });
 
-  const coverage = themeCoverage(items);
+  const coverage = themeCoverage(items, await readMinimums(supabase));
   const summary = summarize(items);
 
   return {

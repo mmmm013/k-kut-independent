@@ -458,13 +458,13 @@ export default function PixInventoryPage({ params }: { params: Promise<{ id: str
             {/* ── LineFeel Catalog ── */}
             {llfs.length > 0 && (
               <UnitSection
-                unit="LLF"
+                unit="sK"
                 blurb="Single lyric lines delivered as audio — the smallest audible unit in the KUT Family."
               >
                 {llfs.map((llf) => (
                   <UnitRow
                     key={llf.id}
-                    unit="LLF"
+                    unit="sK"
                     title={llf.line_text ?? llf.structure_tag ?? 'LineFeel'}
                     structureTag={llf.structure_tag}
                     variant={llf.variant}

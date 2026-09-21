@@ -157,7 +157,17 @@ create table if not exists public.llf_assets (
     check (approved_for_hug = false or audio_qc_status = 'pass')
 );
 
-create index if not exists llf_assets_pix_idx on public.llf_assets (pix_pck_id);
+-- Guarded: migration 600 turns llf_assets into a VIEW over sk_assets, and a
+-- view takes neither indexes, RLS, nor new columns. Skipped once that has run.
+do $$
+begin
+  if (select table_type from information_schema.tables
+      where table_schema = 'public' and table_name = 'llf_assets') = 'BASE TABLE' then
+    execute $stmt$create index if not exists llf_assets_pix_idx on public.llf_assets (pix_pck_id)$stmt$;
+  end if;
+end
+$$;
+
 
 -- ── K-kUpId: a K-KUT curated and signed for a romance level ──────────────────
 create table if not exists public.kupid_assets (

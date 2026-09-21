@@ -195,12 +195,17 @@ function KfInventory() {
                           <td
                             key={unit}
                             className={`px-3 py-3 text-center font-mono ${
-                              row.containers[unit] > 0
-                                ? 'text-emerald-400'
-                                : 'text-red-400/70'
+                              row.required[unit] === 0
+                                ? 'text-[#C8A882]/40'
+                                : row.containers[unit] >= row.required[unit]
+                                  ? 'text-emerald-400'
+                                  : 'text-red-400/70'
                             }`}
                           >
                             {row.containers[unit]}
+                            {row.required[unit] > 0 && (
+                              <span className="text-[#C8A882]/50">/{row.required[unit]}</span>
+                            )}
                           </td>
                         ))}
                         <td className="px-4 py-3 text-center">
@@ -208,10 +213,12 @@ function KfInventory() {
                             <span className="text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
                               Satisfied
                             </span>
-                          ) : (
-                            <span className="text-[10px] text-[#C8A882]/60">
-                              needs {row.missing.map(unitLabel).join(', ')}
+                          ) : !row.has_floor ? (
+                            <span className="text-[10px] text-[#C8A882]/40 uppercase tracking-widest">
+                              no floor set
                             </span>
+                          ) : (
+                            <span className="text-[10px] text-[#C8A882]/70">{row.still_needed}</span>
                           )}
                         </td>
                       </tr>

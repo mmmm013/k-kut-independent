@@ -99,7 +99,7 @@ export default function LineFeelPage({ params }: { params: Promise<{ id: string 
 
   return (
     <KfUnitPlayer
-      unit="LLF"
+      unit="sK"
       loading={loading}
       error={error}
       title={row?.line_text ?? row?.structure_tag ?? null}

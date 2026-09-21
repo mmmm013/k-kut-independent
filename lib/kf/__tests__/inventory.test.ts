@@ -37,15 +37,24 @@ const ROWS: Record<string, Record<string, any>[]> = {
   m_kut_assets: [
     { id: 'm1', pix_pck_id: 'p', mk_type: 'mK-hook', structure_tag: 'Ch1', theme: 'love', audio_qc_status: 'pass' },
   ],
-  llf_assets: [
+  sk_assets: [
     {
-      id: 'l1', pix_pck_id: 'p', structure_tag: 'Ch1', line_text: 'and the light came back',
-      theme: 'love', audio_qc_status: 'pass', llf_audio_url: APPROVED,
+      id: 'l1', pix_pck_id: 'p', sk_subtype: '1LNR', structure_tag: 'Ch1',
+      line_text: 'and the light came back',
+      theme: 'love', audio_qc_status: 'pass', sk_audio_url: APPROVED,
     },
     {
-      id: 'l2', pix_pck_id: 'p', structure_tag: 'Ch2', line_text: 'leaky',
-      theme: 'hope', audio_qc_status: 'pass', llf_audio_url: 'https://x/tracks/master.mp3',
+      id: 'l2', pix_pck_id: 'p', sk_subtype: 'TWST', structure_tag: 'Ch2', line_text: 'leaky',
+      theme: 'hope', audio_qc_status: 'pass', sk_audio_url: 'https://x/tracks/master.mp3',
     },
+  ],
+  kf_theme_minimums: [
+    { theme: 'love', unit_type: 'KUT', minimum: 1 },
+    { theme: 'love', unit_type: 'sK', minimum: 1 },
+    { theme: 'love', unit_type: 'mK', minimum: 1 },
+    { theme: 'hope', unit_type: 'KUT', minimum: 1 },
+    { theme: 'hope', unit_type: 'sK', minimum: 1 },
+    { theme: 'hope', unit_type: 'mK', minimum: 1 },
   ],
   kupid_assets: [
     {
@@ -107,27 +116,40 @@ test('every family is rolled up, in canonical order', async () => {
 
   assert.deepEqual(
     inventory.families.map((family) => family.unit_type),
-    ['KUT', 'mK', 'LLF', 'KUPID'],
+    ['KUT', 'sK', 'mK', 'KUPID'],
   );
   assert.deepEqual(inventory.totals, { total: 7, qc_pass: 6, playable: 4 });
 });
 
 test('a missing table degrades to a partial inventory instead of failing', async () => {
-  const inventory = await buildKfInventory(fakeClient(['llf_assets', 'kupid_assets']), 'p');
+  const inventory = await buildKfInventory(fakeClient(['sk_assets', 'kupid_assets']), 'p');
 
   assert.equal(inventory.ok, true);
-  assert.deepEqual(inventory.unavailable, ['llf_assets', 'kupid_assets']);
+  assert.deepEqual(inventory.unavailable, ['sk_assets', 'kupid_assets']);
   assert.equal(inventory.totals.total, 4);
 });
 
-test('a theme is satisfied only when every container has a playable unit', async () => {
+test('a theme is satisfied only when every container meets its floor', async () => {
   const inventory = await buildKfInventory(fakeClient(), 'p');
   const love = inventory.coverage.find((row) => row.theme === 'love')!;
 
-  assert.deepEqual(love.containers, { KUT: 1, mK: 1, LLF: 1, KUPID: 1 });
+  assert.deepEqual(love.containers, { KUT: 1, sK: 1, mK: 1, KUPID: 1 });
   assert.deepEqual(love.missing, []);
   assert.equal(love.satisfied, true);
   assert.deepEqual(inventory.satisfied_themes, ['love']);
+});
+
+test('the floor comes from data, and one unit does not satisfy a floor of 13', async () => {
+  // The real requirement: 13 per theme per container. One playable unit in
+  // each container must NOT read as satisfied.
+  const strict = await buildKfInventory(fakeClient(['kf_theme_minimums']), 'p');
+  const love = strict.coverage.find((row) => row.theme === 'love')!;
+
+  assert.deepEqual(love.required, { KUT: 13, sK: 13, mK: 13, KUPID: 0 });
+  assert.deepEqual(love.shortfall, { KUT: 12, sK: 12, mK: 12, KUPID: 0 });
+  assert.equal(love.satisfied, false);
+  assert.equal(love.still_needed, 'K-KUT needs 12, short-KUT needs 12, mini-KUT needs 12');
+  assert.deepEqual(strict.satisfied_themes, []);
 });
 
 test('a theme backed only by held units is not satisfied', async () => {
@@ -136,9 +158,9 @@ test('a theme backed only by held units is not satisfied', async () => {
 
   // hope has a QC-passed KUT with no active code, and an LLF pointing at
   // source audio. Neither is playable, so hope is short in every container.
-  assert.deepEqual(hope.containers, { KUT: 0, mK: 0, LLF: 0, KUPID: 0 });
+  assert.deepEqual(hope.containers, { KUT: 0, sK: 0, mK: 0, KUPID: 0 });
   assert.equal(hope.satisfied, false);
-  assert.deepEqual(hope.missing, ['KUT', 'mK', 'LLF', 'KUPID']);
+  assert.equal(hope.still_needed, 'K-KUT needs 1, short-KUT needs 1, mini-KUT needs 1');
 });
 
 test('all seven themes are always reported, gaps included', async () => {
@@ -169,10 +191,23 @@ test('summarize counts exactly the items it is handed', async () => {
   assert.deepEqual(summarize(inventory.items).families, inventory.families);
 
   // A narrowed list: counts must describe the narrowed list, not the whole.
-  const onlyLlf = inventory.items.filter((item) => item.unit_type === 'LLF');
-  const narrowed = summarize(onlyLlf);
+  const onlySk = inventory.items.filter((item) => item.unit_type === 'sK');
+  const narrowed = summarize(onlySk);
 
   assert.equal(narrowed.totals.total, 2);
-  assert.equal(narrowed.families.find((f) => f.unit_type === 'LLF')!.total, 2);
+  assert.equal(narrowed.families.find((f) => f.unit_type === 'sK')!.total, 2);
   assert.equal(narrowed.families.find((f) => f.unit_type === 'KUT')!.total, 0);
+});
+
+test('a theme with no floor row requires nothing — Holidays are excluded', async () => {
+  // peace carries no kf_theme_minimums row in this fixture, standing in for a
+  // Holiday theme. It must not silently inherit another theme's 13-floor.
+  const inventory = await buildKfInventory(fakeClient(), 'p');
+  const peace = inventory.coverage.find((row) => row.theme === 'peace')!;
+
+  assert.deepEqual(peace.required, { KUT: 0, sK: 0, mK: 0, KUPID: 0 });
+  assert.equal(peace.still_needed, null);
+  assert.equal(peace.has_floor, false);
+  // Unmeasured, not satisfied — an absent requirement is not a met one.
+  assert.equal(peace.satisfied, false);
 });

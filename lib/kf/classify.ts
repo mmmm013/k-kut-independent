@@ -34,6 +34,7 @@ const AUDIO_URL_COLUMNS = [
   'kut_audio_url',
   'mk_audio_url',
   'llf_audio_url',
+  'sk_audio_url',
   'kupid_audio_url',
   'approved_audio_url',
 ] as const;
@@ -58,8 +59,13 @@ const EXPLICIT_UNIT_TYPES: Record<string, KfUnitType> = {
   mk: 'mK',
   'm-kut': 'mK',
   'mini-kut': 'mK',
-  llf: 'LLF',
-  linefeel: 'LLF',
+  sk: 'sK',
+  's-kut': 'sK',
+  'short-kut': 'sK',
+  // LineFeel is a one-liner, which is an sK. Kept as a legacy spelling.
+  llf: 'sK',
+  linefeel: 'sK',
+  '1lnr': 'sK',
   kupid: 'KUPID',
   'k-kupid': 'KUPID',
 };
@@ -81,8 +87,11 @@ export function classifyUnitType(row: Row): KfUnitType {
 
   const raw = hintText(row);
 
-  if (raw.includes('llf') || raw.includes('linefeel') || raw.includes('line feel')) {
-    return 'LLF';
+  if (
+    raw.includes('llf') || raw.includes('linefeel') || raw.includes('line feel') ||
+    raw.includes('s-kut') || raw.includes('short-kut') || raw.includes('1lnr')
+  ) {
+    return 'sK';
   }
 
   if (raw.includes('kupid') || raw.includes('k-kupid') || raw.includes('kkupid')) {
@@ -99,8 +108,8 @@ export function classifyUnitType(row: Row): KfUnitType {
 /** Fan-facing name for a unit type. Never reveals the underlying source track. */
 export function publicPhrase(unit: KfUnitType): string {
   switch (unit) {
-    case 'LLF':
-      return 'LineFeel option';
+    case 'sK':
+      return 'short-KUT option';
     case 'KUPID':
       return 'K-kUpId option';
     case 'mK':
@@ -113,8 +122,8 @@ export function publicPhrase(unit: KfUnitType): string {
 /** Short display label for a unit type, for chips and table headers. */
 export function unitLabel(unit: KfUnitType): string {
   switch (unit) {
-    case 'LLF':
-      return 'LineFeel';
+    case 'sK':
+      return 'short-KUT';
     case 'KUPID':
       return 'K-kUpId';
     case 'mK':
@@ -150,7 +159,7 @@ export function themeColor(theme: KfTheme): string {
 /** Accent colour per unit type, matching the palette used across the app. */
 export function unitColor(unit: KfUnitType): string {
   switch (unit) {
-    case 'LLF':
+    case 'sK':
       return '#8B5CF6';
     case 'KUPID':
       return '#E07B54';
@@ -166,7 +175,9 @@ export function unitHref(unit: KfUnitType, id: string): string | null {
   if (!id) return null;
 
   switch (unit) {
-    case 'LLF':
+    case 'sK':
+      // Route rename to /sk/[id] pending; the page reads the
+      // llf_assets compatibility view over sk_assets.
       return `/llf/${encodeURIComponent(id)}`;
     case 'KUPID':
       return `/kupid/${encodeURIComponent(id)}`;

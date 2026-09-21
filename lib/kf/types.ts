@@ -7,13 +7,34 @@
  * agree on these four unit types and on how they are gated.
  *
  *   KUT    — exact contiguous section audio (the K-KUT invention)
+ *   sK     — short-KUT: everything that is neither a KK nor an mK
  *   mK     — mini-KUT text micro-assets, audio resolved from a parent KUT
- *   LLF    — LineFeel, a single lyric line delivered as audio
  *   KUPID  — K-kUpId, a KUT curated and signed for a romance level
  */
 
-/** The four KUT Family unit types. Order here is the canonical display order. */
-export const KF_UNIT_TYPES = ['KUT', 'mK', 'LLF', 'KUPID'] as const;
+/**
+ * The KUT Family unit types, in canonical display order.
+ *
+ * sK is short-KUT: everything that is neither a KK nor an mK. LineFeel (LLF)
+ * is a one-liner (1LNR), which is an sK — it is a subtype, not a peer
+ * container, so it no longer appears here.
+ */
+export const KF_UNIT_TYPES = ['KUT', 'sK', 'mK', 'KUPID'] as const;
+
+/**
+ * sK subtypes — the pattern classes found in TEXT Loop Runs, plus the
+ * small-item codes already recognized upstream. Mirrors public.sk_subtype.
+ */
+export const SK_SUBTYPES = [
+  'TWST', 'HOOK', 'MTa4', 'PHRZ', 'PHRZ_LNG', 'SAYING', 'ALTR', '1LNR',
+  'CNTRST', 'OXY', 'CLSHA', 'LNTRIO', 'LNPR', '3RHYM', '4RHYM',
+  'TRM', 'TERM_CUT', 'WORD_CUT', 'XCLM', 'OTHER',
+] as const;
+
+export type SkSubtype = (typeof SK_SUBTYPES)[number];
+
+/** Required playable units per theme per container, "right off-the-bat". */
+export const KF_DEFAULT_MINIMUM = 13;
 
 export type KfUnitType = (typeof KF_UNIT_TYPES)[number];
 
@@ -114,15 +135,27 @@ export interface KfFamilyCount {
 
 /**
  * Theme coverage across containers — the "satisfied themes" view.
- * `satisfied` is true only when every container has at least one playable unit.
+ * `satisfied` is true only when every container meets its required floor.
  */
 export interface KfThemeCoverage {
   theme: KfTheme;
   label: string;
   /** Playable unit count per container. */
   containers: Record<KfUnitType, number>;
-  /** Containers with no playable unit for this theme. */
+  /** Required floor per container. Data, not a constant — see kf_theme_minimums. */
+  required: Record<KfUnitType, number>;
+  /** How many more each short container needs. */
+  shortfall: Record<KfUnitType, number>;
+  /** Containers still below their floor. */
   missing: KfUnitType[];
+  /** Human work queue, e.g. "sK needs 9, mK needs 4". */
+  still_needed: string | null;
+  /**
+   * Whether any floor is set for this theme at all. A theme with no floor
+   * (Holidays) is unmeasured, not satisfied — `satisfied` stays false so an
+   * absent requirement can never read as a met one.
+   */
+  has_floor: boolean;
   satisfied: boolean;
 }
 
