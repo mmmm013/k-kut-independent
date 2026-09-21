@@ -131,6 +131,22 @@ export interface KfInventoryResponse {
   ok: boolean;
   /** PIX filter that was applied, or null for the whole family. */
   pix_pck_id: string | null;
+  /**
+   * What `totals` and `families` count. `items` when a narrowing filter was
+   * applied, `scope` when the payload describes the whole PIX scope.
+   */
+  counts_describe?: 'items' | 'scope';
+  /** Narrowing filters the request applied, echoed back. */
+  filters?: {
+    type: KfUnitType | null;
+    theme: KfTheme | null;
+    playable_only: boolean;
+  };
+  /**
+   * What `coverage` and `satisfied_themes` describe. Always the full PIX
+   * scope, never a filtered slice.
+   */
+  coverage_scope?: string;
   totals: {
     total: number;
     qc_pass: number;

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { createClient } from "../../../../lib/supabase/server";
-import { buildKfInventory } from "../../../../lib/kf/inventory";
+import { buildKfInventory, summarize } from "../../../../lib/kf/inventory";
 import { KF_THEMES, KF_UNIT_TYPES, KfTheme, KfUnitType } from "../../../../lib/kf/types";
 
 export const dynamic = "force-dynamic";
@@ -18,9 +18,19 @@ export const dynamic = "force-dynamic";
  *   ?theme=love|apology|…    scope to one of the seven themes
  *   ?playable=1              return only units that pass the gate
  *
- * `coverage` and `satisfied_themes` always describe the FULL inventory for the
- * PIX scope, never the filtered item list — a filter is for looking at one
- * slice, and recomputing coverage from a slice would report false gaps.
+ * Two different things are being described, so the payload says which is which:
+ *
+ *   totals / families    count exactly the `items` returned. When a narrowing
+ *                        filter is applied they are recomputed from the
+ *                        filtered list, so the counts and the list always
+ *                        agree. `counts_describe` says so explicitly.
+ *   coverage /           always describe the FULL PIX scope, never the
+ *   satisfied_themes     filtered slice — recomputing theme coverage from,
+ *                        say, ?type=KUT would report every theme as missing
+ *                        mK, LLF and KUPID, which is a false gap rather than
+ *                        a real one. `coverage_scope` names what they cover.
+ *
+ * `filters` echoes what was applied, so a caller never has to infer it.
  *
  * Uses the anon key, so Row Level Security decides what is visible. Nothing
  * here can widen access beyond what the browser could already read.
@@ -70,10 +80,27 @@ export async function GET(req: Request) {
 
   const inventory = await buildKfInventory(createClient(), pix);
 
+  const type = typeParam as KfUnitType | null;
+  const theme = themeParam as KfTheme | null;
+
   let items = inventory.items;
-  if (typeParam) items = items.filter((item) => item.unit_type === (typeParam as KfUnitType));
-  if (themeParam) items = items.filter((item) => item.theme === (themeParam as KfTheme));
+  if (type) items = items.filter((item) => item.unit_type === type);
+  if (theme) items = items.filter((item) => item.theme === theme);
   if (playableOnly) items = items.filter((item) => item.playable);
 
-  return NextResponse.json({ ...inventory, items });
+  const narrowed = items.length !== inventory.items.length;
+  // Recompute so the counts describe the list actually being returned.
+  const summary = narrowed
+    ? summarize(items)
+    : { totals: inventory.totals, families: inventory.families };
+
+  return NextResponse.json({
+    ...inventory,
+    filters: { type, theme, playable_only: playableOnly },
+    counts_describe: narrowed ? "items" : "scope",
+    coverage_scope: pix ? `pix:${pix}` : "all",
+    totals: summary.totals,
+    families: summary.families,
+    items,
+  });
 }

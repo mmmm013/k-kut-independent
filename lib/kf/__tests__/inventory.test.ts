@@ -12,7 +12,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
-import { buildKfInventory } from '../inventory';
+import { buildKfInventory, summarize } from '../inventory';
 
 const APPROVED = 'https://x/storage/v1/object/public/kut-renders/ch1.mp3';
 
@@ -158,4 +158,21 @@ test('an untagged unit is never assigned a theme', async () => {
   // The mini-KUT fixture without a theme column must stay null rather than
   // being guessed into a theme and hiding a real coverage gap.
   assert.equal(untagged.every((item) => item.theme === null), true);
+});
+
+test('summarize counts exactly the items it is handed', async () => {
+  const inventory = await buildKfInventory(fakeClient(), 'p');
+
+  // The whole inventory: summarize must agree with what buildKfInventory
+  // already reported, or the route's recomputation would drift from it.
+  assert.deepEqual(summarize(inventory.items).totals, inventory.totals);
+  assert.deepEqual(summarize(inventory.items).families, inventory.families);
+
+  // A narrowed list: counts must describe the narrowed list, not the whole.
+  const onlyLlf = inventory.items.filter((item) => item.unit_type === 'LLF');
+  const narrowed = summarize(onlyLlf);
+
+  assert.equal(narrowed.totals.total, 2);
+  assert.equal(narrowed.families.find((f) => f.unit_type === 'LLF')!.total, 2);
+  assert.equal(narrowed.families.find((f) => f.unit_type === 'KUT')!.total, 0);
 });

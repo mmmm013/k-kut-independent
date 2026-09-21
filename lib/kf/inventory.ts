@@ -218,6 +218,27 @@ function rollup(items: KfInventoryItem[]): KfFamilyCount[] {
 }
 
 /**
+ * Totals and per-family counts for a given set of items.
+ *
+ * Exported so a caller that narrows `items` can recompute the counts to match
+ * what it is actually returning. Handing back a filtered item list alongside
+ * counts for the unfiltered set describes two different things in one payload.
+ */
+export function summarize(items: KfInventoryItem[]): {
+  totals: { total: number; qc_pass: number; playable: number };
+  families: KfFamilyCount[];
+} {
+  return {
+    totals: {
+      total: items.length,
+      qc_pass: items.filter((item) => item.audio_qc_status === 'pass').length,
+      playable: items.filter((item) => item.playable).length,
+    },
+    families: rollup(items),
+  };
+}
+
+/**
  * Build the KUT Family inventory, optionally scoped to one PIX.
  * Items come back grouped by unit type in canonical family order.
  */
@@ -278,16 +299,13 @@ export async function buildKfInventory(
   });
 
   const coverage = themeCoverage(items);
+  const summary = summarize(items);
 
   return {
     ok: true,
     pix_pck_id: pixPckId,
-    totals: {
-      total: items.length,
-      qc_pass: items.filter((item) => item.audio_qc_status === 'pass').length,
-      playable: items.filter((item) => item.playable).length,
-    },
-    families: rollup(items),
+    totals: summary.totals,
+    families: summary.families,
     coverage,
     satisfied_themes: coverage.filter((row) => row.satisfied).map((row) => row.theme),
     items,
