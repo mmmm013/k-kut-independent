@@ -8,9 +8,12 @@
  */
 
 import {
+  KF_THEMES,
+  KfTheme,
   KfUnitType,
   QcStatus,
   SECTION_ORDER,
+  THEME_META,
   Variant,
 } from './types';
 
@@ -119,6 +122,29 @@ export function unitLabel(unit: KfUnitType): string {
     default:
       return 'K-KUT';
   }
+}
+
+/**
+ * Read a row's theme, accepting any of the column names the SSOT uses.
+ * Returns null rather than guessing — an untagged unit is a real gap in
+ * coverage, and inventing a theme for it would hide that gap.
+ */
+export function resolveTheme(row: Row): KfTheme | null {
+  for (const column of ['theme', 'sentiment', 'emotion_level'] as const) {
+    const value = String(row[column] ?? '').toLowerCase().trim();
+    if ((KF_THEMES as readonly string[]).includes(value)) return value as KfTheme;
+  }
+  return null;
+}
+
+/** Display label for a theme. */
+export function themeLabel(theme: KfTheme): string {
+  return THEME_META[theme].label;
+}
+
+/** Accent colour for a theme. */
+export function themeColor(theme: KfTheme): string {
+  return THEME_META[theme].color;
 }
 
 /** Accent colour per unit type, matching the palette used across the app. */

@@ -17,6 +17,31 @@ export const KF_UNIT_TYPES = ['KUT', 'mK', 'LLF', 'KUPID'] as const;
 
 export type KfUnitType = (typeof KF_UNIT_TYPES)[number];
 
+/**
+ * The seven themes (sentiments) a delivery unit can carry.
+ *
+ * These are the same seven the home page routes a fan through. A theme is
+ * "satisfied" when it has at least one playable unit in EVERY container —
+ * a fan who arrives feeling any one of these must find something in every
+ * unit type, not just K-KUT.
+ */
+export const KF_THEMES = [
+  'love', 'apology', 'gratitude', 'energy', 'hurt', 'hope', 'peace',
+] as const;
+
+export type KfTheme = (typeof KF_THEMES)[number];
+
+/** Display metadata per theme, matching the home page's sentiment copy. */
+export const THEME_META: Record<KfTheme, { label: string; color: string }> = {
+  love:      { label: 'Love',      color: '#E07B54' },
+  apology:   { label: 'Apology',   color: '#8B5CF6' },
+  gratitude: { label: 'Gratitude', color: '#D4A017' },
+  energy:    { label: 'Energy',    color: '#C0392B' },
+  hurt:      { label: 'Hurt',      color: '#6B8CAE' },
+  hope:      { label: 'Hope',      color: '#4EA87B' },
+  peace:     { label: 'Peace',     color: '#C8A882' },
+};
+
 /** Canonical GPM section order. Sections may only be sold in this order (ASCAP rule). */
 export const SECTION_ORDER = [
   'Intro', 'V1', 'Pre1', 'Ch1', 'V2', 'Pre2', 'Ch2', 'BR', 'Ch3', 'Outro',
@@ -65,6 +90,8 @@ export interface KfInventoryItem {
   /** Section or section-combo this unit covers, e.g. "Ch1" or "V1 → Pre1". */
   structure_tag: string | null;
   variant: string | null;
+  /** Which of the seven themes this unit carries, when tagged. */
+  theme: KfTheme | null;
   audio_qc_status: QcStatus;
   duration_ms: number | null;
   /** Public-safe label. Never leaks a source/PIX filename. */
@@ -85,6 +112,20 @@ export interface KfFamilyCount {
   playable: number;
 }
 
+/**
+ * Theme coverage across containers — the "satisfied themes" view.
+ * `satisfied` is true only when every container has at least one playable unit.
+ */
+export interface KfThemeCoverage {
+  theme: KfTheme;
+  label: string;
+  /** Playable unit count per container. */
+  containers: Record<KfUnitType, number>;
+  /** Containers with no playable unit for this theme. */
+  missing: KfUnitType[];
+  satisfied: boolean;
+}
+
 /** Full `/api/kf/inventory` payload. */
 export interface KfInventoryResponse {
   ok: boolean;
@@ -96,6 +137,10 @@ export interface KfInventoryResponse {
     playable: number;
   };
   families: KfFamilyCount[];
+  /** One row per theme, whether or not that theme has any inventory yet. */
+  coverage: KfThemeCoverage[];
+  /** Themes with a playable unit in every container. */
+  satisfied_themes: KfTheme[];
   items: KfInventoryItem[];
   /** Tables that could not be read (missing or RLS-blocked). Never fatal. */
   unavailable: string[];

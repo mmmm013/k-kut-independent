@@ -12,17 +12,27 @@
  * listed but not playable, with the reason shown — the inventory is complete
  * even when the catalog is not.
  *
- * Optional filters: /kf?pix=<pix_pck_id>&type=KUT|mK|LLF|KUPID
+ * Shows theme coverage first: which of the seven themes have a playable unit
+ * in every container, and which containers are still empty for a theme.
+ *
+ * Optional filters: /kf?pix=<pix_pck_id>&type=KUT|mK|LLF|KUPID&theme=love
  */
 
 import { Suspense, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 
-import { unitColor, unitLabel, formatDuration } from '../../lib/kf/classify';
-import { KF_UNIT_TYPES, KfInventoryResponse, KfUnitType } from '../../lib/kf/types';
+import { themeColor, unitColor, unitLabel, formatDuration } from '../../lib/kf/classify';
+import {
+  KF_THEMES,
+  KF_UNIT_TYPES,
+  KfInventoryResponse,
+  KfTheme,
+  KfUnitType,
+} from '../../lib/kf/types';
 
 type Filter = KfUnitType | 'ALL';
+type ThemeFilter = KfTheme | 'ALL';
 
 function KfInventory() {
   const searchParams = useSearchParams();
@@ -36,6 +46,11 @@ function KfInventory() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<Filter>(initialFilter);
+  const [themeFilter, setThemeFilter] = useState<ThemeFilter>(
+    (KF_THEMES as readonly string[]).includes(searchParams.get('theme') ?? '')
+      ? (searchParams.get('theme') as KfTheme)
+      : 'ALL',
+  );
 
   useEffect(() => {
     let alive = true;
@@ -67,9 +82,12 @@ function KfInventory() {
 
   const visible = useMemo(() => {
     if (!data) return [];
-    if (filter === 'ALL') return data.items;
-    return data.items.filter((item) => item.unit_type === filter);
-  }, [data, filter]);
+    return data.items.filter(
+      (item) =>
+        (filter === 'ALL' || item.unit_type === filter) &&
+        (themeFilter === 'ALL' || item.theme === themeFilter),
+    );
+  }, [data, filter, themeFilter]);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -117,6 +135,92 @@ function KfInventory() {
 
         {!loading && !error && data && (
           <>
+            {/* ── Theme coverage ── */}
+            <section>
+              <div className="flex items-baseline justify-between flex-wrap gap-2 mb-1">
+                <h2 className="text-sm font-bold text-[#F5e6c8] uppercase tracking-widest">
+                  Theme coverage
+                </h2>
+                <p className="text-xs text-[#C8A882]">
+                  <span className="text-emerald-400 font-semibold">
+                    {data.satisfied_themes.length}
+                  </span>
+                  {' '}of {data.coverage.length} themes satisfied
+                </p>
+              </div>
+              <p className="text-xs text-[#C8A882] mb-4">
+                A theme is <strong className="text-[#F5e6c8]">satisfied</strong> when it has at
+                least one playable unit in every container. Zeros are the work left.
+              </p>
+
+              <div className="overflow-x-auto rounded-xl border border-white/10 bg-[#111]">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-white/10">
+                      <th className="text-left font-semibold text-[#C8A882] px-4 py-3 text-xs uppercase tracking-widest">
+                        Theme
+                      </th>
+                      {KF_UNIT_TYPES.map((unit) => (
+                        <th
+                          key={unit}
+                          className="px-3 py-3 text-xs font-mono uppercase tracking-widest"
+                          style={{ color: unitColor(unit) }}
+                        >
+                          {unitLabel(unit)}
+                        </th>
+                      ))}
+                      <th className="px-4 py-3 text-xs uppercase tracking-widest text-[#C8A882]">
+                        Status
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {data.coverage.map((row) => (
+                      <tr key={row.theme} className="border-b border-white/5 last:border-0">
+                        <td className="px-4 py-3">
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setThemeFilter(themeFilter === row.theme ? 'ALL' : row.theme)
+                            }
+                            className="font-semibold hover:underline"
+                            style={{
+                              color: themeFilter === row.theme ? '#F5e6c8' : themeColor(row.theme),
+                            }}
+                          >
+                            {row.label}
+                          </button>
+                        </td>
+                        {KF_UNIT_TYPES.map((unit) => (
+                          <td
+                            key={unit}
+                            className={`px-3 py-3 text-center font-mono ${
+                              row.containers[unit] > 0
+                                ? 'text-emerald-400'
+                                : 'text-red-400/70'
+                            }`}
+                          >
+                            {row.containers[unit]}
+                          </td>
+                        ))}
+                        <td className="px-4 py-3 text-center">
+                          {row.satisfied ? (
+                            <span className="text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                              Satisfied
+                            </span>
+                          ) : (
+                            <span className="text-[10px] text-[#C8A882]/60">
+                              needs {row.missing.map(unitLabel).join(', ')}
+                            </span>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </section>
+
             {/* ── Family rollup ── */}
             <section className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               {data.families.map((family) => (
@@ -183,6 +287,24 @@ function KfInventory() {
               ))}
             </section>
 
+            <section className="flex flex-wrap gap-2">
+              <FilterChip
+                label="All themes"
+                active={themeFilter === 'ALL'}
+                color="#F5e6c8"
+                onClick={() => setThemeFilter('ALL')}
+              />
+              {data.coverage.map((row) => (
+                <FilterChip
+                  key={row.theme}
+                  label={row.label}
+                  active={themeFilter === row.theme}
+                  color={themeColor(row.theme)}
+                  onClick={() => setThemeFilter(row.theme)}
+                />
+              ))}
+            </section>
+
             {/* ── Units ── */}
             <section className="flex flex-col gap-3">
               {visible.length === 0 ? (
@@ -211,6 +333,14 @@ function KfInventory() {
                         >
                           {unitLabel(item.unit_type)}
                         </span>
+                        {item.theme && (
+                          <span
+                            className="text-[10px] font-semibold uppercase tracking-widest"
+                            style={{ color: themeColor(item.theme) }}
+                          >
+                            {item.theme}
+                          </span>
+                        )}
                         {item.structure_tag && (
                           <span className="font-mono text-xs text-[#C8A882]">{item.structure_tag}</span>
                         )}

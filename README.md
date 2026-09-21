@@ -117,11 +117,33 @@ The gate is enforced in three independent places, so bypassing one is not enough
   units only.
 - **Render** — `lib/kf/classify.ts` and `lib/kf/inventory.ts`, shared by every route.
 
+### Themes — and what "satisfied" means
+
+A unit also carries one of seven **themes**, the same seven the home page routes
+a fan through:
+
+`love` · `apology` · `gratitude` · `energy` · `hurt` · `hope` · `peace`
+
+> A theme is **satisfied** when it has at least one **playable** unit in
+> **every** container.
+
+Playable, not merely present: QC passed, approved delivery audio, and for a
+K-KUT an active code. A theme backed only by units held at the gate is *not*
+satisfied — reporting it as satisfied would hide exactly the work that remains.
+
+Coverage is computed in two places, to the same definition:
+
+- `lib/kf/inventory.ts` → the `coverage` and `satisfied_themes` fields on
+  `/api/kf/inventory`, and the matrix at the top of `/kf`.
+- `public.kf_theme_coverage` → the same answer in SQL, for reporting.
+
+An untagged unit reads as `null`, never as a guess. A gap shows as a zero.
+
 ### Surfaces
 
 | Route | What it shows |
 |---|---|
-| `/kf` | The whole KUT Family inventory. `?pix=<id>` and `?type=KUT\|mK\|LLF\|KUPID` filter it. |
+| `/kf` | Theme coverage matrix + the whole KUT Family inventory. Filters: `?pix=`, `?type=KUT\|mK\|LLF\|KUPID`, `?theme=love\|apology\|…`. |
 | `/pix/[id]` | One PIX's inventory, all four unit types, in canonical section order. |
 | `/api/kf/inventory` | The same data as JSON. Anon key, so RLS decides visibility. |
 | `/api/hug/[id]` | HUG delivery. Service role, reads the `k_kuts` SSOT, blocks source audio. |
@@ -154,6 +176,7 @@ supabase/
     20260921000100_kut_family_schema.sql   tables, indexes, source-audio CHECK constraints
     20260921000200_k_kuts_ssot_view.sql    public.k_kuts — the KUT SSOT HUG delivery reads
     20260921000300_kut_family_rls.sql      RLS policies and grants
+    20260921000400_kut_family_themes.sql   themes on every container + kf_theme_coverage
   seed.sql                                 local-dev sample data (NOT run by `db push`)
 ```
 
@@ -177,7 +200,9 @@ supabase db push --dry-run
 supabase db push
 ```
 
-To load the sample PIX and one unit of every KUT Family type **locally**:
+To load the sample PIX — all seven themes in all four containers, so every
+theme reads as satisfied, plus a few units deliberately held at the gate —
+**locally**:
 
 ```bash
 supabase db reset   # runs the migrations, then supabase/seed.sql
@@ -185,6 +210,12 @@ supabase db reset   # runs the migrations, then supabase/seed.sql
 
 > `supabase/seed.sql` is sample data for local development. `supabase db push`
 > does not run it, and it should never be run against production.
+
+Check coverage at any time:
+
+```sql
+select * from public.kf_theme_coverage;
+```
 
 > **Tip:** If the Supabase CLI fails to parse `.env.local`, check for backslashes or special characters in variable values. Use plain ASCII values or quote them.
 

@@ -14,17 +14,22 @@
  */
 
 import {
+  KF_THEMES,
   KF_UNIT_TYPES,
   KfFamilyCount,
   KfInventoryItem,
   KfInventoryResponse,
+  KfTheme,
+  KfThemeCoverage,
   KfUnitType,
+  THEME_META,
 } from './types';
 import {
   classifyUnitType,
   isForbiddenSourceUrl,
   normalizeQc,
   resolveAudioUrl,
+  resolveTheme,
   unitHref,
   unitLabel,
 } from './classify';
@@ -93,6 +98,7 @@ function mapKut(row: Row): KfInventoryItem {
     pix_pck_id: row.pix_pck_id ? String(row.pix_pck_id) : null,
     structure_tag: row.structure_tag ? String(row.structure_tag) : null,
     variant: row.variant ? String(row.variant) : null,
+    theme: resolveTheme(row),
     audio_qc_status: normalizeQc(row.audio_qc_status),
     duration_ms: typeof row.duration_ms === 'number' ? row.duration_ms : null,
     label: row.structure_tag ? `K-KUT · ${row.structure_tag}` : 'K-KUT',
@@ -112,6 +118,7 @@ function mapMiniKut(row: Row): KfInventoryItem {
     pix_pck_id: row.pix_pck_id ? String(row.pix_pck_id) : null,
     structure_tag: row.structure_tag ? String(row.structure_tag) : null,
     variant: null,
+    theme: resolveTheme(row),
     audio_qc_status: normalizeQc(row.audio_qc_status),
     duration_ms: null,
     label: row.mk_type ? String(row.mk_type) : 'mini-KUT',
@@ -131,6 +138,7 @@ function mapLineFeel(row: Row): KfInventoryItem {
     pix_pck_id: row.pix_pck_id ? String(row.pix_pck_id) : null,
     structure_tag: row.structure_tag ? String(row.structure_tag) : null,
     variant: row.variant ? String(row.variant) : null,
+    theme: resolveTheme(row),
     audio_qc_status: normalizeQc(row.audio_qc_status),
     duration_ms: typeof row.duration_ms === 'number' ? row.duration_ms : null,
     label: row.line_text ? String(row.line_text) : 'LineFeel',
@@ -151,6 +159,7 @@ function mapKupid(row: Row): KfInventoryItem {
     pix_pck_id: row.pix_pck_id ? String(row.pix_pck_id) : null,
     structure_tag: row.structure_tag ? String(row.structure_tag) : null,
     variant: row.variant ? String(row.variant) : null,
+    theme: resolveTheme(row),
     audio_qc_status: normalizeQc(row.audio_qc_status),
     duration_ms: typeof row.duration_ms === 'number' ? row.duration_ms : null,
     label: row.level_code
@@ -162,6 +171,38 @@ function mapKupid(row: Row): KfInventoryItem {
     playable: !blocked,
     blocked_reason: blocked,
   };
+}
+
+/**
+ * Theme coverage: for each of the seven themes, how many PLAYABLE units exist
+ * in each container. Counting playable units rather than rows is the point —
+ * a theme backed only by units held at the QC gate is not satisfied, and
+ * reporting it as such would hide exactly the work that remains.
+ *
+ * Every theme is always returned, including ones with no inventory at all, so
+ * a gap shows as a zero rather than as a missing row.
+ */
+function themeCoverage(items: KfInventoryItem[]): KfThemeCoverage[] {
+  return KF_THEMES.map((theme: KfTheme) => {
+    const containers = Object.fromEntries(
+      KF_UNIT_TYPES.map((unit) => [
+        unit,
+        items.filter(
+          (item) => item.theme === theme && item.unit_type === unit && item.playable,
+        ).length,
+      ]),
+    ) as Record<KfUnitType, number>;
+
+    const missing = KF_UNIT_TYPES.filter((unit) => containers[unit] === 0);
+
+    return {
+      theme,
+      label: THEME_META[theme].label,
+      containers,
+      missing,
+      satisfied: missing.length === 0,
+    };
+  });
 }
 
 function rollup(items: KfInventoryItem[]): KfFamilyCount[] {
@@ -191,25 +232,25 @@ export async function buildKfInventory(
     readTable(
       supabase,
       'k_kut_assets',
-      'id, pix_pck_id, structure_tag, variant, audio_qc_status, duration_ms, k_kut_codes(id, item_type, status)',
+      'id, pix_pck_id, structure_tag, variant, theme, audio_qc_status, duration_ms, k_kut_codes(id, item_type, status)',
       pixPckId,
     ),
     readTable(
       supabase,
       'm_kut_assets',
-      'id, pix_pck_id, mk_type, content, structure_tag, audio_qc_status',
+      'id, pix_pck_id, mk_type, content, structure_tag, theme, audio_qc_status',
       pixPckId,
     ),
     readTable(
       supabase,
       'llf_assets',
-      'id, pix_pck_id, structure_tag, variant, line_text, audio_qc_status, duration_ms, llf_audio_url',
+      'id, pix_pck_id, structure_tag, variant, line_text, theme, audio_qc_status, duration_ms, llf_audio_url',
       pixPckId,
     ),
     readTable(
       supabase,
       'kupid_assets',
-      'id, pix_pck_id, structure_tag, variant, romance_level, level_code, audio_qc_status, duration_ms, kupid_audio_url',
+      'id, pix_pck_id, structure_tag, variant, romance_level, level_code, theme, audio_qc_status, duration_ms, kupid_audio_url',
       pixPckId,
     ),
   ]);
@@ -236,6 +277,8 @@ export async function buildKfInventory(
     return (a.structure_tag ?? '').localeCompare(b.structure_tag ?? '');
   });
 
+  const coverage = themeCoverage(items);
+
   return {
     ok: true,
     pix_pck_id: pixPckId,
@@ -245,6 +288,8 @@ export async function buildKfInventory(
       playable: items.filter((item) => item.playable).length,
     },
     families: rollup(items),
+    coverage,
+    satisfied_themes: coverage.filter((row) => row.satisfied).map((row) => row.theme),
     items,
     unavailable,
   };

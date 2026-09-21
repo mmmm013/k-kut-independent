@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 
 import { createClient } from "../../../../lib/supabase/server";
 import { buildKfInventory } from "../../../../lib/kf/inventory";
-import { KF_UNIT_TYPES, KfUnitType } from "../../../../lib/kf/types";
+import { KF_THEMES, KF_UNIT_TYPES, KfTheme, KfUnitType } from "../../../../lib/kf/types";
 
 export const dynamic = "force-dynamic";
 
@@ -13,9 +13,14 @@ export const dynamic = "force-dynamic";
  * normalized into one list with a single gate applied across all four.
  *
  * Query params:
- *   ?pix=<pix_pck_id>   scope to one master track (default: whole family)
+ *   ?pix=<pix_pck_id>        scope to one master track (default: whole family)
  *   ?type=KUT|mK|LLF|KUPID   scope to one unit type
- *   ?playable=1         return only units that pass the gate
+ *   ?theme=love|apology|…    scope to one of the seven themes
+ *   ?playable=1              return only units that pass the gate
+ *
+ * `coverage` and `satisfied_themes` always describe the FULL inventory for the
+ * PIX scope, never the filtered item list — a filter is for looking at one
+ * slice, and recomputing coverage from a slice would report false gaps.
  *
  * Uses the anon key, so Row Level Security decides what is visible. Nothing
  * here can widen access beyond what the browser could already read.
@@ -38,6 +43,7 @@ export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const pix = searchParams.get("pix")?.trim() || null;
   const typeParam = searchParams.get("type")?.trim() || null;
+  const themeParam = searchParams.get("theme")?.trim().toLowerCase() || null;
   const playableOnly = searchParams.get("playable") === "1";
 
   if (typeParam && !(KF_UNIT_TYPES as readonly string[]).includes(typeParam)) {
@@ -51,10 +57,22 @@ export async function GET(req: Request) {
     );
   }
 
+  if (themeParam && !(KF_THEMES as readonly string[]).includes(themeParam)) {
+    return NextResponse.json(
+      {
+        ok: false,
+        code: "UNKNOWN_THEME",
+        message: `Unknown theme "${themeParam}". Expected one of ${KF_THEMES.join(", ")}.`,
+      },
+      { status: 400 }
+    );
+  }
+
   const inventory = await buildKfInventory(createClient(), pix);
 
   let items = inventory.items;
   if (typeParam) items = items.filter((item) => item.unit_type === (typeParam as KfUnitType));
+  if (themeParam) items = items.filter((item) => item.theme === (themeParam as KfTheme));
   if (playableOnly) items = items.filter((item) => item.playable);
 
   return NextResponse.json({ ...inventory, items });

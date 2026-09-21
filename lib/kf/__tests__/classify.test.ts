@@ -17,6 +17,7 @@ import {
   isForbiddenSourceUrl,
   normalizeQc,
   resolveAudioUrl,
+  resolveTheme,
   safeDeliveryNote,
   sectionSortKey,
   unitHref,
@@ -99,4 +100,16 @@ test('display helpers', () => {
   assert.equal(variantLabel(null), '—');
   assert.equal(formatDuration(18000), '0:18');
   assert.equal(formatDuration(125000), '2:05');
+});
+
+test('themes resolve from any of the SSOT column spellings', () => {
+  assert.equal(resolveTheme({ theme: 'love' }), 'love');
+  assert.equal(resolveTheme({ sentiment: 'Apology' }), 'apology');
+  assert.equal(resolveTheme({ emotion_level: 'PEACE' }), 'peace');
+});
+
+test('an unknown or absent theme is null, never guessed', () => {
+  assert.equal(resolveTheme({ theme: 'nostalgia' }), null);
+  assert.equal(resolveTheme({}), null);
+  assert.equal(resolveTheme({ theme: null }), null);
 });
