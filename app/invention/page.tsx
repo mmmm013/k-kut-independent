@@ -7,6 +7,10 @@
  *   1. K-KUT  — exact-excerpt audio (section-based, ASCAP-compliant)
  *   2. mini-KUT (mK) — text micro-assets (NOT audio)
  *   3. K-kUpId — romance/gifting invention (5 levels)
+ *
+ * Closes with the four KUT Family delivery unit types, which is what the
+ * inventory at /kf is built from. LineFeel (LLF) is a delivery unit, not a
+ * fourth invention — it belongs here rather than above.
  */
 
 import Link from 'next/link';
@@ -24,6 +28,13 @@ const MK_TYPES = [
   { type: 'mK-hook',   desc: 'Phrase with a twist or play-on-words' },
 ];
 
+const KF_UNITS = [
+  { unit: 'KUT',   name: 'K-KUT',     color: '#D4A017', desc: 'Exact contiguous section audio', table: 'k_kut_assets' },
+  { unit: 'mK',    name: 'mini-KUT',  color: '#C8A882', desc: 'Text micro-assets from lyrics',  table: 'm_kut_assets' },
+  { unit: 'LLF',   name: 'LineFeel',  color: '#8B5CF6', desc: 'One lyric line as audio',        table: 'llf_assets' },
+  { unit: 'KUPID', name: 'K-kUpId',   color: '#E07B54', desc: 'A KUT signed for a romance level', table: 'kupid_assets' },
+];
+
 const KUPID_LEVELS = [
   { level: 1, label: 'Interest',  color: '#C8A882' },
   { level: 2, label: 'Date',      color: '#D4A017' },
@@ -39,6 +50,7 @@ export default function InventionPage() {
       <header className="flex items-center justify-between px-6 py-4 border-b border-white/10">
         <Link href="/" className="text-[#D4A017] font-bold text-lg hover:opacity-80">← K-KUT</Link>
         <nav className="flex gap-4 text-sm text-[#C8A882]">
+          <Link href="/kf" className="hover:text-[#D4A017] transition-colors">KUT Family</Link>
           <Link href="/demo" className="hover:text-[#D4A017] transition-colors">Demo</Link>
         </nav>
       </header>
@@ -124,6 +136,40 @@ export default function InventionPage() {
             <li>Every share is traceable and monetizable (viral loop)</li>
             <li>NOT a delivery vehicle — it IS its own invention</li>
           </ul>
+        </section>
+
+
+        {/* ── KUT Family delivery units ── */}
+        <section id="kut-family">
+          <p className="text-xs uppercase tracking-widest text-[#C8A882] mb-2">Delivery units</p>
+          <h2 className="text-3xl font-extrabold text-[#F5e6c8] mb-4">The KUT Family</h2>
+          <p className="text-[#C8A882] leading-relaxed mb-6">
+            Four unit types, one gate. A unit is playable only once audio QC has passed
+            and its audio is an approved delivery render — PIX and full-track source
+            audio is never a delivery unit.
+          </p>
+
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+            {KF_UNITS.map(({ unit, name, color, desc, table }) => (
+              <div
+                key={unit}
+                className="rounded-lg border bg-[#111] p-3"
+                style={{ borderColor: color + '33' }}
+              >
+                <p className="text-xs font-mono mb-1" style={{ color }}>{unit}</p>
+                <p className="text-sm text-[#F5e6c8] font-semibold">{name}</p>
+                <p className="text-xs text-[#C8A882] mt-1">{desc}</p>
+                <p className="text-[10px] font-mono text-[#C8A882]/50 mt-2">{table}</p>
+              </div>
+            ))}
+          </div>
+
+          <Link
+            href="/kf"
+            className="inline-block px-5 py-2 rounded-full text-sm font-bold bg-[#D4A017] text-[#0a0a0a] hover:bg-[#c49015] transition-colors"
+          >
+            Open the KUT Family inventory →
+          </Link>
         </section>
 
       </main>

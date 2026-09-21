@@ -1,61 +1,42 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
+import {
+  classifyUnitType,
+  publicPhrase,
+  resolveAudioUrl,
+  safeId,
+} from "../../../../lib/kf/classify";
+
 export const dynamic = "force-dynamic";
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  { auth: { persistSession: false } }
-);
+/**
+ * Built per request, not at module scope: SUPABASE_SERVICE_ROLE_KEY is a
+ * Production-only variable, and creating the client at import time made
+ * `next build` fail wherever it is absent (preview deploys, local builds).
+ */
+function serviceClient() {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-function publicUnitType(row: any) {
-  const raw = [
-    row.unit_type,
-    row.delivery_unit_type,
-    row.kut_type,
-    row.type,
-    row.asset_type,
-    row.title,
-    row.description,
-  ]
-    .filter(Boolean)
-    .join(" ")
-    .toLowerCase();
+  if (!supabaseUrl || !serviceRoleKey) return null;
 
-  if (raw.includes("llf") || raw.includes("linefeel") || raw.includes("line feel")) {
-    return "LLF";
-  }
-
-  if (raw.includes("mk") || raw.includes("mini")) {
-    return "mK";
-  }
-
-  return "KUT";
-}
-
-function publicPhrase(row: any) {
-  const unit = publicUnitType(row);
-
-  if (unit === "LLF") return "LineFeel option";
-  if (unit === "mK") return "Mini KUT option";
-  return "KUT option";
-}
-
-function safeId(row: any) {
-  return (
-    row.id ||
-    row.kut_id ||
-    row.slug ||
-    row.key ||
-    row.uuid ||
-    row.public_id ||
-    null
-  );
+  return createClient(supabaseUrl, serviceRoleKey, {
+    auth: { persistSession: false },
+  });
 }
 
 export async function GET(req: Request) {
   try {
+    const supabase = serviceClient();
+
+    if (!supabase) {
+      return NextResponse.json(
+        { error: "K-KUT Supabase URL or service role key is missing." },
+        { status: 500 }
+      );
+    }
+
     const { searchParams } = new URL(req.url);
     const q = (searchParams.get("q") || "").toLowerCase().trim();
 
@@ -72,16 +53,17 @@ export async function GET(req: Request) {
     }
 
     const moments = (data || []).map((k: any, index: number) => {
-      const unit = publicUnitType(k);
+      const unit = classifyUnitType(k);
+      const phrase = publicPhrase(unit);
 
       return {
         id: safeId(k),
-        phrase: publicPhrase(k),
-        display_label: `${publicPhrase(k)} ${index + 1}`,
+        phrase,
+        display_label: `${phrase} ${index + 1}`,
         delivery_unit_type: unit,
         keenness_score: k.keenness_score || 0,
         emotion_level: k.emotion_level || "",
-        audio_available: Boolean(k.delivery_audio_url || k.kut_audio_url || k.mk_audio_url || k.llf_audio_url || k.approved_audio_url),
+        audio_available: Boolean(resolveAudioUrl(k)),
       };
     });
 

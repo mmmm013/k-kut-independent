@@ -1,6 +1,14 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
+import {
+  classifyUnitType,
+  isDisapprovedForHug,
+  isForbiddenSourceUrl,
+  resolveAudioUrl,
+  safeDeliveryNote,
+} from "../../../../lib/kf/classify";
+
 export const dynamic = "force-dynamic";
 
 function blocked(code: string, message: string, status = 403) {
@@ -13,56 +21,6 @@ function blocked(code: string, message: string, status = 403) {
     },
     { status }
   );
-}
-
-function isForbiddenSourceUrl(value: unknown) {
-  if (typeof value !== "string") return true;
-
-  const lower = value.toLowerCase();
-
-  return (
-    lower.includes("/tracks/") ||
-    lower.includes("pix") ||
-    lower.includes("gpmc") ||
-    lower.includes("source") ||
-    lower.includes("flagship") ||
-    lower.includes("full") ||
-    lower.includes("a%20love%20like%20that") ||
-    lower.includes("a love like that")
-  );
-}
-
-function safeDeliveryNote(row: any) {
-  if (row.public_label) return row.public_label;
-  if (row.public_phrase) return row.public_phrase;
-  if (row.delivery_note) return row.delivery_note;
-  if (row.description) return "KUT-authorized delivery";
-  return "KUT-authorized HUG delivery";
-}
-
-function unitType(row: any) {
-  const raw = [
-    row.delivery_unit_type,
-    row.unit_type,
-    row.kut_type,
-    row.type,
-    row.asset_type,
-    row.title,
-    row.description,
-  ]
-    .filter(Boolean)
-    .join(" ")
-    .toLowerCase();
-
-  if (raw.includes("llf") || raw.includes("linefeel") || raw.includes("line feel")) {
-    return "LLF";
-  }
-
-  if (raw.includes("mk") || raw.includes("mini")) {
-    return "mK";
-  }
-
-  return "KUT";
 }
 
 export async function GET(
@@ -132,33 +90,23 @@ export async function GET(
     );
   }
 
-  const audioUrl =
-    kut.delivery_audio_url ||
-    kut.kut_audio_url ||
-    kut.mk_audio_url ||
-    kut.llf_audio_url ||
-    kut.approved_audio_url ||
-    "";
+  const audioUrl = resolveAudioUrl(kut);
 
   if (!audioUrl) {
     return blocked(
       "NO_KUT_AUDIO",
-      "Blocked: this KUT does not have an approved public KUT/mK/LLF audio URL."
+      "Blocked: this KUT does not have an approved public KUT/mK/LLF/K-kUpId audio URL."
     );
   }
 
   if (isForbiddenSourceUrl(audioUrl)) {
     return blocked(
       "FORBIDDEN_SOURCE_AUDIO",
-      "Blocked: this HUG attempted to use PIX/source/full-track audio instead of approved KUT/mK/LLF audio."
+      "Blocked: this HUG attempted to use PIX/source/full-track audio instead of an approved KUT Family delivery unit."
     );
   }
 
-  if (
-    kut.approved_for_hug === false ||
-    kut.hug_approved === false ||
-    kut.approved === false
-  ) {
+  if (isDisapprovedForHug(kut)) {
     return blocked(
       "NOT_APPROVED_FOR_HUG",
       "Blocked: this KUT delivery unit is not approved for HUG delivery."
@@ -169,7 +117,7 @@ export async function GET(
     ok: true,
     blocked: false,
     id: String(kut.id || id),
-    delivery_unit_type: unitType(kut),
+    delivery_unit_type: classifyUnitType(kut),
     audio_url: audioUrl,
     delivery_note: safeDeliveryNote(kut),
     remaining_forwards: null,

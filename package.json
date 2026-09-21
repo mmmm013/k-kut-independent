@@ -6,7 +6,9 @@
     "dev": "next dev",
     "prebuild": "node scripts/check-env.mjs",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "test": "tsc -p tsconfig.test.json && node --test \".test-out/__tests__/*.test.js\"",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@supabase/ssr": "^0.5.0",

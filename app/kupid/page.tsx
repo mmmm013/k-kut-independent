@@ -63,6 +63,9 @@ export default function KupidPage() {
       <header className="flex items-center justify-between px-6 py-4 border-b border-white/10">
         <Link href="/" className="text-[#D4A017] font-bold text-lg hover:opacity-80">← K-KUT</Link>
         <nav className="flex gap-4 text-sm text-[#C8A882]">
+          <Link href="/kf?type=KUPID" className="hover:text-[#D4A017] transition-colors">
+            Inventory
+          </Link>
           <Link href="/invention#k-kupid" className="hover:text-[#D4A017] transition-colors">
             About K-kUpId
           </Link>
