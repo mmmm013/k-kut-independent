@@ -103,9 +103,14 @@ or remove it from the production build.
 
 ## 5. Migrations are not applied yet
 
-The four migrations in `supabase/migrations/` have been verified locally but
-not applied to the hosted project. Until they are, every KUT Family table is
-missing and `/kf` reports the whole inventory as unavailable.
+The four migrations in `supabase/migrations/` have been verified against a
+local PostgreSQL 16 but not applied to the hosted project. Until they are,
+every KUT Family table is missing and `/kf` reports the whole inventory as
+unavailable.
+
+> **To confirm in one request**, open the deployed preview and load
+> `/api/kf/inventory`. If `unavailable` lists all four tables, the migrations
+> have not landed yet. If it comes back with counts, they have.
 
 ```bash
 supabase link --project-ref <your-project-ref>
@@ -117,12 +122,20 @@ All four are idempotent, so re-running is safe.
 
 ---
 
-## 6. Environment variables must be set in Vercel
+## 6. Environment variables — Preview confirmed, Production unverified
 
-`scripts/check-env.mjs` fails the build if either is missing:
+`scripts/check-env.mjs` hard-fails the build if either is missing:
 
-- `NEXT_PUBLIC_SUPABASE_URL` — Production, Preview, Development
-- `NEXT_PUBLIC_SUPABASE_ANON_KEY` — Production, Preview, Development
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+
+**Preview is confirmed set.** The Vercel preview deploy for commit `9a6b925`
+completed successfully, and it could not have gotten past `prebuild` without
+both variables. That build also ran with TypeScript checking newly enabled, so
+the `next.config.js` change is validated in real CI, not just locally.
+
+**Production is not confirmed** — no production deploy has run against this
+branch. Check Vercel → Settings → Environment Variables before promoting.
 
 `SUPABASE_SERVICE_ROLE_KEY` is Production-only and is read at request time by
 `/api/hug/[id]` and `/api/bot/moments`. Both now build without it; both return
