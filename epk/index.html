@@ -65,6 +65,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--brass); outline-off
 }
 .mast-grid{display:grid; grid-template-columns:1fr; gap:clamp(24px,4vw,40px); align-items:end}
 @media (min-width:860px){ .mast-grid{grid-template-columns:1fr 300px} }
+figure.portrait{margin:0}
 .portrait{
   position:relative; aspect-ratio:4/5; max-width:100%;
   background:var(--sunk); border:1px solid var(--rule); overflow:hidden;
@@ -131,6 +132,25 @@ h2{
 .embed iframe{position:relative; width:100%; height:100%; border:0; display:block}
 .player .open{display:inline-block; margin-top:14px; font-size:14px; font-weight:500}
 
+/* ---------- listen ---------- */
+.listen-card{border:1px solid var(--rule); background:var(--surface); padding:clamp(22px,3.5vw,36px); max-width:64ch}
+.listen-card p{margin:0 0 14px}
+.listen-card p:last-child{margin-bottom:0}
+.listen-cta{margin-top:20px !important}
+.listen-link{
+  font-family:var(--display); font-size:clamp(18px,3vw,26px); font-weight:500;
+  text-decoration:none; border-bottom:1px solid var(--brass-soft);
+}
+
+/* ---------- gallery ---------- */
+.gallery{display:grid; grid-template-columns:1fr; gap:clamp(14px,2vw,20px); margin-top:clamp(24px,3vw,32px)}
+@media (min-width:760px){ .gallery:has(.shot + .shot){grid-template-columns:1.6fr 1fr; align-items:stretch} }
+.shot{margin:0; border:1px solid var(--rule); background:var(--sunk); overflow:hidden}
+.shot img{width:100%; height:100%; object-fit:cover; display:block}
+.shot.wide{aspect-ratio:2000/933}
+.shot.tall{aspect-ratio:4/5}
+@media (min-width:760px){ .shot.wide,.shot.tall{aspect-ratio:auto; min-height:260px} }
+
 /* ---------- canvas ---------- */
 .canvas-row{display:grid; grid-template-columns:1fr; gap:clamp(20px,3vw,36px); align-items:start}
 @media (min-width:760px){ .canvas-row{grid-template-columns:1.2fr 1fr} }
@@ -183,9 +203,9 @@ footer{padding-block:clamp(28px,4vw,44px) clamp(36px,5vw,56px); border-top:1px s
       <p class="tagline">Krooning from Down Under!</p>
       <p class="standfirst">Vocal performer and singer-songwriter. Based in Australia; label and management in the United States.</p>
     </div>
-    <div class="portrait">
-      <img src="assets/kleigh_portrait.jpg" alt="Portrait of KLEIGH" onerror="this.remove()">
-    </div>
+    <figure class="portrait">
+      <img src="assets/kleigh-portrait-featured.jpg" alt="KLEIGH" onerror="this.remove()">
+    </figure>
   </div>
 </header>
 
@@ -230,33 +250,13 @@ footer{padding-block:clamp(28px,4vw,44px) clamp(36px,5vw,56px); border-top:1px s
   <div class="wrap">
     <div class="sec-head">
       <p class="eyebrow">Audio</p>
-      <h2>mmmm-Listen</h2>
+      <h2>Listening is hosted on our own ground.</h2>
     </div>
 
-    <div class="players">
-      <div class="player">
-        <h3>Primary</h3>
-        <div class="embed">
-          <div class="behind">
-            <span class="mark">mmmm</span>
-            <span class="hint">Player loads from DISCO. Use the link below if it does not appear.</span>
-          </div>
-          <iframe title="mmmm-Listen &mdash; Primary" src="https://musicmaykers.disco.ac/e/p/24920180?download=true&amp;s=lBMqsvWaYiZAfjZy0Uy5r3tzWWo%3AfDc9JZwI&amp;artwork=true&amp;color=%2332B57C&amp;theme=white" allowfullscreen loading="lazy"></iframe>
-        </div>
-        <a class="open" href="https://musicmaykers.disco.ac/e/p/24920180?download=true&amp;s=lBMqsvWaYiZAfjZy0Uy5r3tzWWo%3AfDc9JZwI&amp;artwork=true&amp;color=%2332B57C&amp;theme=white" target="_blank" rel="noopener">Open the Primary player &rarr;</a>
-      </div>
-
-      <div class="player">
-        <h3>Featured</h3>
-        <div class="embed">
-          <div class="behind">
-            <span class="mark">mmmm</span>
-            <span class="hint">Player loads from DISCO. Use the link below if it does not appear.</span>
-          </div>
-          <iframe title="mmmm-Listen &mdash; Featured" src="https://musicmaykers.disco.ac/e/p/23917462?download=true&amp;s=YTalScyRlpiYKBM3KJnRJeHc6NQ%3Az4KvCBdW&amp;artwork=true&amp;color=%2332B57C&amp;theme=white" allowfullscreen loading="lazy"></iframe>
-        </div>
-        <a class="open" href="https://musicmaykers.disco.ac/e/p/23917462?download=true&amp;s=YTalScyRlpiYKBM3KJnRJeHc6NQ%3Az4KvCBdW&amp;artwork=true&amp;color=%2332B57C&amp;theme=white" target="_blank" rel="noopener">Open the Featured player &rarr;</a>
-      </div>
+    <div class="listen-card">
+      <p>The catalogue streams at <a href="https://gputnammusic.com">gputnammusic.com</a>, where the KLEIGH Spotlight sits alongside the wider G&nbsp;Putnam Music catalogue.</p>
+      <p>Reference audio for press, sync and supervision &mdash; downloadable files, with writer, performer and publisher credits attached &mdash; is released on request.</p>
+      <p class="listen-cta"><a class="listen-link" href="https://gputnammusic.com">Stream at gputnammusic.com &rarr;</a></p>
     </div>
   </div>
 </section>
@@ -297,7 +297,12 @@ footer{padding-block:clamp(28px,4vw,44px) clamp(36px,5vw,56px); border-top:1px s
       <div class="asset"><dt>Sync and licensing</dt><dd>Rights and availability confirmed per request.</dd></div>
     </dl>
 
-    <p class="routing" style="margin-top:22px">Materials are released on request rather than posted, so that every file goes out with its credit and its terms attached.</p>
+    <div class="gallery">
+      <figure class="shot wide"><img src="assets/kleigh-press-01.jpg" alt="KLEIGH photographed against a sandstone rock face" loading="lazy" onerror="this.closest('figure').remove()"></figure>
+      <figure class="shot tall"><img src="assets/kleigh-portrait-featured.jpg" alt="KLEIGH, studio portrait" loading="lazy" onerror="this.closest('figure').remove()"></figure>
+    </div>
+
+    <p class="routing" style="margin-top:22px">Shown at screen resolution. Print-resolution files are released on request rather than posted, so that every file goes out with its photographer credit and its usage terms attached.</p>
   </div>
 </section>
 

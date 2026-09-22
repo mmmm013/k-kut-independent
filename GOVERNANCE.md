@@ -832,3 +832,57 @@ is the likely home of the biography, track titles and credits. It is not in
 Drive and not in Dropbox, Gmail attachments cannot be downloaded from this
 session, and both `www.dropbox.com` and `www.canva.com` are blocked by the
 network egress proxy. It remains unread.
+
+### 13.1 · LAW — the banned display name (2026-09-22)
+
+> **"MUSIC MAYKERS IS BANNED FROM UI DISPLAY. ALWAYS & ONLY G PUTNAM MUSIC."**
+> — GD
+
+This ranks with the track-title law. The banned name may not appear in any
+surface a visitor can see: rendered text, alt text, page titles, link hrefs,
+embed sources, image filenames, or data that feeds a UI. Guarded by
+`scripts/audit-banned-ui-names.mjs` (`npm run audit:banned-ui-names`), which
+exits 1 on any occurrence. Only `GOVERNANCE.md`, `epk/README.md` and the audit
+itself are exempt, because naming the ban is how the ban is kept.
+
+**First casualty: the two DISCO playlist embeds.** The player renders
+"By Music Maykers, LLC" inside its own frame, in our page, to every visitor —
+account branding that cannot be overridden from our markup — and the host
+`musicmaykers.disco.ac` carried the name again in the `src` and in every
+fallback link. The embeds are out of `epk/index.html`. Listening points at
+`gputnammusic.com`. To restore embedded players, rename the DISCO workspace or
+serve the player from a G Putnam Music domain; nothing else must change.
+
+**Known surfaces still carrying the banned name, outside this repo:**
+`musicmaykers.net` (the Vocal Showcase page renders "By Music Maykers, LLC"),
+the DISCO workspace branding, and the `musicmaykers.disco.ac` host itself.
+None are reachable from this repository.
+
+### 13.2 · Downloads — settled (2026-09-22)
+
+GD on the `download=true` default: *"NO IDEA. FIX IT."* Settled: **nothing
+downloads off the EPK.** Streaming lives at `gputnammusic.com`; downloadable
+reference audio for press, sync and supervision is released on request, so every
+file leaves with its writer, performer and publisher credits and its usage terms
+attached. This is the rule the press materials already follow and it agrees with
+the stated principle on the stream surface — *stream first, save what you love
+when it is available.* Reversible on GD's word.
+
+### 13.3 · Dropbox Transfer links are not reachable, and why
+
+GD: *"i cannot believe T is NOT part & parcel w/ ALL AI platforms."*
+
+Two separate walls, neither of them a judgement call:
+
+1. **The Dropbox connector covers files in a Dropbox account.** A Transfer
+   (`dropbox.com/t/…`) is not a file or a shared link — it is a separate
+   delivery product with no entry in the API the connector speaks. Asking for
+   it returns `SHARED_LINK_NOT_FOUND`, which is accurate: there is no shared
+   link.
+2. **This session's network egress proxy blocks `www.dropbox.com` outright**, so
+   the Transfer page cannot be opened as a web page either. `www.canva.com` is
+   blocked the same way.
+
+**The workaround, both directions:** save the Transfer into Dropbox proper
+("Save to Dropbox" on the Transfer page), or drop the files into any Dropbox
+folder. Contents then read normally, including text extraction from PDFs.
