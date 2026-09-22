@@ -546,20 +546,83 @@ invented entitlement or promise unlimited replays.
 
 ### The identified repair
 
-Issued by GD from the read-only inspection of `mmmm013/k-kut` at `d9af6da`.
-That repository is not writable from this session, so this records the work
-rather than performing it.
+Issued by GD from the inspection of `mmmm013/k-kut` at `d9af6da`.
 
-| # | Repair |
-|---|---|
-| 1 | **Connect the numbered price lock to server-side offer validation**, so drift is caught. Today `kkr-canonical-pricing.ts` is imported by nothing and agrees with checkout only by coincidence of authorship. |
-| 2 | **Add purchase paths** for `PROMOTIONAL_HUG` $11.99, `STANDARD_HUG` $14.99, and the **separate** message add-on $0.99. All three are locked prices with no way to charge them. |
-| 3 | **Implement Story BUG's $2.98 checkout and three-part delivery.** Display copy alone is insufficient — $2.98 currently exists in one line of markup on the Comin' True page and nowhere else. |
-| 4 | **Preserve both element names and tier names.** Neither naming is the real one; they name the same priced thing from two sides. |
+| # | Repair | State |
+|---|---|---|
+| 1 | **Connect the numbered price lock to server-side offer validation**, so drift is caught. Today `kkr-canonical-pricing.ts` is imported by nothing and agrees with checkout only by coincidence of authorship. | **done** |
+| 2 | **Add purchase paths** for `PROMOTIONAL_HUG` $11.99, `STANDARD_HUG` $14.99, and the **separate** message add-on $0.99. All three are locked prices with no way to charge them. | **blocked — see below** |
+| 3 | **Implement Story BUG's $2.98 checkout and three-part delivery.** Display copy alone is insufficient — $2.98 currently exists in one line of markup on the Comin' True page and nowhere else. | **done** |
+| 4 | **Preserve both element names and tier names.** Neither naming is the real one; they name the same priced thing from two sides. | **done** |
 
-Repair 3 must honour the story-construction contract already recorded above:
-locked identities and order, one billing event, `packageId:sendIndex`, and a
-retry that never rerandomizes, substitutes or advances a step.
+Repair 3 honours the story-construction contract recorded above: locked
+identities and order, one billing event, `packageId:sendIndex`, and a retry
+that never rerandomizes, substitutes or advances a step. Delivered on branch
+`claude/offer-law-and-story-bug`. Five hand-typed copies of the prices were
+found in total, the fifth in the paid-side check that decides whether money
+already taken matches an approved offer; all five now derive from the lock.
+
+A Story BUG has no audio of its own, since it is three delivery events rather
+than one stitched file. What it proves instead is its parts: all three
+component BUGs must be approved and purchasable. Holding any one component
+removes the whole package.
+
+### Repair 2 — what blocks it
+
+Not a technical limitation. Each of the three items is blocked by a different
+thing, and neither can be resolved without GD.
+
+**The $0.99 note/message add-on is held by an existing governance document.**
+`K_KUT_2611_REGULAR_HUG_MAPPING_V001.md` lists the *"`$0.99` personal-note
+add-on"* under **Continuing Holds** — *"held until separately authorized and
+proven"* — and states in the same document: *"The optional 13-word written
+note remains included in the `$7.99` catalog HUG. It is not a separate
+charge."* Building a purchase path for it would contradict a live rule.
+**GD must lift that hold before the path can exist.**
+
+**`PROMOTIONAL_HUG` and `STANDARD_HUG` have a price and nothing else.** Every
+offer that can be built has four things: a canonical II form, a price, a
+discovery placement, and its source restrictions. The offer law's customer
+table carries exactly three rows — HUG $7.99 / KK or KOMBO, TUG $4.99 / sK,
+BUG $1.99 / mK. These two appear only in the lock's `prices_cents`, with no
+structural-law entry, no II form, no discovery placement, and no description
+anywhere in either repository.
+
+To build them, **GD must supply**, for each of the two:
+
+1. what II form it delivers, and how many;
+2. how it differs from the $7.99 HUG, which is the BLK price;
+3. where it is discovered, and whether a HUGz Card may house it.
+
+Related but separate: a **$12.99 Big HUG** appears in
+`K_KUT_2611_REGULAR_HUG_MAPPING_V001.md` and
+`K_KUT_HOME_3_PRODUCT_RELEASE_V001.md`, while the offer law requires that
+*"no obsolete $12.99 offer is displayed or sold."* Whether the two locked HUG
+prices supersede that tier is also GD's to say.
+
+Note that the offer law's own development boundary states it does not
+authorize **Stripe product creation** or **Stripe price creation**. Two new
+priced offerings would need that boundary moved as well.
+
+### VOC — the two layers
+
+GD's note to the system / 4PE:
+
+> **VOC offers 2 MAIN layers of info: user behavior + system activity &
+> written feedback.**
+
+VOC aims; DMAIC improves. 4PE's KKr is required to evolve itself on VOC and
+Admin — these two layers are what it evolves on. They are two layers of one
+source, read separately. They do not blend, and neither blends with any of
+the five vocabularies.
+
+### The personal note — 13 words, not 13 characters
+
+Settled against the source. `K_KUT_2611_REGULAR_HUG_MAPPING_V001.md` states
+**maximum 13 words**, with **160 characters as a technical safety cap**. The
+code matches: `PERSONAL_NOTE_WORD_LIMIT = 13` and
+`PERSONAL_NOTE_CHARACTER_LIMIT = 160`. An earlier reading of "13 characters"
+was wrong. No change required.
 
 ## Terms still undefined here
 
