@@ -1062,3 +1062,53 @@ Element is exposed to a buyer by `payment_allowed`, a live `checkout_url`, a
 of its routes. Verified by exposing one candidate and confirming exit 1.
 
 It passes today only because everything unprepared sits behind HOLD.
+
+---
+
+## 16 · ROOT CAUSE — why the IIs are not seeding (found 2026-09-22)
+
+GD: *"WHY ARE IIS NOT SEEDING? WHY HELD? I APPROVE ALL!!!!!!"*
+
+The answer is in `data/ii-delivery-registry/romance-reusable-ii-records.json`,
+written by GD himself on **2026-08-30**:
+
+> `repair_reason`: **"Owner reported that the 24-second fixed window entered the
+> next VTP/InTP and stopped mid-vocal."**
+> `owner_confirmation_state`: `REVOKED_BY_OWNER_BOUNDARY_FAILURE_2026_08_30`
+
+**Every Sweet Love candidate is `start 0 → end 24`.** All 48 carry the exact
+defect GD reported. The replacement window, `0.000–34.875`, was revoked in the
+same action — `a-love-like-that-twinkle-reprosecution-manifest.v1.json` lists it
+under `revoked_claims`.
+
+**Both windows are dead. There is no approved boundary.** The candidates are
+explicitly evidence only: `may_establish_blk: false`,
+`may_be_served_or_sold: false`.
+
+### Why approval does not release it
+
+A hold whose cause is *"the boundary is wrong"* is not cleared by approving it.
+Approving these seeds 48 cuts that stop mid-word — which is the abruptness GD
+complained of, and which the finishing profile cannot repair. The GPMx KUT
+Finishing Standard says so directly: **"A fade must not hide a bad cut."**
+
+### What is actually waiting
+
+`comin_true.deduplicated-v1.json` — **96 items, every one at
+`boundary_prosecution_state: HOLD`**, status `CORRECTION_REVIEW_REQUIRED`.
+Three are diagnosed `STEPS_PAST_LAST_AUDIBLE_VOCAL_NOTE_END`. **Ninety-three
+have never been reviewed.**
+
+Each needs one decision that only a person listening can make: where the last
+audible vocal note ends. That is the bottleneck under the silent prototype, the
+empty themes, the zero inventory and the 1,391 unfinished candidates. It is not
+an approval queue. It is 96 listening decisions.
+
+### What GD's approval does release
+
+`a-love-like-that-twinkle-reprosecution-manifest.v1.json` stands at
+`execution_state: PREPARED_NOT_EXECUTED` under
+`authority: OWNER_APPROVED_PREPARE_AND_TEST_ONLY_2026_08_30`. Going past
+prepare-and-test is genuinely GD's word to give, and nothing else is blocking
+it. **Not applied automatically on a blanket approval** — it writes audio, and
+the boundary it would write is one of the two GD revoked.
