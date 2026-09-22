@@ -900,3 +900,26 @@ the photograph is released to any outlet.
 
 `epk/assets/kleigh-press-01.jpg` carries no embedded credit. Its photographer is
 unknown and it is released to no one until that is settled.
+
+### 13.5 · The contributor ethos, and the register it requires (2026-09-22)
+
+GD: *"As in my Ethos, I want ALL who gave their best talent to my mission … to
+receive some type reg royalty. Yet, nothing lasts forever."*
+
+`docs/rights/CONTRIBUTOR_AND_RIGHTS_REGISTER.md` is the list that makes the
+ethos executable. One row per person, per work; a work with a blank row does not
+go out. It was opened because three contributors surfaced by accident in a
+single week — one found in EXIF, one named only in a forwarded subject line, one
+whose credits list was sent and lost.
+
+Two instruments GD already built, to be reused rather than reinvented: the
+**Clayton Michael Gunn Public Story & Privacy Approval Sheet** (the contributor
+controls their own wording — extend it to credits), and the **Clayton
+representation deal** (30% on money actually received, GPM absorbs its own
+costs — the shape a contribution-share should take).
+
+**Searched and not found:** the credits list Michael Clay sent. All 39 threads
+to and from `itsclaygunn@gmail.com`, plus searches on Gavin, "Believe It",
+interview, credits, filmed, videographer. It is not in the mail this account can
+see. `SHORTLIST.zip` from the Gavin and Clay photo shoot sits on Clayton's Drive
+and is unreachable from GD's account.
