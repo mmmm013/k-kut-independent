@@ -377,17 +377,48 @@ a replacement.**
 **Do not** charge $1.99 per send, or $2.98 plus another $0.99, or substitute
 HUG/TUG pricing. Server-side totals are **199 cents** and **298 cents**.
 
-### The full tier price list
+### The canonical price lock
 
-Separate offers. Recorded here so BUG pricing is never derived from them.
+Set by GD. Element name and tier name are two names for the same priced
+thing — the lock names the element, the offer law names the tier. They do not
+disagree.
 
-| Tier | Element | Price |
-|---|---|---|
-| HUG | KK | **$7.99** |
-| Holiday HUG | KK | **$14.99** |
-| TUG | sK | **$4.99** |
-| BUG | mK | **$1.99** |
-| Story BUG | mKs | **$2.98** |
+| Cents | Element (price lock) | Tier (offer law) | In checkout |
+|---|---|---|---|
+| **199** | `mKUT` | BUG | yes |
+| **499** | `sBLK` | TUG | yes |
+| **799** | `BLK` | HUG | yes |
+| **1199** | `PROMOTIONAL_HUG` | — | **absent** |
+| **1499** | `STANDARD_HUG` | — | **absent** |
+| **99** | `VOCAL_NOTE_OR_TYPED_MESSAGE_ADDON` | — | **absent** |
+
+Source: `lib/kkr-canonical-pricing.ts` in `mmmm013/k-kut`, a mirror of
+`KKR_CANONICAL_PRODUCT_PRICE_LOCK_V001.md`. That file states: *an amendment
+requires an explicit GD decision and a new numbered lock version; silent edits
+are prohibited.*
+
+**Three priced items are absent from checkout** — `PROMOTIONAL_HUG`,
+`STANDARD_HUG` and the `VOCAL_NOTE_OR_TYPED_MESSAGE_ADDON`. They are locked
+prices with no way to charge them. `app/checkout/route.ts` carries three
+offers only: HUG 799, TUG 499, BUG 199.
+
+**The lock file is imported by nothing.** The only file referencing
+`KKR_CANONICAL_PRICING` is itself. The prices it locks are enforced elsewhere,
+in `lib/productOfferLaw.ts` and `app/checkout/route.ts`, which agree with it.
+
+`KKR_STRUCTURAL_LAW` in the same file states **`mKUT_is_sBLK: false`**, and
+defines `sBLK` as *one identified structural segment of a BLK, such as Verse
+1a, Verse 1b, Verse 2a, or Verse 2b.*
+
+### $2.98 — what it is made of, unresolved
+
+`$2.98 = 199 + 99` exactly. Two readings survive and GD has not ruled:
+
+- **BUG + story upgrade** — the handoff's reading: *"+$0.99 over the $1.99 base"*
+- **BUG + note add-on** — the lock's reading: `VOCAL_NOTE_OR_TYPED_MESSAGE_ADDON` is 99
+
+The distinction matters because one of them makes Story BUG a product and the
+other makes it a BUG with a message attached. **Not to be resolved without GD.**
 
 ### Eligible BUG classes
 
