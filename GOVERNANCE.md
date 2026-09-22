@@ -978,6 +978,29 @@ places.
   **Outside platform purview**, but a legitimate governance record: it is a
   register, not a platform function. It belongs with governance and CORE.
 
-A law without a test decays. The scope audit — classify every module by which of
-the four functions it serves, and fail on any that serves none — is not yet
-written.
+### The gate
+
+`npm run audit:purview` (`scripts/audit-gpmx-purview.mjs`, classifications in
+`config/gpmx-purview.json`). `npm run audit:laws` runs it with the banned-name
+audit.
+
+Every module serves C-OP, KF-INVENTORY, ARCHITECTURE or DELIVERY, or is declared
+OUT-OF-PURVIEW **with a reason and a named owner**. It fails on:
+
+- a module serving no declared function — **an unclassified new file cannot
+  pass**, which forces the decision at creation, the only moment it is cheap;
+- an OUT-OF-PURVIEW declaration missing its reason or its owner;
+- a rule that matches nothing, so the manifest cannot rot into decoration.
+
+It also prints two standing lists rather than burying them: **declared
+inventory-gate bypasses**, and the **standing debt** of what is kept outside
+purview on the owner's word.
+
+At the time of writing: 60 modules — C-OP 10, KF-INVENTORY 6, ARCHITECTURE 14,
+DELIVERY 12, OUT-OF-PURVIEW 18.
+
+**One bypass is declared.** `app/admin/play/page.tsx` says in its own header:
+*"no edge functions, no database, no QC status required."* It can play audio
+inventory has not blessed — delivery without the gate, which is the first
+failure mode above, already present. It is diagnostic only and must never be
+reachable in a deployed environment.

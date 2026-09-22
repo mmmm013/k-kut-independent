@@ -1,0 +1,250 @@
+{
+  "law": "GPMx PLATFORMS USE ONLY C-OP PROCESS OPTIMIZATION PURVIEW, KF INVENTORY BUILDING, ARCHITECTURE, AND DELIVERY.",
+  "ruled_by": "GD",
+  "ruled_on": "2026-09-22",
+  "functions": {
+    "C-OP": "Process optimization purview. Supervisory: improves how the other three are done. Purview is not licence.",
+    "KF-INVENTORY": "Inventory building. The single door through which items enter.",
+    "ARCHITECTURE": "How inventory is keyed, placed, related and shipped.",
+    "DELIVERY": "Handing over an item inventory has already blessed. Never authors, never substitutes, never fills a gap."
+  },
+  "ignored": [
+    "node_modules/**",
+    ".git/**",
+    ".next/**",
+    ".test-out/**",
+    "next-env.d.ts",
+    "tsconfig.tsbuildinfo",
+    "package-lock.json",
+    "**/*.jpg",
+    "**/*.jpeg",
+    "**/*.png",
+    "**/*.webp",
+    "**/*.svg",
+    "**/*.ico"
+  ],
+  "rules": [
+    {
+      "glob": "lib/kf/inventory.ts",
+      "function": "KF-INVENTORY",
+      "note": "The inventory itself."
+    },
+    {
+      "glob": "lib/kf/types.ts",
+      "function": "KF-INVENTORY",
+      "note": "The shape an inventory item may take."
+    },
+    {
+      "glob": "app/api/kf/inventory/route.ts",
+      "function": "KF-INVENTORY",
+      "note": "The inventory read gate. One gate for all four unit types."
+    },
+    {
+      "glob": "app/kf/page.tsx",
+      "function": "KF-INVENTORY",
+      "note": "The single inventory surface."
+    },
+    {
+      "glob": "app/pix/[id]/page.tsx",
+      "function": "KF-INVENTORY",
+      "note": "Inventory for one PIX."
+    },
+    {
+      "glob": "scripts/build-audio-manifest.mjs",
+      "function": "KF-INVENTORY",
+      "note": "Builds the audio manifest. Items enter here."
+    },
+    {
+      "glob": "lib/kf/classify.ts",
+      "function": "ARCHITECTURE",
+      "note": "Unit-type keying and placement."
+    },
+    {
+      "glob": "app/invention/page.tsx",
+      "function": "ARCHITECTURE",
+      "note": "Documents the three inventions and how they relate."
+    },
+    {
+      "glob": "app/layout.tsx",
+      "function": "ARCHITECTURE",
+      "note": "Application shell."
+    },
+    {
+      "glob": "lib/supabase/*.ts",
+      "function": "ARCHITECTURE",
+      "note": "How surfaces reach storage. Never decides what is playable."
+    },
+    {
+      "glob": "next.config.js",
+      "function": "ARCHITECTURE"
+    },
+    {
+      "glob": "tailwind.config.js",
+      "function": "ARCHITECTURE"
+    },
+    {
+      "glob": "postcss.config.js",
+      "function": "ARCHITECTURE"
+    },
+    {
+      "glob": "tsconfig.json",
+      "function": "ARCHITECTURE"
+    },
+    {
+      "glob": "vercel.json",
+      "function": "ARCHITECTURE"
+    },
+    {
+      "glob": "package.json",
+      "function": "ARCHITECTURE"
+    },
+    {
+      "glob": "app/page.tsx",
+      "function": "DELIVERY"
+    },
+    {
+      "glob": "app/hug/[id]/page.tsx",
+      "function": "DELIVERY"
+    },
+    {
+      "glob": "app/k/[id]/page.tsx",
+      "function": "DELIVERY"
+    },
+    {
+      "glob": "app/llf/[id]/page.tsx",
+      "function": "DELIVERY"
+    },
+    {
+      "glob": "app/mkut/[id]/page.tsx",
+      "function": "DELIVERY"
+    },
+    {
+      "glob": "app/kupid/[id]/page.tsx",
+      "function": "DELIVERY"
+    },
+    {
+      "glob": "app/kupid/page.tsx",
+      "function": "DELIVERY",
+      "note": "Romance-level picker. Picks among blessed items; does not author."
+    },
+    {
+      "glob": "app/api/hug/[id]/route.ts",
+      "function": "DELIVERY"
+    },
+    {
+      "glob": "app/api/bot/moments/route.ts",
+      "function": "DELIVERY"
+    },
+    {
+      "glob": "app/_components/KfUnitPlayer.tsx",
+      "function": "DELIVERY"
+    },
+    {
+      "glob": "index.html",
+      "function": "DELIVERY"
+    },
+    {
+      "glob": "public/index.html",
+      "function": "DELIVERY"
+    },
+    {
+      "glob": "scripts/audit-*.mjs",
+      "function": "C-OP",
+      "note": "Law guards."
+    },
+    {
+      "glob": "scripts/check-env.mjs",
+      "function": "C-OP",
+      "note": "Pre-build environment gate."
+    },
+    {
+      "glob": "lib/kf/reference-mode.ts",
+      "function": "C-OP",
+      "note": "Reference-mode kill switch."
+    },
+    {
+      "glob": "lib/kf/__tests__/*.ts",
+      "function": "C-OP",
+      "note": "Verification of process."
+    },
+    {
+      "glob": "tsconfig.test.json",
+      "function": "C-OP"
+    },
+    {
+      "glob": "config/gpmx-purview.json",
+      "function": "C-OP",
+      "note": "This manifest."
+    },
+    {
+      "glob": "app/admin/play/page.tsx",
+      "function": "C-OP",
+      "note": "Direct audio test player.",
+      "bypasses_inventory_gate": true,
+      "bypass_reason": "Its own header: 'no edge functions, no database, no QC status required.' It can play audio inventory has not blessed. Diagnostic only. It must never be reachable in a deployed environment."
+    },
+    {
+      "glob": ".env.example",
+      "function": "ARCHITECTURE",
+      "note": "The environment contract check-env.mjs gates against."
+    },
+    {
+      "glob": ".gitignore",
+      "function": "ARCHITECTURE",
+      "note": "What never enters the repository."
+    },
+    {
+      "glob": "app/globals.css",
+      "function": "ARCHITECTURE",
+      "note": "Application shell styling."
+    },
+    {
+      "glob": "epk/**",
+      "function": "OUT-OF-PURVIEW",
+      "reason": "Press and artist material. Label business in the shape of a web page.",
+      "owner": "GD"
+    },
+    {
+      "glob": "docs/rights/**",
+      "function": "OUT-OF-PURVIEW",
+      "reason": "Rights administration. A governance register, not a platform function.",
+      "owner": "GD"
+    },
+    {
+      "glob": "GOVERNANCE.md",
+      "function": "OUT-OF-PURVIEW",
+      "reason": "The governance record itself.",
+      "owner": "GD"
+    },
+    {
+      "glob": "README.md",
+      "function": "OUT-OF-PURVIEW",
+      "reason": "Repository documentation.",
+      "owner": "GD"
+    },
+    {
+      "glob": "DEPLOYMENT.md",
+      "function": "OUT-OF-PURVIEW",
+      "reason": "Deployment documentation.",
+      "owner": "GD"
+    },
+    {
+      "glob": "reference/**",
+      "function": "OUT-OF-PURVIEW",
+      "reason": "Explicitly NOT-DEPLOYED reference material.",
+      "owner": "GD"
+    },
+    {
+      "glob": "app/terms/page.tsx",
+      "function": "OUT-OF-PURVIEW",
+      "reason": "Legal terms. Required to be served, but authored by the business, not by the platform.",
+      "owner": "GD"
+    },
+    {
+      "glob": "app/demo/page.tsx",
+      "function": "OUT-OF-PURVIEW",
+      "reason": "Demonstrates the redemption flow conceptually. Promotional, not delivery: it shows rather than hands over. Exactly the kind of surface that accumulates unnoticed.",
+      "owner": "GD"
+    }
+  ]
+}

@@ -9,7 +9,9 @@
     "start": "next start",
     "test": "tsc -p tsconfig.test.json && node --test \".test-out/__tests__/*.test.js\"",
     "typecheck": "tsc --noEmit",
-    "audit:banned-ui-names": "node scripts/audit-banned-ui-names.mjs"
+    "audit:banned-ui-names": "node scripts/audit-banned-ui-names.mjs",
+    "audit:purview": "node scripts/audit-gpmx-purview.mjs",
+    "audit:laws": "npm run audit:banned-ui-names && npm run audit:purview"
   },
   "dependencies": {
     "@supabase/ssr": "^0.5.0",
