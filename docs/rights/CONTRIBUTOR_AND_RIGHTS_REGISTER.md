@@ -38,9 +38,9 @@ work does not go out.
 | *Forever It's Goodbye* | **Gavin** (per GD) | NAMED | GD: *"by Gavin, who also filmed Forever It's Goodbye."* GD notes he misremembered a previously named title. | Same. |
 | Other videos | — | UNKNOWN | — | Full inventory not yet made. YouTube pass outstanding. |
 
-**Possible contact:** `jogavs@gmail.com` appears in GD's sent mail (2026-09-02,
-"FYI-ONLY. Just Info, Breathtaking as It Is"). Consistent with "Gavin", not
-confirmed as the same person. **Do not contact on this basis alone.**
+**Contact:** to be supplied by GD. A speculative address match was raised and
+**struck on GD's instruction, 2026-09-22.** Guessing at a contributor's contact
+details from a name is not evidence and does not belong in this register.
 
 ## Voice, music and platform
 

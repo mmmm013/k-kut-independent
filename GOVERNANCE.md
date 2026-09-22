@@ -923,3 +923,61 @@ to and from `itsclaygunn@gmail.com`, plus searches on Gavin, "Believe It",
 interview, credits, filmed, videographer. It is not in the mail this account can
 see. `SHORTLIST.zip` from the Gavin and Clay photo shoot sits on Clayton's Drive
 and is unreachable from GD's account.
+
+---
+
+## 14 · LAW — the GPMx platform purview (2026-09-22)
+
+> **"GPMx PLATFORMS USE ONLY C-OP PROCESS OPTIMIZATION PURVIEW, KF INVENTORY
+> BUILDING, ARCHITECTURE, AND DELIVERY."**
+> — GD
+
+Four functions. A GPMx platform does these and nothing else.
+
+1. **C-OP process optimization purview** — supervisory. It may look at
+   everything, but only to improve *how* the other three are done. Purview is
+   not licence: seeing a thing is not authority to act on it.
+2. **KF inventory building** — the single door through which items enter. Items
+   are built into inventory, and only there.
+3. **Architecture** — how inventory is keyed, placed and related.
+4. **Delivery** — handing over an item inventory has already blessed.
+
+### The line this draws
+
+The four functions are **mechanical**: repeatable, auditable, testable. Every
+function it excludes is **discretionary** — it needs a decision by an
+accountable person. That is the whole distinction, and it names how the rubble
+accumulated: an AI will make a discretionary decision on request, and a platform
+will happily keep it.
+
+**Not platform work, as of this law:** rights and licensing · credits and
+royalties · press, PR and artist materials · pricing · artist relations ·
+contracts · entity and brand decisions · anything that authors rather than
+places.
+
+### The two failure modes to watch
+
+- **Delivery absorbing authorship.** Delivery hands over what inventory blessed.
+  The moment delivery chooses, substitutes, reformats for effect, or fills a gap
+  to satisfy a layout, it has become authorship — and the item leaves without
+  ever passing inventory. This is the general form of the track-title law, the
+  no-blending law, and the sK freeze.
+- **Purview becoming licence.** C-OP is the only function with a supervisory
+  word in it, so it is the one that expands. It may optimize process. It may not
+  widen what the platform does.
+
+### Applied to what already exists here
+
+- `scripts/audit-banned-ui-names.mjs`, the price lock, `lib/kkrScales.ts`,
+  `lib/satelliteThemes.ts`, `lib/artMusicMatch.ts` — inventory, architecture and
+  delivery integrity. **In purview.**
+- `epk/` — press and artist material. **Outside platform purview.** It is label
+  business that takes the form of a web page. It is correct work; it is not
+  platform work, and it should not sit inside a GPMx platform.
+- `docs/rights/CONTRIBUTOR_AND_RIGHTS_REGISTER.md` — rights administration.
+  **Outside platform purview**, but a legitimate governance record: it is a
+  register, not a platform function. It belongs with governance and CORE.
+
+A law without a test decays. The scope audit — classify every module by which of
+the four functions it serves, and fail on any that serves none — is not yet
+written.
