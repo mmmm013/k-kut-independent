@@ -604,6 +604,56 @@ Note that the offer law's own development boundary states it does not
 authorize **Stripe product creation** or **Stripe price creation**. Two new
 priced offerings would need that boundary moved as well.
 
+### The $12.99 Big HUG — destroyed
+
+GD ruling: *"A $12.99 Big HUG - Destry it!!!!!"*
+
+**Destroyed is not retired.** A retired price is one nothing currently sells.
+A destroyed one is forbidden to come back. Recorded in **price lock V003**
+under `destroyed_prices_cents`, never again as a live price.
+
+The two documents that still authorised the tier —
+`K_KUT_2611_REGULAR_HUG_MAPPING_V001.md` and
+`K_KUT_HOME_3_PRODUCT_RELEASE_V001.md` — are marked destroyed rather than
+rewritten, so the revocation stays legible next to what it revokes. The offer
+law's older wording, *"no obsolete $12.99 offer is displayed or sold,"* is now
+backed by an audit that hunts the amount through everything that ships.
+
+This also settles the open question from repair 2: the $12.99 tier does not
+compete with `PROMOTIONAL_HUG` or `STANDARD_HUG`. It is gone.
+
+### LAW — no system tool adopts a track title
+
+GD: *"NO system tool can adopt track title name."*
+
+A song is **inventory**. A route, page, script, workflow, module, constant or
+npm script is a **tool**. A tool named after a song can only ever serve that
+song: dropping the song means deleting code, and adding another means copying
+it. **Tools are named for what they do and take the song from data.**
+
+| Is a tool — must not name a track | Is data — may name its own track |
+|---|---|
+| routes and pages · scripts · workflows · modules and constants · npm script names | delivery-registry manifests · lyric authority files · audio asset paths |
+
+Dropping a page is therefore a **data** change: a family manifest declares the
+route it publishes on, and one declaring none publishes nothing. Code never
+names a page.
+
+Enforced by `scripts/audit-no-track-title-in-system-tools.mjs`, first in
+prebuild. It reads titles from data, so a new song is covered the moment its
+data lands.
+
+**Eight pre-existing violations remain**, all for one other track — live admin
+routes, their API routes, and a workflow. They are pinned exactly: a new
+violation fails the build, and so does a pinned entry that quietly disappears.
+The list can only shrink. **Renaming live admin routes is GD's call**, so they
+were not renamed as a side effect of landing the law.
+
+Two further titles name tools — `a-love-like-that` and `dont-call-it-love` in
+audit and materialize script names. The audit does not yet see them because
+those titles are not declared in the delivery registry or lyric authority.
+**Their data must declare its title before the law can reach them.**
+
 ### VOC — the two layers
 
 GD's note to the system / 4PE:
