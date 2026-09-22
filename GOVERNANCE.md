@@ -1004,3 +1004,61 @@ DELIVERY 12, OUT-OF-PURVIEW 18.
 inventory has not blessed — delivery without the gate, which is the first
 failure mode above, already present. It is diagnostic only and must never be
 reachable in a deployed environment.
+
+---
+
+## 15 · LAW — PREPARED qualifies an Element for Inventory (2026-09-22)
+
+> Every Element type is **PREPARED** — front padding, back padding and the
+> **SIGNATURE AUDIO LOGO** — as the final step, **just to qualify for
+> Inventory.**
+> — GD
+
+**The word is PREPARED.** Not "armed" — that was Claude's word, and it was
+wrong. The thing an Element is prepared *with* is the **SIGNATURE AUDIO LOGO**.
+Stored data still records the status as
+`delivery_audio_materialized_bookend_twinkle`, because that is the vocabulary
+across 1,392 records and other tooling reads it. The name of the thing is the
+Signature Audio Logo.
+
+Preparation is the last step of **KF inventory building**. It is not a step in
+Delivery.
+
+**Only a PREPARED Element is Inventory.** An unprepared one is a *candidate*: it
+may be listed, matched and routed internally, but it may never be offered,
+priced or checked out, because there is nothing to hand over. All three Element
+types — KK, sK, mK — uniformly. The upstream lineage stages (LT-PIX, DKK, NKK,
+naked sK) are not Elements and were never Inventory.
+
+### Why here, and not on request at the Release Gate
+
+The alternative was considered and rejected on three grounds:
+
+1. **It has already been run.** Dressing on request was the de facto practice.
+   It produced **1,391 unprepared candidates against 1 prepared asset** — a
+   catalogue that cannot be sold, and the reason every buyer-facing surface is
+   silent.
+2. **It puts production inside Delivery**, which is delivery authoring — the
+   first failure mode §14 names.
+3. **RTG only means something if a pre-made KUT is actually ready to go.** An
+   unprepared KK is not.
+
+**The narrow exception:** where the dressing is itself *personal* — a
+Commemorative KUT with an ending made for one recipient — it is not catalogue
+Inventory at all. It is made-to-order, and must be labelled and priced as such.
+
+### Version stamping
+
+A prepared Element records `signature_audio_logo_version`. When the Signature
+Audio Logo changes, nothing already prepared is invalidated — it was lawful when
+prepared — and Inventory flags the old stamps for re-preparation on its own
+schedule. This is what makes preparation-at-Inventory safe to commit to.
+
+### The gate
+
+`npm run audit:inventory-preparation` in **k-kut**. Fails when an unprepared
+Element is exposed to a buyer by `payment_allowed`, a live `checkout_url`, a
+`checkout_authority` that is not HOLD, `publication_allowed`, or the same on any
+of its routes. Verified by exposing one candidate and confirming exit 1.
+
+It passes today only because everything unprepared sits behind HOLD.
