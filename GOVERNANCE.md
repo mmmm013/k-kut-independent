@@ -886,3 +886,17 @@ Two separate walls, neither of them a judgement call:
 **The workaround, both directions:** save the Transfer into Dropbox proper
 ("Save to Dropbox" on the Transfer page), or drop the files into any Dropbox
 folder. Contents then read normally, including text extraction from PDFs.
+
+### 13.4 · Photographer credit recovered from file metadata (2026-09-22)
+
+The featured KLEIGH portrait carries its own credit in EXIF:
+`Copyright: Kristian Dowling 2014`, Nikon D4S, 2014-07-25. The credit is printed
+on `epk/index.html`, and the EXIF is preserved in the committed file as the
+credit's evidence — it must not be stripped.
+
+**Copyright sits with the photographer.** A printed credit is not a licence;
+permitted uses are unconfirmed and must be settled with Kristian Dowling before
+the photograph is released to any outlet.
+
+`epk/assets/kleigh-press-01.jpg` carries no embedded credit. Its photographer is
+unknown and it is released to no one until that is settled.

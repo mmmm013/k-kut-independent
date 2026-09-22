@@ -67,7 +67,7 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--brass); outline-off
 @media (min-width:860px){ .mast-grid{grid-template-columns:1fr 300px} }
 figure.portrait{margin:0}
 .portrait{
-  position:relative; aspect-ratio:4/5; max-width:100%;
+  position:relative; aspect-ratio:532/800; max-width:100%;
   background:var(--sunk); border:1px solid var(--rule); overflow:hidden;
 }
 .portrait::before{
@@ -75,6 +75,12 @@ figure.portrait{margin:0}
   font-family:var(--display); font-weight:700; font-size:120px; color:var(--rule);
 }
 .portrait img{position:relative; width:100%; height:100%; object-fit:cover}
+
+.portrait-block{display:flex; flex-direction:column; gap:8px}
+.credit{
+  margin:0; font-size:11px; font-weight:500; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--muted);
+}
 
 /* ---------- rules ---------- */
 .rule{border:0; border-top:1px solid var(--rule); margin:0}
@@ -115,24 +121,6 @@ h2{
 .designation{font-family:var(--display); font-style:italic; color:var(--brass); font-weight:500}
 
 /* ---------- listen ---------- */
-.players{display:grid; grid-template-columns:1fr; gap:clamp(18px,3vw,28px)}
-@media (min-width:760px){ .players{grid-template-columns:1fr 1fr} }
-.player{border:1px solid var(--rule); background:var(--surface); padding:clamp(18px,2.5vw,24px)}
-.player h3{font-family:var(--body); font-size:12px; font-weight:600; letter-spacing:.16em; text-transform:uppercase; margin:0 0 14px; color:var(--muted)}
-.embed{
-  position:relative; width:100%; aspect-ratio:480/395; background:var(--sunk);
-  border:1px solid var(--rule); overflow:hidden;
-}
-.embed .behind{
-  position:absolute; inset:0; display:grid; place-content:center; justify-items:center;
-  gap:10px; padding:20px; text-align:center;
-}
-.embed .behind .mark{font-family:var(--display); font-size:26px; color:var(--muted)}
-.embed .behind .hint{font-size:12px; color:var(--muted); max-width:24ch; line-height:1.5}
-.embed iframe{position:relative; width:100%; height:100%; border:0; display:block}
-.player .open{display:inline-block; margin-top:14px; font-size:14px; font-weight:500}
-
-/* ---------- listen ---------- */
 .listen-card{border:1px solid var(--rule); background:var(--surface); padding:clamp(22px,3.5vw,36px); max-width:64ch}
 .listen-card p{margin:0 0 14px}
 .listen-card p:last-child{margin-bottom:0}
@@ -145,10 +133,15 @@ h2{
 /* ---------- gallery ---------- */
 .gallery{display:grid; grid-template-columns:1fr; gap:clamp(14px,2vw,20px); margin-top:clamp(24px,3vw,32px)}
 @media (min-width:760px){ .gallery:has(.shot + .shot){grid-template-columns:1.6fr 1fr; align-items:stretch} }
-.shot{margin:0; border:1px solid var(--rule); background:var(--sunk); overflow:hidden}
+.shot{position:relative; margin:0; border:1px solid var(--rule); background:var(--sunk); overflow:hidden}
 .shot img{width:100%; height:100%; object-fit:cover; display:block}
+.shot figcaption{
+  position:absolute; left:0; right:0; bottom:0; padding:10px 12px;
+  font-size:10px; font-weight:500; letter-spacing:.1em; text-transform:uppercase;
+  color:#EFEBE3; background:linear-gradient(to top, rgba(10,11,14,.82), rgba(10,11,14,0));
+}
 .shot.wide{aspect-ratio:2000/933}
-.shot.tall{aspect-ratio:4/5}
+.shot.tall{aspect-ratio:532/800}
 @media (min-width:760px){ .shot.wide,.shot.tall{aspect-ratio:auto; min-height:260px} }
 
 /* ---------- canvas ---------- */
@@ -203,9 +196,12 @@ footer{padding-block:clamp(28px,4vw,44px) clamp(36px,5vw,56px); border-top:1px s
       <p class="tagline">Krooning from Down Under!</p>
       <p class="standfirst">Vocal performer and singer-songwriter. Based in Australia; label and management in the United States.</p>
     </div>
-    <figure class="portrait">
-      <img src="assets/kleigh-portrait-featured.jpg" alt="KLEIGH" onerror="this.remove()">
-    </figure>
+    <div class="portrait-block">
+      <figure class="portrait">
+        <img src="assets/kleigh-portrait-featured.jpg" alt="KLEIGH" onerror="this.remove()">
+      </figure>
+      <p class="credit">Photograph &copy; Kristian Dowling</p>
+    </div>
   </div>
 </header>
 
@@ -299,7 +295,7 @@ footer{padding-block:clamp(28px,4vw,44px) clamp(36px,5vw,56px); border-top:1px s
 
     <div class="gallery">
       <figure class="shot wide"><img src="assets/kleigh-press-01.jpg" alt="KLEIGH photographed against a sandstone rock face" loading="lazy" onerror="this.closest('figure').remove()"></figure>
-      <figure class="shot tall"><img src="assets/kleigh-portrait-featured.jpg" alt="KLEIGH, studio portrait" loading="lazy" onerror="this.closest('figure').remove()"></figure>
+      <figure class="shot tall"><img src="assets/kleigh-portrait-featured.jpg" alt="KLEIGH, studio portrait" loading="lazy" onerror="this.closest('figure').remove()"><figcaption>Photograph &copy; Kristian Dowling</figcaption></figure>
     </div>
 
     <p class="routing" style="margin-top:22px">Shown at screen resolution. Print-resolution files are released on request rather than posted, so that every file goes out with its photographer credit and its usage terms attached.</p>

@@ -75,12 +75,18 @@ there directly.
 `assets/kleigh-press-01.jpg` — KLEIGH against a sandstone rock face. Supplied
 by GD 2026-09-22.
 
-`assets/kleigh-portrait-featured.jpg` — **the slot exists; the file does not.**
-GD sent the studio portrait (black shirt, hands clasped) but it did not reach
-the session's disk, so there were no bytes to write. It is the same photograph
-the old `epk.html` referenced as `assets/kleigh_portrait.jpg`. Drop that file in
-under the new name and both the masthead and the gallery pick it up. Until then
-each `img` removes itself rather than rendering broken.
+`assets/kleigh-portrait-featured.jpg` — the studio portrait GD featured.
+**Its own EXIF carries the credit: `Copyright: Kristian Dowling 2014`**, shot on
+a Nikon D4S on 2014-07-25, processed in Lightroom 5.5. The credit is now printed
+on the page, under the masthead portrait and on the gallery frame.
+
+EXIF is preserved in the committed file — it is the credit's evidence. Do not
+strip it.
+
+**Copyright sits with the photographer, not with G Putnam Music.** A printed
+credit is not a licence. Before this photograph goes to any outlet, confirm with
+Kristian Dowling what the permitted uses are; press-kit use is normally granted
+for a portrait commissioned of the artist, but it has not been confirmed here.
 
 ## Settled by ruling, 2026-09-22
 
@@ -95,8 +101,11 @@ each `img` removes itself rather than rendering broken.
 
 ## Still open
 
-3. **Photographer credit and usage terms** for both photographs. Unknown, and
-   required before either file is released to anyone outside.
+3. **Usage terms.** The portrait's photographer is Kristian Dowling, from the
+   file's own metadata, and the credit is on the page. **Terms are still
+   unconfirmed** — see above. `kleigh-press-01.jpg` (the rock face) carries no
+   embedded credit at all; its photographer is unknown and it goes out to no
+   one until that is settled.
 4. **Track titles and credits.** The page asserts none. The KLEIGH Spotlight on
    gputnammusic.com shows three; they are not reproduced here without credits.
 5. **Biography.** Needs to be written and artist-approved. The triptych is an
