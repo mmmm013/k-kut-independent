@@ -113,8 +113,16 @@ Current issued floors:
 | Container | Floor | Denominator | Note |
 |---|---|---|---|
 | KK | **3** | per theme | typical yield 5–7; any number of contiguous KKs may exist |
-| sK | 13 | per theme | sK retains theme participation |
-| mK | *pending GD ruling* | — | mK ignores sequence and Themes, so a per-theme denominator does not yet apply |
+| sK | — | — | **the 13-per-theme floor is nixed** (GD) |
+| mK | — | none possible | mK does not work with Themes, so no per-theme floor can exist |
+
+**The 13-per-theme floor is withdrawn.** It was issued, then nixed by GD. Only
+the KK floor of 3 per theme stands. Any code or seed that still carries 13 is
+stale.
+
+**Exempt from KUT minimums entirely:** Holidays, **Anniversary**, and
+**Birthday**. They carry no floor row, and report as *unmeasured* — never as
+satisfied. An absent requirement must not read as a met one.
 
 38 Themes x 3 = **114 KKs** minimum. 36 currently show `DEPLOYABLE_INVENTORY`.
 
@@ -331,6 +339,79 @@ used for what it is, and never votes in a match.
 assignment that governs GPM operations. **VOC aims; DMAIC improves.** DMAIC
 returns approved learning to MIAL, LLBP and BIC governance.
 
+## 10. What each container carries — and what it sheds
+
+Issued by GD. Mandatory, always.
+
+### Delivery binds to element, one to one
+
+| Tier | Provides |
+|---|---|
+| HUG | KK |
+| TUG | sK |
+| BUG | mK |
+
+A tier is packaging and delivery. It is never a source authority and never
+creates a second audio lineage. **KK / sK / mK is what the element *is*.
+HUG / TUG / BUG is how it is *packaged and delivered*.**
+
+### BUG has two types
+
+Locked by GD.
+
+| Type | Price | What the buyer gets |
+|---|---|---|
+| **BUG** | **$1.99** | three **timed sends** of the **same** BUG |
+| **Story BUG** | **$2.98 total** | three **different, related** BUGs |
+
+Both are three sends. The difference is whether the three carry one BUG or
+three related ones — a single moment repeated on a schedule, against a
+sequence that tells something. Pricing is per package, not per send.
+
+### FM enters structured; KK reflects its sections
+
+**FM enters as a structured song.** KKs reflect **sections of that arranged
+song** — they are not arbitrary cuts, they follow the arrangement.
+
+**BLK is its own item, practice and technique.** It is not a lineage stage.
+**sBLK** is a sub-block, standing in for sub-verses — `V1a`, `V1b`.
+
+### Sequence, and where it stops mattering
+
+| | Sequence |
+|---|---|
+| LT-PIX → KK | holds |
+| KK → sK | **no longer matters** |
+| mK | ignored entirely |
+
+### Themes
+
+**sKs work with Themes. mKs do not.** There is no mK theme axis, which is why
+no per-theme mK floor can exist.
+
+### The strip, the pod, and MetaGrab Sets
+
+**Once stripped, a KK drops all descriptive metadata.** The stripped element
+stores in a **pod**. That pod sits alongside **KKr pods of metadata**. The
+pods together are **MetaGrab Sets**.
+
+This is the no-blending law made physical: audio in one pod, meaning in
+another, joined as a Set. Never fused into one record, always co-located.
+
+**BUGs remain free from such governance.**
+
+### The frontend / backend split — critical
+
+**sK and mK do NOT stay tied to SSOT on the frontend. Only on the backend.**
+
+> **ALL IIs retain backend legal, business and proprietary information and
+> data on the backend. ALWAYS.**
+
+On the frontend an sK or mK stands free of its SSOT tie. On the backend the
+lineage, rights, legal and business data are never absent. This is the same
+boundary the Permanent Laws draw from the other side: raw source paths and
+source WAV URLs must never be returned by a buyer-facing delivery function.
+
 ## Terms still undefined here
 
 Named upstream or in conversation but not resolvable from the supplied files —
@@ -350,8 +431,7 @@ central source feeding every platform; **C-OP** is Central Operations (§9).
 **BIC** = Best-in-Class 6-Sigma with RACI. **GPEx** is the company-scale
 platform built around 4PE; GPEx and SSOT are the authority plane.
 
-Still open and awaiting GD: the **two BUG types**, and the **mK floor
-denominator** — mK ignores Themes, so “13 per Theme” has no denominator.
+**BUG's two types are resolved** (§10): BUG and Story BUG.
 
 `TEXT Loop Runs` are partially resolved: they are where sK candidates are
 found, and `sk_assets.text_loop_run_id` records which run surfaced each one.
