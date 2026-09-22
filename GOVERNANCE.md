@@ -308,6 +308,7 @@ and keeps one audio hash identical across every platform.
 | `gputnammusic.com` | music supervisors (SUPEs), MIP 2s | industry catalogue | next, after KUT deployment |
 | `2kleigh.com` | listeners | KLEIGH vocal streaming, Stripe tiers | **queries Supabase directly** |
 | K-KUT buyer surface (Vercel) | fans | HUG / TUG / BUG | contained, surfaces disabled |
+| `i-meant.com` | senders | **the BUG platform** — BUG and Story BUG | shared CORE; deployment not freshly verified |
 | `13HUGz.com` | senders | the send-use vocabulary | not yet described here |
 | DISCO | licensing | catalogue of record | vendor platform |
 
@@ -357,16 +358,88 @@ HUG / TUG / BUG is how it is *packaged and delivered*.**
 
 ### BUG has two types
 
-Locked by GD.
+Locked by GD. Reconciled against *BUG and Story BUG — complete recovered
+handoff*, 2026-09-22.
 
-| Type | Price | What the buyer gets |
+| | Ordinary / Repeat BUG | Story BUG / Sequenced Story BUG |
 |---|---|---|
-| **BUG** | **$1.99** | three **timed sends** of the **same** BUG |
-| **Story BUG** | **$2.98 total** | three **different, related** BUGs |
+| Inventory | mini-KUT (mK) | mini-KUTs (mKs) |
+| Package | three total timed sends | three total timed sends forming a story |
+| Content | the **same exact** BUG in all three | three **different, related** BUGs |
+| Price | **$1.99 total** | **$2.98 total** |
+| Upgrade | none | **+$0.99** over the $1.99 base |
+| Sequencing | repeat the selected immutable item | successive, randomized yet sequenced, building a story |
+| Domain | `i-meant.com` | same platform, shared CORE |
 
-Both are three sends. The difference is whether the three carry one BUG or
-three related ones — a single moment repeated on a schedule, against a
-sequence that tells something. Pricing is per package, not per send.
+**Both products must remain available. Story BUG is an optional upgrade, not
+a replacement.**
+
+**Do not** charge $1.99 per send, or $2.98 plus another $0.99, or substitute
+HUG/TUG pricing. Server-side totals are **199 cents** and **298 cents**.
+
+### The full tier price list
+
+Separate offers. Recorded here so BUG pricing is never derived from them.
+
+| Tier | Element | Price |
+|---|---|---|
+| HUG | KK | **$7.99** |
+| Holiday HUG | KK | **$14.99** |
+| TUG | sK | **$4.99** |
+| BUG | mK | **$1.99** |
+| Story BUG | mKs | **$2.98** |
+
+### Eligible BUG classes
+
+**TRM, VSND and XCLM.** An earlier TRM/VSND-only restriction was broadened by
+owner direction. **TWIST is separate and is not BUG.** The classification
+definitions themselves come from the governing ontology — they are not to be
+inferred from the abbreviations.
+
+A matching word or phrase from another recording, or another occurrence of the
+same word, remains a distinct choice. **Text equality alone is not
+duplication.**
+
+### Story construction — a recoverable contract, not proven deployed
+
+From the August 22 design. Preserve it to inspect; it is not evidence of
+current deployed behavior.
+
+- Select eligible **related** clips at package assembly.
+- Arrange **Hook → Build → Payoff**.
+- **Permanently lock** the selected clip identities and their order for that package.
+- **One billing event** for the package.
+- Durable scheduling for the successive sends.
+- Idempotency key `packageId:sendIndex`.
+- A retry must **not** rerandomize the story, substitute a clip, or advance a step.
+
+"Randomized yet sequenced" is an **assembly** decision. It is not permission to
+shuffle a purchased story on every play or send. **"Related" means meaningful
+contextual progression**, not three mKs sharing one broad tag. **Family
+affection must never automatically receive romantic material.**
+
+The package is **three delivery events**. A single stitched audio file does not
+substitute for them, and each component keeps its own source lineage.
+
+### Three different quantities — never multiplied together
+
+| Quantity | Value |
+|---|---|
+| timed sends per package | **3** |
+| shares | **2** |
+| plays per share | **3** |
+
+Three sends are not three permitted plays. Do not combine these into an
+invented entitlement or promise unlimited replays.
+
+### Presentation rules on record
+
+| Item | Rule |
+|---|---|
+| personal text note | **13 characters** |
+| audio logo | **Twinkle MEDIUM at 75%** per II; canonical source CC preserved separately |
+| lyrics display | brown background, tan text, amber highlighting |
+| delivery | **no download**; do not inherit URU audio-download behaviour |
 
 ### FM enters structured; KK reflects its sections
 
