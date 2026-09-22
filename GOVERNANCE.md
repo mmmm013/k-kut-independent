@@ -799,3 +799,36 @@ collision. **TUG** delivers sK at $4.99, the `sBLK` line of the price lock
 `TEXT Loop Runs` are partially resolved: they are where sK candidates are
 found, and `sk_assets.text_loop_run_id` records which run surfaced each one.
 The run mechanics themselves are still upstream and undescribed here.
+
+---
+
+## 13 · KLEIGH EPK — audited, then rebuilt (2026-09-22)
+
+The material supplied out of the Dropbox Transfer link ("T") was audited against
+the ten acceptance criteria: **7 FAIL, 2 PARTIAL.** `EPK.pdf` proved to be a
+one-page placeholder dated 9/21/25 whose entire text is *"EPK (placeholder) /
+Use previous v2.7 / v2.6 EPK if needed."*
+
+GD's ruling: **"just Build new. WHY NOT? We do NOT NEED OLD."** and
+**"still, kreate new!"** The new kit is `epk/index.html`. The old pages are not
+reproduced and v2.7 / v2.6 are not sought.
+
+Three findings are recorded here because they outlive the page:
+
+1. **The contact routing rule is now printed on the artist-facing page itself.**
+   All press, sync, booking and artwork enquiries for KLEIGH, Michael Clay and
+   Clayton Michael Gunn go to `KLEIGH@gputnammusic.com`, in both directions.
+   The old page published `info@musicmaykers.com`, which breaks that rule.
+2. **The entity is unsettled.** The old pages footed "©2025 musicmaykers, llc".
+   The new page foots "© 2026 G Putnam Music, LLC". GD confirms which one the
+   representation agreement names.
+3. **`download=true` on both DISCO players was carried over untouched.** It is a
+   decision nobody is recorded as having made. Press-audio download rights are a
+   separate question from the consumer no-download rule, and are GD's to settle.
+
+**`KLIEGH EPK PDF.pdf`** — an EPK DRAFT from Clayton Gunn dated 2026-01-08,
+Gmail message `19ba061960520f10` — is nine months newer than the placeholder and
+is the likely home of the biography, track titles and credits. It is not in
+Drive and not in Dropbox, Gmail attachments cannot be downloaded from this
+session, and both `www.dropbox.com` and `www.canva.com` are blocked by the
+network egress proxy. It remains unread.

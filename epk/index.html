@@ -1,0 +1,361 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>KLEIGH Press Kit</title>
+<meta name="description" content="Press and sync kit for KLEIGH. Represented by G Putnam Music, LLC.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,700;1,6..96,400&family=Archivo:wght@400;500;600&display=swap">
+<style>
+:root{
+  color-scheme: light;
+  --ground:#EAE6DE; --surface:#F5F2EC; --sunk:#E0DACE;
+  --ink:#191A1E; --muted:#6B675F; --rule:#CEC7B9;
+  --brass:#8E5F16; --brass-soft:#A8721F; --aqua:#1A6E60;
+  --display:"Bodoni Moda", "Didot", Georgia, serif;
+  --body:"Archivo", "Helvetica Neue", Arial, sans-serif;
+  --gutter:clamp(18px, 5vw, 64px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme: dark;
+    --ground:#121317; --surface:#1A1C22; --sunk:#0C0D10;
+    --ink:#EFEBE3; --muted:#9C978C; --rule:#2E313A;
+    --brass:#D9A445; --brass-soft:#C08F33; --aqua:#4FC3A8;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --ground:#121317; --surface:#1A1C22; --sunk:#0C0D10;
+  --ink:#EFEBE3; --muted:#9C978C; --rule:#2E313A;
+  --brass:#D9A445; --brass-soft:#C08F33; --aqua:#4FC3A8;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{
+  background:var(--ground); color:var(--ink);
+  font-family:var(--body); font-size:16px; line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+img{max-width:100%; display:block}
+a{color:var(--brass); text-decoration-thickness:1px; text-underline-offset:3px}
+a:focus-visible,button:focus-visible{outline:2px solid var(--brass); outline-offset:3px; border-radius:2px}
+.wrap{max-width:1080px; margin:0 auto; padding-inline:var(--gutter)}
+.eyebrow{
+  font-size:11px; font-weight:600; letter-spacing:.18em; text-transform:uppercase;
+  color:var(--muted); margin:0;
+}
+
+/* ---------- masthead ---------- */
+.masthead{padding-block:clamp(36px,7vw,80px) clamp(28px,5vw,48px)}
+.marquee{
+  font-family:var(--display); font-weight:700;
+  font-size:clamp(68px, 20vw, 190px); line-height:.86; letter-spacing:-.015em;
+  margin:.18em 0 0; text-wrap:balance;
+}
+.tagline{
+  font-family:var(--display); font-style:italic; font-weight:400;
+  font-size:clamp(20px,4.2vw,34px); line-height:1.25; color:var(--brass);
+  margin:.45em 0 0; text-wrap:balance;
+}
+.standfirst{
+  max-width:34ch; margin:1.1em 0 0; color:var(--muted); font-size:clamp(15px,2vw,17px);
+}
+.mast-grid{display:grid; grid-template-columns:1fr; gap:clamp(24px,4vw,40px); align-items:end}
+@media (min-width:860px){ .mast-grid{grid-template-columns:1fr 300px} }
+.portrait{
+  position:relative; aspect-ratio:4/5; max-width:100%;
+  background:var(--sunk); border:1px solid var(--rule); overflow:hidden;
+}
+.portrait::before{
+  content:"K"; position:absolute; inset:0; display:grid; place-items:center;
+  font-family:var(--display); font-weight:700; font-size:120px; color:var(--rule);
+}
+.portrait img{position:relative; width:100%; height:100%; object-fit:cover}
+
+/* ---------- rules ---------- */
+.rule{border:0; border-top:1px solid var(--rule); margin:0}
+section{padding-block:clamp(40px,6vw,72px)}
+.sec-head{display:flex; flex-wrap:wrap; gap:8px 20px; align-items:baseline; margin-bottom:clamp(20px,3vw,32px)}
+h2{
+  font-family:var(--display); font-weight:500; font-size:clamp(26px,4.4vw,42px);
+  line-height:1.1; margin:0; letter-spacing:-.01em; text-wrap:balance;
+}
+
+/* ---------- triptych ---------- */
+.triptych{display:grid; grid-template-columns:1fr; gap:0; border:1px solid var(--rule); background:var(--surface)}
+@media (min-width:760px){ .triptych{grid-template-columns:repeat(3,1fr)} }
+.panel{padding:clamp(22px,3vw,32px); border-top:1px solid var(--rule); transition:background .25s ease}
+.panel:first-child{border-top:0}
+@media (min-width:760px){
+  .panel{border-top:0; border-left:1px solid var(--rule)}
+  .panel:first-child{border-left:0}
+}
+.panel:hover{background:var(--ground)}
+.panel-mark{
+  font-family:var(--display); font-size:13px; letter-spacing:.2em; color:var(--brass);
+  display:block; margin-bottom:14px;
+}
+.panel h3{
+  font-family:var(--display); font-weight:500; font-size:clamp(22px,3vw,28px);
+  line-height:1.15; margin:0 0 10px;
+}
+.panel p{margin:0; color:var(--muted); font-size:15px}
+.panel .practice{
+  display:block; font-size:11px; font-weight:600; letter-spacing:.16em;
+  text-transform:uppercase; color:var(--ink); margin-bottom:6px;
+}
+.panel a{display:inline-block; margin-top:14px; font-size:14px}
+.triptych-note{
+  margin:clamp(20px,3vw,28px) 0 0; max-width:62ch; font-size:clamp(15px,2vw,17px);
+}
+.designation{font-family:var(--display); font-style:italic; color:var(--brass); font-weight:500}
+
+/* ---------- listen ---------- */
+.players{display:grid; grid-template-columns:1fr; gap:clamp(18px,3vw,28px)}
+@media (min-width:760px){ .players{grid-template-columns:1fr 1fr} }
+.player{border:1px solid var(--rule); background:var(--surface); padding:clamp(18px,2.5vw,24px)}
+.player h3{font-family:var(--body); font-size:12px; font-weight:600; letter-spacing:.16em; text-transform:uppercase; margin:0 0 14px; color:var(--muted)}
+.embed{
+  position:relative; width:100%; aspect-ratio:480/395; background:var(--sunk);
+  border:1px solid var(--rule); overflow:hidden;
+}
+.embed .behind{
+  position:absolute; inset:0; display:grid; place-content:center; justify-items:center;
+  gap:10px; padding:20px; text-align:center;
+}
+.embed .behind .mark{font-family:var(--display); font-size:26px; color:var(--muted)}
+.embed .behind .hint{font-size:12px; color:var(--muted); max-width:24ch; line-height:1.5}
+.embed iframe{position:relative; width:100%; height:100%; border:0; display:block}
+.player .open{display:inline-block; margin-top:14px; font-size:14px; font-weight:500}
+
+/* ---------- canvas ---------- */
+.canvas-row{display:grid; grid-template-columns:1fr; gap:clamp(20px,3vw,36px); align-items:start}
+@media (min-width:760px){ .canvas-row{grid-template-columns:1.2fr 1fr} }
+.canvas-row p{margin:0 0 14px; max-width:58ch}
+
+/* ---------- assets ---------- */
+.assets{display:grid; grid-template-columns:1fr; gap:0; border-top:1px solid var(--rule)}
+.asset{
+  display:grid; grid-template-columns:1fr; gap:4px;
+  padding:16px 0; border-bottom:1px solid var(--rule);
+}
+@media (min-width:640px){ .asset{grid-template-columns:230px 1fr; gap:24px; align-items:baseline} }
+.asset dt{font-weight:600; font-size:15px}
+.asset dd{margin:0; color:var(--muted); font-size:15px}
+
+/* ---------- contact ---------- */
+.contact{background:var(--surface); border:1px solid var(--rule); padding:clamp(22px,3.5vw,36px)}
+.addr{
+  display:flex; flex-wrap:wrap; align-items:center; gap:12px; margin:14px 0 0;
+}
+.addr a{
+  font-family:var(--display); font-size:clamp(19px,3.4vw,30px); font-weight:500;
+  word-break:break-word; text-decoration:none; border-bottom:1px solid var(--brass-soft);
+}
+.copy{
+  font-family:var(--body); font-size:12px; font-weight:600; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--ink); background:transparent;
+  border:1px solid var(--rule); padding:8px 14px; cursor:pointer; transition:border-color .2s ease;
+}
+.copy:hover{border-color:var(--brass)}
+.routing{margin:18px 0 0; max-width:58ch; font-size:15px; color:var(--muted)}
+
+/* ---------- footer ---------- */
+footer{padding-block:clamp(28px,4vw,44px) clamp(36px,5vw,56px); border-top:1px solid var(--rule)}
+.foot{display:flex; flex-wrap:wrap; gap:10px 24px; justify-content:space-between; align-items:baseline}
+.foot p{margin:0; font-size:13px; color:var(--muted)}
+
+@media (prefers-reduced-motion: reduce){
+  *{transition:none !important; animation:none !important}
+}
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="wrap mast-grid">
+    <div>
+      <p class="eyebrow">G Putnam Music, LLC &middot; Press &amp; Sync</p>
+      <h1 class="marquee">KLEIGH</h1>
+      <p class="tagline">Krooning from Down Under!</p>
+      <p class="standfirst">Vocal performer and singer-songwriter. Based in Australia; label and management in the United States.</p>
+    </div>
+    <div class="portrait">
+      <img src="assets/kleigh_portrait.jpg" alt="Portrait of KLEIGH" onerror="this.remove()">
+    </div>
+  </div>
+</header>
+
+<hr class="rule">
+
+<section id="identities">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">I &middot; II &middot; III</p>
+      <h2>One person. Three practices, each under its own name.</h2>
+    </div>
+
+    <div class="triptych">
+      <div class="panel">
+        <span class="panel-mark">I</span>
+        <span class="practice">Voice</span>
+        <h3>KLEIGH</h3>
+        <p>Vocal performer. Singer-songwriter.</p>
+      </div>
+      <div class="panel">
+        <span class="panel-mark">II</span>
+        <span class="practice">Piano &amp; Composition</span>
+        <h3>Michael Clay</h3>
+        <p>Pianist. Composer. Collaborator.</p>
+      </div>
+      <div class="panel">
+        <span class="panel-mark">III</span>
+        <span class="practice">Canvas</span>
+        <h3>Clayton Michael Gunn</h3>
+        <p>Canvas artist.</p>
+        <a href="https://mmmm-art.com">mmmm-art.com &rarr;</a>
+      </div>
+    </div>
+
+    <p class="triptych-note">The three names are not a group and not a side project. They are one working artist, filed apart because the disciplines are apart. G Putnam Music, LLC represents all three under a single designation &mdash; <span class="designation">CyberStar</span>.</p>
+  </div>
+</section>
+
+<hr class="rule">
+
+<section id="listen">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Audio</p>
+      <h2>mmmm-Listen</h2>
+    </div>
+
+    <div class="players">
+      <div class="player">
+        <h3>Primary</h3>
+        <div class="embed">
+          <div class="behind">
+            <span class="mark">mmmm</span>
+            <span class="hint">Player loads from DISCO. Use the link below if it does not appear.</span>
+          </div>
+          <iframe title="mmmm-Listen &mdash; Primary" src="https://musicmaykers.disco.ac/e/p/24920180?download=true&amp;s=lBMqsvWaYiZAfjZy0Uy5r3tzWWo%3AfDc9JZwI&amp;artwork=true&amp;color=%2332B57C&amp;theme=white" allowfullscreen loading="lazy"></iframe>
+        </div>
+        <a class="open" href="https://musicmaykers.disco.ac/e/p/24920180?download=true&amp;s=lBMqsvWaYiZAfjZy0Uy5r3tzWWo%3AfDc9JZwI&amp;artwork=true&amp;color=%2332B57C&amp;theme=white" target="_blank" rel="noopener">Open the Primary player &rarr;</a>
+      </div>
+
+      <div class="player">
+        <h3>Featured</h3>
+        <div class="embed">
+          <div class="behind">
+            <span class="mark">mmmm</span>
+            <span class="hint">Player loads from DISCO. Use the link below if it does not appear.</span>
+          </div>
+          <iframe title="mmmm-Listen &mdash; Featured" src="https://musicmaykers.disco.ac/e/p/23917462?download=true&amp;s=YTalScyRlpiYKBM3KJnRJeHc6NQ%3Az4KvCBdW&amp;artwork=true&amp;color=%2332B57C&amp;theme=white" allowfullscreen loading="lazy"></iframe>
+        </div>
+        <a class="open" href="https://musicmaykers.disco.ac/e/p/23917462?download=true&amp;s=YTalScyRlpiYKBM3KJnRJeHc6NQ%3Az4KvCBdW&amp;artwork=true&amp;color=%2332B57C&amp;theme=white" target="_blank" rel="noopener">Open the Featured player &rarr;</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<section id="canvas">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Canvas</p>
+      <h2>The paintings are a separate practice.</h2>
+    </div>
+    <div class="canvas-row">
+      <div>
+        <p>Original canvas work is made under the name <strong>Clayton Michael Gunn</strong> and shown and sold on its own site. It is not merchandise and it is not album art.</p>
+        <p><a href="https://mmmm-art.com">mmmm-art.com &rarr;</a></p>
+      </div>
+      <div></div>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<section id="press">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">For editors, supervisors and programmers</p>
+      <h2>Press materials</h2>
+    </div>
+
+    <dl class="assets">
+      <div class="asset"><dt>Photographs</dt><dd>High-resolution files, each supplied with its photographer credit and written usage terms.</dd></div>
+      <div class="asset"><dt>One-sheet</dt><dd>PDF.</dd></div>
+      <div class="asset"><dt>Biography</dt><dd>Short and long form, artist-approved, for quotation.</dd></div>
+      <div class="asset"><dt>Track listing and credits</dt><dd>Titles with writer, performer and publisher credits.</dd></div>
+      <div class="asset"><dt>Logo files</dt><dd>Vector and raster.</dd></div>
+      <div class="asset"><dt>Sync and licensing</dt><dd>Rights and availability confirmed per request.</dd></div>
+    </dl>
+
+    <p class="routing" style="margin-top:22px">Materials are released on request rather than posted, so that every file goes out with its credit and its terms attached.</p>
+  </div>
+</section>
+
+<hr class="rule">
+
+<section id="contact">
+  <div class="wrap">
+    <div class="contact">
+      <p class="eyebrow">Contact</p>
+      <div class="addr">
+        <a id="epk-contact-link" href="mailto:KLEIGH@gputnammusic.com">KLEIGH@gputnammusic.com</a>
+        <button class="copy" id="epk-copy-contact" type="button" data-address="KLEIGH@gputnammusic.com">Copy address</button>
+      </div>
+      <p class="routing">All press, sync, booking and artwork enquiries for KLEIGH, Michael Clay and Clayton Michael Gunn are handled by G Putnam Music, LLC at this address, in both directions. There is no second route.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot">
+    <p>&copy; 2026 G Putnam Music, LLC. All rights reserved.</p>
+    <p>KLEIGH &middot; Michael Clay &middot; Clayton Michael Gunn</p>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var btn = document.getElementById('epk-copy-contact');
+  if (!btn) return;
+  var original = btn.textContent;
+  var resetTimer;
+  btn.addEventListener('click', function () {
+    var address = btn.getAttribute('data-address') || '';
+    var settle = function (label) {
+      btn.textContent = label;
+      clearTimeout(resetTimer);
+      resetTimer = setTimeout(function () { btn.textContent = original; }, 2000);
+    };
+    var selectInstead = function () {
+      var link = document.getElementById('epk-contact-link');
+      if (!link) { settle('Copy failed'); return; }
+      try {
+        var range = document.createRange();
+        range.selectNodeContents(link);
+        var sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+        settle('Selected — press copy');
+      } catch (e) { settle('Copy failed'); }
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(address).then(function () { settle('Copied'); }, selectInstead);
+    } else {
+      selectInstead();
+    }
+  });
+})();
+</script>
+
+</body>
+</html>
