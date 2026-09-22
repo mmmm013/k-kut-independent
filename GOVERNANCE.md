@@ -76,7 +76,7 @@ Anything title-matched is not lineage. Do not add a title-based join.
 
 ---
 
-## 4. Creation order is gated and sequential
+## 4. Creation order is gated because sK is a residual
 
 From `write_phase_gates()`:
 
@@ -84,19 +84,39 @@ From `write_phase_gates()`:
 |---|---|---|
 | KK | freeze must complete | `13_MK_STAGE_GATE.json` = PASS only when `KK_FREEZE_COMPLETE` |
 | mK | created only from frozen approved KKs | retain LT-PIX/SRC/KK/path/SHA, stay inside source-KK bounds |
-| sK | **currently BLOCKED** | `MK_OBJECT_FREEZE_REQUIRED_BEFORE_SK_CREATION` |
+| sK | follows the mK freeze | `MK_OBJECT_FREEZE_REQUIRED_BEFORE_SK_CREATION` |
 
 The KK review room agrees: `SK_PROCESSING: DEFERRED`, `FULL_KKs ONLY`.
 
-**Consequence for the 13-floor:** KK, sK and mK cannot be filled in parallel
-today. sK creation is gated behind mK freeze, which is gated behind KK freeze.
-The floor is a target; the pipeline is a queue.
+**This gate is not an obstruction. It is the definition.** GD, production note:
 
-**The floor itself** lives in `public.kf_theme_minimums` — 13 per theme for
-KUT, sK and mK — never as a constant in code. Raise a row and the shortfall
-recomputes with no deploy. A theme with no row (Holidays) requires nothing and
-reports as *unmeasured*, never as satisfied: an absent requirement must not
-read as a met one.
+> When KKr deems an II to be either a KK or an mK, then it cannot be an sK.
+
+**sK is short-KUT: everything that is neither a KK nor an mK.** A residual
+cannot be computed until its claimants are settled, so sK creation *must*
+follow the KK and mK freezes. It was never capable of running in parallel, and
+an earlier revision of this document was wrong to describe it as "BLOCKED" or
+to call the ordering a consequence for the floor.
+
+**What the freeze is for:** it stops tight-line fights — boundary contests
+where a KK and an mK both claim the same line of audio. Freeze the claimants,
+and the boundaries stop moving.
+
+**The floor** lives in `public.kf_theme_minimums`, per theme and per container,
+never as a constant in code. Raise a row and the shortfall recomputes with no
+deploy. A theme with no row (Holidays) requires nothing and reports as
+*unmeasured*, never as satisfied: an absent requirement must not read as a met
+one.
+
+Current issued floors:
+
+| Container | Floor | Denominator | Note |
+|---|---|---|---|
+| KK | **3** | per theme | typical yield 5–7; any number of contiguous KKs may exist |
+| sK | 13 | per theme | sK retains theme participation |
+| mK | *pending GD ruling* | — | mK ignores sequence and Themes, so a per-theme denominator does not yet apply |
+
+38 Themes x 3 = **114 KKs** minimum. 36 currently show `DEPLOYABLE_INVENTORY`.
 
 ---
 
@@ -248,6 +268,69 @@ This is why `/api/bot/moments` is named as it is.
 
 ---
 
+## 9. CORE and C-OP — the shared architecture
+
+**CORE is the central source. Every platform is fed from CORE.**
+**C-OP is Central Operations.** They are two things, not one name for one
+thing. An earlier revision of this document did not carry either, and treated
+`C-OP` as an undefined term. That was wrong.
+
+**No platform is its own architecture.** Platform implementations are
+described *within* the shared architecture, as implementations of it. A
+platform is a projection of CORE, never a second authority and never a second
+audio lineage.
+
+This is already specified in `Improved_GPMx_model`, planes 6 and 7:
+
+> No raw table should directly determine public availability.
+> element -> release eligibility evaluation -> release package -> platform projection
+
+> Multiple platforms should consume the same release package rather than
+> querying internal tables independently.
+
+Each projection carries `platform`, `release_package_id`, `external_product_key`,
+`external_asset_key`, `projection_state`, `last_published_hash`,
+`last_published_at`, `error_state` — which is what makes publishing idempotent
+and keeps one audio hash identical across every platform.
+
+### Platforms, as implementations of the shared architecture
+
+| Platform | Audience | Serves | Status against CORE |
+|---|---|---|---|
+| `gputnammusic.com` | music supervisors (SUPEs), MIP 2s | industry catalogue | next, after KUT deployment |
+| `2kleigh.com` | listeners | KLEIGH vocal streaming, Stripe tiers | **queries Supabase directly** |
+| K-KUT buyer surface (Vercel) | fans | HUG / TUG / BUG | contained, surfaces disabled |
+| `13HUGz.com` | senders | the send-use vocabulary | not yet described here |
+| DISCO | licensing | catalogue of record | vendor platform |
+
+`2kleigh.com` is the live exception and the clearest case for CORE. It reaches
+Supabase through its own edge function — `/functions/v1/mood-proxy/stream?mood=`
+— calling `fetchTracksByMood()` from `MoodGrid.tsx`. That is a platform
+querying internal tables independently, which plane 7 forbids. Evidence:
+*G Putnam Music — Operational Excellence Framework (BIC 6-Sigma v1.0)*, GPM
+Vault.
+
+### Five vocabularies. None of them blend.
+
+Each describes a different thing for a different audience. They may be
+co-observed and cross-tabulated. They are never summed, merged, or substituted
+for one another.
+
+| Vocabulary | Source | Describes |
+|---|---|---|
+| Mood/feel · Lyric themes | DISCO | the **record** — for sync licensing |
+| sentiment · emotion · mood · presentation · expression-function | **KKr MetaGrab** | the **send** — suitability, the humanizing layer |
+| 13HUGz | GPM | the **occasion** — weighted, multi-valued |
+| KF themes | K-KUT surface | the **shared sentiment** a buyer is sending |
+| MOODs (MELANCHOLY · ETHEREAL · FOCUS · UPLIFTING · HIGH ENERGY) | `2kleigh.com` | the **listening vibe** |
+
+KKr alone performs matching. Every other vocabulary is supporting evidence,
+used for what it is, and never votes in a match.
+
+**BIC** = Best-in-Class: the 6-Sigma continuous-improvement framework with RACI
+assignment that governs GPM operations. **VOC aims; DMAIC improves.** DMAIC
+returns approved learning to MIAL, LLBP and BIC governance.
+
 ## Terms still undefined here
 
 Named upstream or in conversation but not resolvable from the supplied files —
@@ -262,7 +345,13 @@ VOC decisions; a reported issue earns one free corrected element). **MGS** =
 multi-gated semantic — 13 dimensions, ≥30 confirmed assertions, ≥3 congruent
 user-visible tags, contraindication review, no numeric-only shortcut.
 **GPMx** is the enterprise; **4PE is its governed operating system**.
-**DKK** and **naked sK** are lineage layers, newly evidenced.
+**DKK** and **naked sK** are lineage layers, newly evidenced. **CORE** is the
+central source feeding every platform; **C-OP** is Central Operations (§9).
+**BIC** = Best-in-Class 6-Sigma with RACI. **GPEx** is the company-scale
+platform built around 4PE; GPEx and SSOT are the authority plane.
+
+Still open and awaiting GD: the **two BUG types**, and the **mK floor
+denominator** — mK ignores Themes, so “13 per Theme” has no denominator.
 
 `TEXT Loop Runs` are partially resolved: they are where sK candidates are
 found, and `sk_assets.text_loop_run_id` records which run surfaced each one.
