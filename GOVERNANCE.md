@@ -220,11 +220,26 @@ From `01_GD_AUDIO_FIRST_NKK_SEND_USE_REVIEW_ROOM.html`:
 
 > Playable rows: **25** | No-audio rows held: **4,040**
 
-Of 4,065 review objects, 25 have playable audio. Canonical counts elsewhere:
+Of 4,065 review objects, 25 have playable audio. Counts in that room:
 **429 LT-PIX · 2,611 KK · 3,040 objects**.
 
-No floor expressed in units — 13 per container per theme or any other number —
-is reachable from 25 playable objects. Capture is the constraint.
+**These are one room's numbers, at one date.** Later snapshots are far larger
+and differently scoped:
+
+| Date | Source | Count |
+|---|---|---|
+| 2026-09-01 | Invention Delta, live Supabase read | 710 parent tracks · 42,971 K-KUT rows · 22,005 distinct IIs |
+| 2026-09-01 | same | HUG 36 · TUG 661 · BUG 21,308 distinct IIs |
+| 2026-08-31 | prior assistant report | 21,308 playable / audio-QC-pass mKs |
+| 2026-09-21 | `START_HERE.md` | 9,188 approved mKs within 9,808 approved IIs, 85 families |
+
+**Never add these together.** They have different scopes, different dates and
+different admission criteria. 9,188 approved mKs is not 9,188 purchasable
+three-send packages, and HTTP 200 on an audio URL establishes neither correct
+audio nor successful delivery.
+
+Whatever the scope, capture is the constraint: no floor in units is reachable
+faster than audio can be captured and proven.
 
 ## 6. Per-KK gates upstream
 
@@ -356,6 +371,56 @@ A tier is packaging and delivery. It is never a source authority and never
 creates a second audio lineage. **KK / sK / mK is what the element *is*.
 HUG / TUG / BUG is how it is *packaged and delivered*.**
 
+### FM enters structured; KK reflects its sections
+
+**FM enters as a structured song.** KKs reflect **sections of that arranged
+song** — they are not arbitrary cuts, they follow the arrangement.
+
+**BLK is its own item, practice and technique.** It is not a lineage stage.
+**sBLK** is a sub-block, standing in for sub-verses — `V1a`, `V1b`.
+
+### Sequence, and where it stops mattering
+
+| | Sequence |
+|---|---|
+| LT-PIX → KK | holds |
+| KK → sK | **no longer matters** |
+| mK | ignored entirely |
+
+### Themes
+
+**sKs work with Themes. mKs do not.** There is no mK theme axis, which is why
+no per-theme mK floor can exist.
+
+### The strip, the pod, and MetaGrab Sets
+
+**Once stripped, a KK drops all descriptive metadata.** The stripped element
+stores in a **pod**. That pod sits alongside **KKr pods of metadata**. The
+pods together are **MetaGrab Sets**.
+
+This is the no-blending law made physical: audio in one pod, meaning in
+another, joined as a Set. Never fused into one record, always co-located.
+
+**BUGs remain free from such governance.**
+
+### The frontend / backend split — critical
+
+**sK and mK do NOT stay tied to SSOT on the frontend. Only on the backend.**
+
+> **ALL IIs retain backend legal, business and proprietary information and
+> data on the backend. ALWAYS.**
+
+On the frontend an sK or mK stands free of its SSOT tie. On the backend the
+lineage, rights, legal and business data are never absent. This is the same
+boundary the Permanent Laws draw from the other side: raw source paths and
+source WAV URLs must never be returned by a buyer-facing delivery function.
+
+## 11. The three offers — commerce
+
+What a buyer pays for, and what the payment is for. Element law is §10;
+nothing here overrides it. A tier is packaging and delivery, never a
+source authority.
+
 ### BUG has two types
 
 Locked by GD. Reconciled against *BUG and Story BUG — complete recovered
@@ -427,23 +492,6 @@ blending keeps two identically priced items from collapsing into one.
 file's own rule applies — an explicit GD decision and a new numbered lock
 version. Not a silent edit.
 
-### The identified repair
-
-Issued by GD from the read-only inspection of `mmmm013/k-kut` at `d9af6da`.
-That repository is not writable from this session, so this records the work
-rather than performing it.
-
-| # | Repair |
-|---|---|
-| 1 | **Connect the numbered price lock to server-side offer validation**, so drift is caught. Today `kkr-canonical-pricing.ts` is imported by nothing and agrees with checkout only by coincidence of authorship. |
-| 2 | **Add purchase paths** for `PROMOTIONAL_HUG` $11.99, `STANDARD_HUG` $14.99, and the **separate** message add-on $0.99. All three are locked prices with no way to charge them. |
-| 3 | **Implement Story BUG's $2.98 checkout and three-part delivery.** Display copy alone is insufficient — $2.98 currently exists in one line of markup on the Comin' True page and nowhere else. |
-| 4 | **Preserve both element names and tier names.** Neither naming is the real one; they name the same priced thing from two sides. |
-
-Repair 3 must honour the story-construction contract already recorded above:
-locked identities and order, one billing event, `packageId:sendIndex`, and a
-retry that never rerandomizes, substitutes or advances a step.
-
 ### Eligible BUG classes
 
 **TRM, VSND and XCLM.** An earlier TRM/VSND-only restriction was broadened by
@@ -496,58 +544,32 @@ invented entitlement or promise unlimited replays.
 | lyrics display | brown background, tan text, amber highlighting |
 | delivery | **no download**; do not inherit URU audio-download behaviour |
 
-### FM enters structured; KK reflects its sections
+### The identified repair
 
-**FM enters as a structured song.** KKs reflect **sections of that arranged
-song** — they are not arbitrary cuts, they follow the arrangement.
+Issued by GD from the read-only inspection of `mmmm013/k-kut` at `d9af6da`.
+That repository is not writable from this session, so this records the work
+rather than performing it.
 
-**BLK is its own item, practice and technique.** It is not a lineage stage.
-**sBLK** is a sub-block, standing in for sub-verses — `V1a`, `V1b`.
-
-### Sequence, and where it stops mattering
-
-| | Sequence |
+| # | Repair |
 |---|---|
-| LT-PIX → KK | holds |
-| KK → sK | **no longer matters** |
-| mK | ignored entirely |
+| 1 | **Connect the numbered price lock to server-side offer validation**, so drift is caught. Today `kkr-canonical-pricing.ts` is imported by nothing and agrees with checkout only by coincidence of authorship. |
+| 2 | **Add purchase paths** for `PROMOTIONAL_HUG` $11.99, `STANDARD_HUG` $14.99, and the **separate** message add-on $0.99. All three are locked prices with no way to charge them. |
+| 3 | **Implement Story BUG's $2.98 checkout and three-part delivery.** Display copy alone is insufficient — $2.98 currently exists in one line of markup on the Comin' True page and nowhere else. |
+| 4 | **Preserve both element names and tier names.** Neither naming is the real one; they name the same priced thing from two sides. |
 
-### Themes
-
-**sKs work with Themes. mKs do not.** There is no mK theme axis, which is why
-no per-theme mK floor can exist.
-
-### The strip, the pod, and MetaGrab Sets
-
-**Once stripped, a KK drops all descriptive metadata.** The stripped element
-stores in a **pod**. That pod sits alongside **KKr pods of metadata**. The
-pods together are **MetaGrab Sets**.
-
-This is the no-blending law made physical: audio in one pod, meaning in
-another, joined as a Set. Never fused into one record, always co-located.
-
-**BUGs remain free from such governance.**
-
-### The frontend / backend split — critical
-
-**sK and mK do NOT stay tied to SSOT on the frontend. Only on the backend.**
-
-> **ALL IIs retain backend legal, business and proprietary information and
-> data on the backend. ALWAYS.**
-
-On the frontend an sK or mK stands free of its SSOT tie. On the backend the
-lineage, rights, legal and business data are never absent. This is the same
-boundary the Permanent Laws draw from the other side: raw source paths and
-source WAV URLs must never be returned by a buyer-facing delivery function.
+Repair 3 must honour the story-construction contract already recorded above:
+locked identities and order, one billing event, `packageId:sendIndex`, and a
+retry that never rerandomizes, substitutes or advances a step.
 
 ## Terms still undefined here
 
 Named upstream or in conversation but not resolvable from the supplied files —
 not guessed at anywhere in this codebase:
 
-`FM` (appears as a family id, `FM-100391228`) · `TUGs` beyond the Tier-2
-meaning · the three unobserved 13HUGz container names · whether `13HUGz.com`
-is the storefront for that vocabulary · `ii_key` / what an II physically is
+the three unobserved 13HUGz container names · whether `13HUGz.com` is the
+storefront for that vocabulary · what an II physically *is*, as distinct from
+how it is keyed · `MIP 2s`, the supervisor surface on `gputnammusic.com` ·
+`LLBP` and `KUPID`
 
 Resolved since: **VOC** = Voice of Customer (the Listen rooms capture and save
 VOC decisions; a reported issue earns one free corrected element). **MGS** =
@@ -559,7 +581,12 @@ central source feeding every platform; **C-OP** is Central Operations (§9).
 **BIC** = Best-in-Class 6-Sigma with RACI. **GPEx** is the company-scale
 platform built around 4PE; GPEx and SSOT are the authority plane.
 
-**BUG's two types are resolved** (§10): BUG and Story BUG.
+**FM** enters as a structured song; KKs reflect sections of that arrangement
+(§10). **`ii_key`** is one part of the four-part placement key —
+`platform + ii_key + theme_id + sentiment_key` — which is what lets several
+sentiments live inside one Theme, and several Themes attach to one II, without
+collision. **TUG** delivers sK at $4.99, the `sBLK` line of the price lock
+(§11). **BUG's two types are resolved** (§11): BUG and Story BUG.
 
 `TEXT Loop Runs` are partially resolved: they are where sK candidates are
 found, and `sk_assets.text_loop_run_id` records which run surfaced each one.
