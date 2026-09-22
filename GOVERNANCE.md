@@ -410,15 +410,39 @@ in `lib/productOfferLaw.ts` and `app/checkout/route.ts`, which agree with it.
 defines `sBLK` as *one identified structural segment of a BLK, such as Verse
 1a, Verse 1b, Verse 2a, or Verse 2b.*
 
-### $2.98 — what it is made of, unresolved
+### $2.98 — settled
 
-`$2.98 = 199 + 99` exactly. Two readings survive and GD has not ruled:
+**Story BUG is three different, related BUGs sent in sequence.**
 
-- **BUG + story upgrade** — the handoff's reading: *"+$0.99 over the $1.99 base"*
-- **BUG + note add-on** — the lock's reading: `VOCAL_NOTE_OR_TYPED_MESSAGE_ADDON` is 99
+`$1.99 base + $0.99 Story upgrade = $2.98 total.`
 
-The distinction matters because one of them makes Story BUG a product and the
-other makes it a BUG with a message attached. **Not to be resolved without GD.**
+**The Story upgrade is not the vocal-note / typed-message add-on.** They are
+both 99 cents and they are different offerings. *Equal prices do not make two
+things the same thing* — the same law that keeps five vocabularies from
+blending keeps two identically priced items from collapsing into one.
+
+**Consequence for the price lock:** it carries a single 99-cent entry,
+`VOCAL_NOTE_OR_TYPED_MESSAGE_ADDON`. The Story upgrade is a **second, distinct**
+99-cent item that the lock does not carry. Adding it is an amendment, and that
+file's own rule applies — an explicit GD decision and a new numbered lock
+version. Not a silent edit.
+
+### The identified repair
+
+Issued by GD from the read-only inspection of `mmmm013/k-kut` at `d9af6da`.
+That repository is not writable from this session, so this records the work
+rather than performing it.
+
+| # | Repair |
+|---|---|
+| 1 | **Connect the numbered price lock to server-side offer validation**, so drift is caught. Today `kkr-canonical-pricing.ts` is imported by nothing and agrees with checkout only by coincidence of authorship. |
+| 2 | **Add purchase paths** for `PROMOTIONAL_HUG` $11.99, `STANDARD_HUG` $14.99, and the **separate** message add-on $0.99. All three are locked prices with no way to charge them. |
+| 3 | **Implement Story BUG's $2.98 checkout and three-part delivery.** Display copy alone is insufficient — $2.98 currently exists in one line of markup on the Comin' True page and nowhere else. |
+| 4 | **Preserve both element names and tier names.** Neither naming is the real one; they name the same priced thing from two sides. |
+
+Repair 3 must honour the story-construction contract already recorded above:
+locked identities and order, one billing event, `packageId:sendIndex`, and a
+retry that never rerandomizes, substitutes or advances a step.
 
 ### Eligible BUG classes
 
