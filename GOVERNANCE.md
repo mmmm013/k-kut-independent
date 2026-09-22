@@ -654,6 +654,91 @@ audit and materialize script names. The audit does not yet see them because
 those titles are not declared in the delivery registry or lyric authority.
 **Their data must declare its title before the law can reach them.**
 
+### OPERATIONS — all artist contact routes through GD
+
+**ALL contact with KLEIGH, Michael Clay and Clayton Michael Gunn runs through
+GD, in BOTH directions, routed to `KLEIGH@gputnammusic.com`.**
+
+They are one person in three identities. No platform, page, EPK, gallery or
+inquiry form may publish a direct address for any of them, and no reply path
+may bypass that routing. An inquiry about a painting, a booking or a licence
+reaches the artist only through GD.
+
+### TLC — The Love Charger
+
+**TLC = The Love Charger.** **TLA = The Love Arena**, the earlier project
+reference. Historical identifiers and work are preserved; the current
+presentation uses The Love Charger. **A name change does not create a second
+inventory.**
+
+**sKs may be seeded into both Themes and TLC — membership is not exclusive.**
+**mKs remain on request, never publicly seeded.** Themes and TLC both
+reference canonical inventory; neither creates replacement source recordings
+or duplicate KUT identities.
+
+#### The Love Arena generation run — recovered, and withdrawn
+
+The handoff records the four output manifests as 404 and their totals as
+unrecoverable. They are recoverable from git history, and what they show
+matters.
+
+| | |
+|---|---|
+| Commit | `0c71a78` "Generate Love Arena romance inventory manifests" |
+| Generated | 2026-09-08T14:43:54Z |
+| KK | **410** |
+| mK | **134** |
+| sK | **1,640** |
+| Reported | `delivery_integrity_status: PASS` |
+| Checksum | `253f57b7…` |
+| Branch | `copilot/generate-romance-kut-inventory` |
+
+**Eighteen minutes later, commit `78a354c` — "Replace Love Arena generation
+with authority-gated fail-closed flow" — deleted all four.**
+
+So the totals exist, and they are **not a catalogue**. They are the output of
+a run that was withdrawn the same hour for not being authority-gated. Anyone
+finding these numbers should read them as *what an ungated run produced*,
+never as approved inventory. The `PASS` in that summary is the run's own
+claim about delivery integrity, not an approval.
+
+#### The six promotional phrases are not in the code
+
+*Find YOUR Feelings · Who should know? · Old words; New ways · Say it like
+never before! · Make it personal · Follow-up Feelings*
+
+Searched across **all 131 branches**, by exact phrase: **none of the six
+appears anywhere.** The historical report that the engine and six promos were
+"validated and deployed to Preview" is not supported by anything in this
+repository. The phrases are preserved here because GD directed they be
+retained — but they must be treated as **copy to implement, not code to find**.
+
+### The free offer — three clocks that must never merge
+
+| Clock | Meaning |
+|---|---|
+| **Promotion window** | when an eligible user may obtain a free offering |
+| **Recipient access period** | how long a granted item stays available |
+| **BUG send schedule** | when each of the three package sends occurs |
+
+Merging them is the standing danger: **recipient access must not expire merely
+because the acquisition window closed**, and a pending BUG send due after the
+promotion ends is still owed. **Orders legitimately granted free remain free
+— never retroactively charged.**
+
+Do not combine August's Monday, September's Monday and "48 hours" into one
+invented campaign. Both historical Mondays are past, and no new activation
+date has been given.
+
+**Current state: no timer runs.** `K_KUT_FREE_PASS_START_DATE` is unset, which
+is the closed state.
+
+### The mental-health reference is 988
+
+Historical "985" text is an error. **988** is the intended U.S. reference.
+Verify the current official wording when implementing it. **GPM is not a
+clinical service and must never present itself as one.**
+
 ### VOC — the two layers
 
 GD's note to the system / 4PE:
