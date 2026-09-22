@@ -666,17 +666,27 @@ reaches the artist only through GD.
 
 ### TLC — The Love Charger
 
-**TLC = The Love Charger.** **TLA = The Love Arena**, the earlier project
-reference. Historical identifiers and work are preserved; the current
-presentation uses The Love Charger. **A name change does not create a second
-inventory.**
+**TLC = The Love Charger.** That is the name. The earlier title is gone and is
+not carried forward anywhere.
 
-**sKs may be seeded into both Themes and TLC — membership is not exclusive.**
-**mKs remain on request, never publicly seeded.** Themes and TLC both
-reference canonical inventory; neither creates replacement source recordings
-or duplicate KUT identities.
+**TLC is the ONE destination.** Themes are not a rival destination — they are
+how TLC is organised. There is one place governed inventory is presented, and
+Themes is the shape it takes inside it.
 
-#### The Love Arena generation run — recovered, and withdrawn
+| Element | In TLC |
+|---|---|
+| **KK** | seeded |
+| **sK** | seeded |
+| **mK** | **on request — reachable, never blanket-seeded** |
+
+`on_request` is a position, not an absence: the inventory exists and can be
+reached. mKs are never seeded because **mKs do not work with Themes**, and
+seeding them would assert a relationship that does not exist.
+
+**TLC references canonical inventory.** It never creates a replacement source
+recording and never mints a duplicate KUT identity.
+
+#### The earlier generation run — recovered, and withdrawn
 
 The handoff records the four output manifests as 404 and their totals as
 unrecoverable. They are recoverable from git history, and what they show
@@ -684,7 +694,7 @@ matters.
 
 | | |
 |---|---|
-| Commit | `0c71a78` "Generate Love Arena romance inventory manifests" |
+| Commit | `0c71a78` (romance inventory manifests) |
 | Generated | 2026-09-08T14:43:54Z |
 | KK | **410** |
 | mK | **134** |
@@ -693,8 +703,8 @@ matters.
 | Checksum | `253f57b7…` |
 | Branch | `copilot/generate-romance-kut-inventory` |
 
-**Eighteen minutes later, commit `78a354c` — "Replace Love Arena generation
-with authority-gated fail-closed flow" — deleted all four.**
+**Eighteen minutes later, commit `78a354c` replaced that generation with an
+authority-gated, fail-closed flow and deleted all four.**
 
 So the totals exist, and they are **not a catalogue**. They are the output of
 a run that was withdrawn the same hour for not being authority-gated. Anyone
