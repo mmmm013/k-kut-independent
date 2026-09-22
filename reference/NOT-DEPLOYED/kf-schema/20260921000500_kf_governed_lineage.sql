@@ -206,10 +206,16 @@ create trigger nkk_assets_within_parent
   for each row execute function public.kf_assert_within_parent_kk();
 
 -- ── Minimums as data, not as a constant ──────────────────────────────────────
--- The floor is 13 per theme per container "right off-the-bat", rising over
--- time toward hundreds. A hardcoded number would have to be redeployed to
--- change; a table does not. Holidays are excluded from the 13-floor and are
--- simply absent from this table until their own rule is set.
+-- A hardcoded number would have to be redeployed to change; a table does not.
+--
+-- The 13-per-theme floor was issued and then withdrawn by GD. Only KK carries
+-- a floor: 3 per theme, with typical yield 5-7 and any number of contiguous
+-- KKs permitted. sK's floor was withdrawn outright. mK can never carry a
+-- per-theme floor, because mKs do not work with Themes.
+--
+-- Holidays, Anniversary and Birthday are exempt from KUT minimums entirely.
+-- They are simply absent from this table, and a theme with no row reports as
+-- unmeasured -- never as satisfied.
 create table if not exists public.kf_theme_minimums (
   theme      public.kf_theme not null,
   unit_type  text not null check (unit_type in ('KUT', 'NKK', 'sK', 'mK', 'LLF', 'KUPID')),
@@ -222,9 +228,8 @@ comment on table public.kf_theme_minimums is
   'Required playable units per theme per container. Raise a row to raise the floor; no code change needed.';
 
 insert into public.kf_theme_minimums (theme, unit_type, minimum)
-select t.theme, u.unit_type, 13
+select t.theme, 'KUT', 3
 from unnest(enum_range(null::public.kf_theme)) as t(theme)
-cross join (values ('KUT'), ('sK'), ('mK')) as u(unit_type)
 on conflict (theme, unit_type) do nothing;
 
 -- ── Coverage, measured against the floor ─────────────────────────────────────

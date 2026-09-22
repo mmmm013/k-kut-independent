@@ -139,16 +139,18 @@ test('a theme is satisfied only when every container meets its floor', async () 
   assert.deepEqual(inventory.satisfied_themes, ['love']);
 });
 
-test('the floor comes from data, and one unit does not satisfy a floor of 13', async () => {
-  // The real requirement: 13 per theme per container. One playable unit in
-  // each container must NOT read as satisfied.
+test('only KK carries a floor, and one KK does not satisfy it', async () => {
+  // The 13-per-theme floor was issued and then withdrawn by GD. KK requires 3
+  // per theme; sK's floor was withdrawn outright and mK can never have one,
+  // because mKs do not work with Themes. One playable KK must NOT read as
+  // satisfied, and the two containers with no floor must not invent one.
   const strict = await buildKfInventory(fakeClient(['kf_theme_minimums']), 'p');
   const love = strict.coverage.find((row) => row.theme === 'love')!;
 
-  assert.deepEqual(love.required, { KUT: 13, sK: 13, mK: 13, KUPID: 0 });
-  assert.deepEqual(love.shortfall, { KUT: 12, sK: 12, mK: 12, KUPID: 0 });
+  assert.deepEqual(love.required, { KUT: 3, sK: 0, mK: 0, KUPID: 0 });
+  assert.deepEqual(love.shortfall, { KUT: 2, sK: 0, mK: 0, KUPID: 0 });
   assert.equal(love.satisfied, false);
-  assert.equal(love.still_needed, 'K-KUT needs 12, short-KUT needs 12, mini-KUT needs 12');
+  assert.equal(love.still_needed, 'K-KUT needs 2');
   assert.deepEqual(strict.satisfied_themes, []);
 });
 

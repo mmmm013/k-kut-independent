@@ -33,8 +33,15 @@ export const SK_SUBTYPES = [
 
 export type SkSubtype = (typeof SK_SUBTYPES)[number];
 
-/** Required playable units per theme per container, "right off-the-bat". */
-export const KF_DEFAULT_MINIMUM = 13;
+/**
+ * Required playable KKs per theme.
+ *
+ * The 13-per-theme floor was issued and then withdrawn by GD. Only the KK
+ * floor survives, at 3 per theme; typical yield is 5-7 and any number of
+ * contiguous KKs may exist. sK carries no floor. mK cannot carry a per-theme
+ * floor at all, because mKs do not work with Themes.
+ */
+export const KF_KK_MINIMUM = 3;
 
 export type KfUnitType = (typeof KF_UNIT_TYPES)[number];
 

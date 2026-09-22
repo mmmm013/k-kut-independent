@@ -14,7 +14,7 @@
  */
 
 import {
-  KF_DEFAULT_MINIMUM,
+  KF_KK_MINIMUM,
   KF_THEMES,
   KF_UNIT_TYPES,
   KfFamilyCount,
@@ -244,8 +244,8 @@ function themeCoverage(
  * needs no deploy.
  *
  * Deliberately per-theme rather than one global number: Holidays are excluded
- * from the 13-floor, so a theme with no row required nothing of it. Collapsing
- * to a single number would silently impose the 13-floor on them.
+ * from the floor, so a theme with no row requires nothing of it. Collapsing to
+ * a single number would silently impose one theme's floor on another's.
  *
  * Falls back to the documented default for every theme only when the table is
  * unreachable, so a missing table reports real shortfalls rather than pretending
@@ -262,11 +262,10 @@ async function readMinimums(supabase: QueryableClient): Promise<MinimumsByTheme>
   if (!available || rows.length === 0) {
     const fallback: MinimumsByTheme = {};
     for (const theme of KF_THEMES) {
-      fallback[theme] = {
-        KUT: KF_DEFAULT_MINIMUM,
-        sK: KF_DEFAULT_MINIMUM,
-        mK: KF_DEFAULT_MINIMUM,
-      };
+      // Only KK carries a floor. sK's was withdrawn and mK can never have one,
+      // so they are absent here and report as unmeasured rather than as short
+      // against a requirement that does not exist.
+      fallback[theme] = { KUT: KF_KK_MINIMUM };
     }
     return fallback;
   }
