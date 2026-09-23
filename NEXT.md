@@ -61,3 +61,20 @@ checks the mail every morning and only speaks up if something arrives.
 - 324 works have writers at 100% and unique valid ISRCs.
 - No cover claims publishing GPM doesn't own.
 - The Nelson chronology: 87 works, 2006–2025.
+
+---
+
+## Backlog
+
+**4PE Version 2** — nearly ready, owner-held. Users can act inside it.
+Revisit when the owner raises it; not before.
+
+**BLK3, Comin' True** — one section, two numbers, confirmable by ear:
+the vocal says ~67 and ~82; the locked map says 70.097 and 82.831.
+`Hopeful Ooh` sings before BLK3 starts, and BLK3 ends inside the line
+"And I won't waste time looking back". Owner's listen, not a computation.
+
+**Element capture grain** — 50 of 83 Elements carry whole-second bounds
+against a millisecond boundary truth. Whether the CC tool captured finer
+and the manifest rounded is unanswered; the BIC-level LLBP that would say
+is not in this repository.
