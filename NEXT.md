@@ -2,19 +2,24 @@
 
 ## Today
 
-**Read the letter to Heather. Send it when you're ready.**
+**Add three hosts to Network access in this environment's settings.**
 
-That's it. That's the whole list.
+    vwlzubxshjjonabpeagd.supabase.co
+    tlbqzzhhypixfbejoucr.supabase.co
+    www.k-kut.com
 
-It asks her for nothing and promises her nothing. If she reads it and does
-nothing, it still did its job. Today or next week are both fine.
+Cloud environment menu in the title bar, then Edit. That is the whole task.
 
-Everything about the memorial — the page, any revenue share, using Erik's
-name at all — waits behind her answer. That is the correct order, legally
-and otherwise.
+It unblocks the KF inventory. All 382 URLs currently read "inconclusive"
+because the probe was refused at the door, not because anything was learned
+about them. 362 of the 382 sit on the first host, whose ii-delivery bucket
+you already saw return NoSuchBucket in a browser. If that holds, they come
+back `absent`, and `absent` is the one verdict your rule allows stripping.
 
-*(The $4.99 Stripe check is still worth thirty seconds sometime. It is the
-only thing that could be quietly costing money. It is not today.)*
+Once it is on, I run the probe and the KF inventory question closes.
+
+*(The letter to Heather is ready whenever you are. The $4.99 Stripe check is
+still worth thirty seconds sometime. Neither is today.)*
 
 ---
 
