@@ -1,80 +1,99 @@
 # NEXT
 
-## Today
-
-**Add three hosts to Network access in this environment's settings.**
-
-    vwlzubxshjjonabpeagd.supabase.co
-    tlbqzzhhypixfbejoucr.supabase.co
-    www.k-kut.com
-
-Cloud environment menu in the title bar, then Edit. That is the whole task.
-
-It unblocks the KF inventory. All 382 URLs currently read "inconclusive"
-because the probe was refused at the door, not because anything was learned
-about them. 362 of the 382 sit on the first host, whose ii-delivery bucket
-you already saw return NoSuchBucket in a browser. If that holds, they come
-back `absent`, and `absent` is the one verdict your rule allows stripping.
-
-Once it is on, I run the probe and the KF inventory question closes.
-
-*(The letter to Heather is ready whenever you are. The $4.99 Stripe check is
-still worth thirty seconds sometime. Neither is today.)*
+*Managed. You do not have to hold any of this.*
 
 ---
 
-## Not today
+## Tonight
 
-You do not need to remember any of this. It is written down here so you
-don't have to carry it. Ask "what's next" and you get one thing.
+**Nothing.**
 
-**Waiting on a file — nothing to do until it arrives**
-- ASCAP works export (Excel + CWR)
-- DISCO export with a future expiry
-
-Both pipelines are built. They run the moment a file lands. A routine
-checks the mail every morning and only speaks up if something arrives.
-
-**Waiting on one decision, no rush**
-- Who is GPM's authorized representative? Three letters sit in Gmail
-  drafts, finished except that name. They cost nothing sitting there.
-
-**Worth doing sometime, not urgent**
-- Export the gputnammusic mail account — twenty years, one copy
-- ASCAP licence for the sites (applying is the protective act; it
-  backdates, so being late is not being exposed)
-
-**Parked — no action needed, already handled**
-- 36 Elements held on unevidenced boundaries · correctly held
-- 3 Story BUGs with no audio · correctly withheld
-- 13hugz.com held · correct, its storage is gone
-- 2gdp.com still riding this deployment · works fine, just untidy
-- 323 songs not through 4PE · waiting on the DISCO file
+The store works. 61 Elements are live and selling. Both repos are clean and
+pushed. Twelve guards pass and all of them now block a bad deploy. Nothing
+degrades overnight and nothing is waiting on you before morning.
 
 ---
 
-## Already done, stop thinking about it
+## Tomorrow, one thing
 
-- The build was silently failing every deploy. Fixed.
-- 15 sellable became 61. Live in production.
-- Three pages stopped telling buyers there was nothing to buy.
-- 324 works have writers at 100% and unique valid ISRCs.
-- No cover claims publishing GPM doesn't own.
-- The Nelson chronology: 87 works, 2006–2025.
+**Click one $4.99 button on the site. Confirm Stripe says $4.99.**
+
+Thirty seconds. It is the only thing live that could be quietly costing
+money, because that link was identified by age rather than by a price anyone
+could read.
+
+Everything else below is either running without you or waiting on somebody
+who is not you.
 
 ---
 
-## Backlog
+## Running without you
 
-**4PE Version 2** — nearly ready, owner-held. Users can act inside it.
-Revisit when the owner raises it; not before.
+**A daily check, 9am Central.** It reads the mail for DISCO, ASCAP, the MLC,
+HFA and Heather, and checks whether the corrected Twinkle has landed. It
+reports only when something actually changed. Silence means nothing needed
+you.
 
-**BLK3, Comin' True** — one section, two numbers, confirmable by ear:
-the vocal says ~67 and ~82; the locked map says 70.097 and 82.831.
-`Hopeful Ooh` sings before BLK3 starts, and BLK3 ends inside the line
-"And I won't waste time looking back". Owner's listen, not a computation.
+---
 
-**Element capture grain** — 50 of 83 Elements carry whole-second bounds
-against a millisecond boundary truth. Whether the CC tool captured finer
-and the manifest rounded is unanswered; the BIC-level LLBP that would say
-is not in this repository.
+## Waiting on someone else
+
+| | who |
+|---|---|
+| Corrected Twinkle — the signature folder is empty and ready | your other session |
+| Fresh original WAV URLs, or a bulk-download route | Katryn / DISCO |
+| ASCAP works export, Excel + CWR | ASCAP |
+| Vault inventory: which Track_IDs are verified present | your Mac |
+| Reply, whenever she is ready | Heather |
+
+When the vault list arrives, paste it here. Matching it against the 324-work
+register and saying which are ready for 4PE is a few minutes of work.
+
+---
+
+## Waiting on your ear or your word
+
+**BLK3, Comin' True.** The vocal says roughly 67 and 82; the locked map says
+70.097 and 82.831. `Hopeful Ooh` sings before BLK3 starts, and BLK3 ends
+inside the line "And I won't waste time looking back". Thirty seconds of
+listening settles it. Three attempts to compute it all failed the same way.
+
+**The 26 composed Elements.** Their text joins real words in an order the
+song never sang. Keep them composed, or re-derive to verbatim.
+
+**Three letters** to ASCAP, the MLC and HFA. One name and one email to fill
+in, then send from gputnammusic. They close the single-point-of-failure on
+your own catalogue.
+
+**The letter to Heather.** Ready whenever you are. It asks her for nothing.
+
+---
+
+## Parked, correctly, no action
+
+- 36 Elements held on boundaries with no acoustic evidence
+- 3 Story BUGs with no rendered audio
+- 13hugz.com held — its storage is gone, not its permission
+- 104 seed previews held — 104 of 104 fail their catalogue hash
+- grief_remembrance held on judgement, not on stock
+- 4PE Version 2 — yours, until you raise it
+- Capture grain, 50 of 83 whole-second — needs a BIC-level LLBP that names
+  capture resolution, and that document is not in this repository
+
+---
+
+## Settled today, stop thinking about it
+
+- Every deploy was failing silently. Fixed, and the gauntlet now blocks.
+- 15 sellable became 61, live.
+- k-kut.com reaches its own store. It could not before today.
+- The governed menu: 5 solo passages, then 10 contiguous KOMBOs, in song order.
+- Buyer text comes from the song's own words. The MGS is the catalogue's tags,
+  not a paraphrase of them. `fate` no longer sells as `faith`.
+- One signature, not six. The corrupt one is killed rather than parked.
+- Sympathy is silent, like wedding.
+- BIC Rule 5 was broken in production — audio paused but never reset. Fixed,
+  and now checked every build.
+- 324 works: writers at 100%, unique valid ISRCs, no cover claiming GPM
+  publishing. Lloyd G Miller spelled as you ruled.
+- The Nelson chronology: 87 works, 2006–2025, 29 singers.
