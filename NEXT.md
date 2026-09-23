@@ -73,8 +73,9 @@ your own catalogue.
 
 - 36 Elements held on boundaries with no acoustic evidence
 - 3 Story BUGs with no rendered audio
-- 13hugz.com held — its storage is gone, not its permission
-- 104 seed previews held — 104 of 104 fail their catalogue hash
+- 104 seed previews held — 104 of 104 fail their catalogue hash, and their
+  bucket is gone. The 13 cards now offer the 15 finished HUGs instead, so the
+  seeds stay held without the cards staying empty.
 - grief_remembrance held on judgement, not on stock
 - 4PE Version 2 — yours, until you raise it
 - Capture grain, 50 of 83 whole-second — needs a BIC-level LLBP that names
@@ -97,3 +98,6 @@ your own catalogue.
 - 324 works: writers at 100%, unique valid ISRCs, no cover claiming GPM
   publishing. Lloyd G Miller spelled as you ruled.
 - The Nelson chronology: 87 works, 2006–2025, 29 singers.
+- 13hugz.com sells again. All 13 cards offer the 15 finished HUGs. The guards
+  now count stock instead of banning the word "audio", so a page reopens and
+  closes by itself.
