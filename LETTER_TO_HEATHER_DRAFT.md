@@ -40,8 +40,9 @@ needs directly to them.
 There's one more thing. I might hold the largest collection anywhere of the
 original recordings Erik and I made together — around a hundred. All of
 them are titled and registered with ASCAP, under the one-stop agreement
-Erik and I had, which still stands. They're his and mine. Right now they
-earn nothing, because nobody knows they exist.
+Erik and I had, which still stands. They're his and mine. Few people know
+they exist, so they earn far less than they should — but they do earn.
+ASCAP royalties on them have been paid to both our sides.
 
 I'm changing that. I've invented something I call KUTs, built from the
 songs Erik and I wrote together. I make no claim on any song I'm not on the
