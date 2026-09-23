@@ -37,12 +37,24 @@ ASCAP will probably contact you to confirm you're his successor. That's
 routine. If it's easier, I can send whatever documentation your attorney
 needs directly to them.
 
-There's one more thing. I believe I hold the largest collection of Erik's
-own original recordings anywhere — well over a hundred. Most were never
-titled or registered. They're his, and right now they earn nothing because
-nobody knows they exist. I'd like to identify and register them properly so
-they can pay your family. That's work, not money, and I'm glad to do it.
-Only if you want it done.
+There's one more thing. I might hold the largest collection anywhere of the
+original recordings Erik and I made together — around a hundred. All of
+them are titled and registered with ASCAP, under the one-stop agreement
+Erik and I had, which still stands. They're his and mine. Right now they
+earn nothing, because nobody knows they exist.
+
+I'm changing that. I've invented something I call KUTs, built from the
+songs Erik and I wrote together. I make no claim on any song I'm not on the
+copyright of. I own the KUTs themselves, and I'm hoping they accelerate
+what these songs earn — for his side as much as mine.
+
+And with your permission, I'd like to build an Erik W. Nelson memorial page
+for my company, which remains so beholden to this amazing man. I'd work
+with your attorney to find the smartest way to funnel as much of that
+page's revenue as possible to you or to Erik's estate — whatever you want,
+however your attorney thinks it should be structured.
+
+That's work, not money, and I'm glad to do it. Only if you want it done.
 
 Whenever you're ready — and only then — tell me what would actually help.
 If it's none of this, that's a complete answer.
@@ -68,10 +80,17 @@ gputnam@gputnammusic.com
 
 - No dollar figure. I don't have income yet and a number she remembers is
   a promise I might not keep.
-- No mention of a memorial page. That's hers to approve or refuse, and
-  raising it in the same breath as money makes the money feel conditional.
-- No request. Not one. If she reads it and does nothing, it still did its
-  job.
+- No request she has to act on. The memorial page is raised as a question
+  for whenever she wants to answer it, not as something waiting on her.
+  If she reads the letter and does nothing, it still did its job.
+
+**The memorial page is in the letter, by GD's decision**
+
+His wording does the work my caution was for: "with your permission",
+"whatever you want", "only if you want it done". It asks rather than
+announces, and it routes the structure through her attorney instead of
+proposing terms. Her consent still has to be in writing before any page
+using Erik's name, likeness or story exists.
 
 **What I can safely commit to once she answers**
 
