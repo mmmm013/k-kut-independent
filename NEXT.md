@@ -2,12 +2,19 @@
 
 ## Today
 
-**Click one $4.99 button on the site. Check Stripe says $4.99.**
+**Read the letter to Heather. Send it when you're ready.**
 
 That's it. That's the whole list.
 
-It takes thirty seconds and it's the only thing that could be quietly
-costing money. Everything else can wait, and waiting costs nothing.
+It asks her for nothing and promises her nothing. If she reads it and does
+nothing, it still did its job. Today or next week are both fine.
+
+Everything about the memorial — the page, any revenue share, using Erik's
+name at all — waits behind her answer. That is the correct order, legally
+and otherwise.
+
+*(The $4.99 Stripe check is still worth thirty seconds sometime. It is the
+only thing that could be quietly costing money. It is not today.)*
 
 ---
 
