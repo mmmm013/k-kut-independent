@@ -8,7 +8,10 @@
 
 **Nothing.**
 
-Deployed. 74 Elements selling, up from 15 when this started. Both repos clean
+Deployed. 74 Elements are listed and purchasable, up from 15 when this started.
+No purchase has been observed: a green deploy and passing guards show the store
+is reachable, not that anyone has bought, been delivered, or heard the right
+audio. First real sale is the proof. Both repos clean
 and pushed. Fourteen guards pass and every one of them blocks a bad deploy.
 Nothing degrades overnight.
 
@@ -24,7 +27,7 @@ npm run stage:verify
 ```
 
 It has never been in version control. It is the only thing standing between
-you and: 81 corrections that fix the endings on 59 selling Elements, the 4
+you and: 81 corrections that fix the endings on 59 listed Elements, the 4
 defects you reported yourself, the 3 Story BUGs that block Drink OR Kiss!, and
 BLK3's boundaries. One file closes all four.
 
@@ -67,7 +70,7 @@ register and saying which are ready for 4PE is a few minutes of work.
 inside the line "And I won't waste time looking back". Thirty seconds of
 listening settles it. Three attempts to compute it all failed the same way.
 
-**The 59 endings.** Every selling Element ships with a constant widening the
+**The 59 endings.** Every listed Element ships with a constant widening the
 finishing profile says should be 0 for cc_governed. Re-render once the master
 lands, or rule the widening acceptable.
 
@@ -105,7 +108,7 @@ your own catalogue.
 ## Settled today, stop thinking about it
 
 - Every deploy was failing silently. Fixed, and the gauntlet now blocks.
-- 15 sellable became 61, live.
+- 15 listed became 61, live.
 - k-kut.com reaches its own store. It could not before today.
 - The governed menu: 5 solo passages, then 10 contiguous KOMBOs, in song order.
 - Buyer text comes from the song's own words. The MGS is the catalogue's tags,
@@ -117,7 +120,7 @@ your own catalogue.
 - 324 works: writers at 100%, unique valid ISRCs, no cover claiming GPM
   publishing. Lloyd G Miller spelled as you ruled.
 - The Nelson chronology: 87 works, 2006–2025, 29 singers.
-- 15 sellable became 74. The last 12 were held by a confidence score, not by
+- 15 listed became 74. The last 12 were held by a confidence score, not by
   the rule; their real scores are recorded unchanged rather than raised.
 - The 4 defects you reported carry versioned trim requests and stay live, per
   the correction queue's own policy. The show goes on.
