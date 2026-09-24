@@ -16,11 +16,15 @@ degrades overnight and nothing is waiting on you before morning.
 
 ## Tomorrow, one thing
 
-**Click one $4.99 button on the site. Confirm Stripe says $4.99.**
+**Open the three payment links. Confirm each says what it should.**
 
-Thirty seconds. It is the only thing live that could be quietly costing
-money, because that link was identified by age rather than by a price anyone
-could read.
+  $7.99 HUG · $4.99 TUG · $1.99 BUG
+
+A minute. The build now prints all three as UNCONFIRMED AT STRIPE on every
+run and will keep printing it until you say otherwise, because the amount a
+link charges lives at Stripe and nothing here can read it. A guard now stops
+any two tiers sharing a link, so the one-keystroke mistake that sells a word
+at $7.99 can no longer ship. What it cannot do is read the amount for you.
 
 Everything else below is either running without you or waiting on somebody
 who is not you.
@@ -61,6 +65,11 @@ listening settles it. Three attempts to compute it all failed the same way.
 **The 26 composed Elements.** Their text joins real words in an order the
 song never sang. Keep them composed, or re-derive to verbatim.
 
+**The Wedding Track Pack link.** A twelfth payment link was sitting in
+`lib/personalSeeds.ts` with no price named anywhere. It reaches no page, so
+nobody can buy it, and it is now registered rather than hidden. Name its
+price or retire the link.
+
 **Three letters** to ASCAP, the MLC and HFA. One name and one email to fill
 in, then send from gputnammusic. They close the single-point-of-failure on
 your own catalogue.
@@ -98,6 +107,12 @@ your own catalogue.
 - 324 works: writers at 100%, unique valid ISRCs, no cover claiming GPM
   publishing. Lloyd G Miller spelled as you ruled.
 - The Nelson chronology: 87 works, 2006–2025, 29 singers.
+- Nine pages were dead ends — personal, holiday, kupid, wedding, som, supe,
+  romance, d, demo. The site header had eight links and not one reached a
+  player. It carries the store now, so every page is one click from all 61.
+- The prebuild chain stopped halfway on any machine without a .env.local, so
+  nine guards never ran locally and a real failure looked like a clean build.
+  That is how a guard comes to fail only on Vercel. The env check runs last now.
 - 13hugz.com sells again. All 13 cards offer the 15 finished HUGs. The guards
   now count stock instead of banning the word "audio", so a page reopens and
   closes by itself.
