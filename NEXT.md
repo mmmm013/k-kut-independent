@@ -8,26 +8,31 @@
 
 **Nothing.**
 
-The store works. 61 Elements are live and selling. Both repos are clean and
-pushed. Twelve guards pass and all of them now block a bad deploy. Nothing
-degrades overnight and nothing is waiting on you before morning.
+Deployed. 74 Elements selling, up from 15 when this started. Both repos clean
+and pushed. Fourteen guards pass and every one of them blocks a bad deploy.
+Nothing degrades overnight.
 
 ---
 
 ## Tomorrow, one thing
 
-**Open the three payment links. Confirm each says what it should.**
+**Drop the master into staging.**
 
-  $7.99 HUG · $4.99 TUG · $1.99 BUG
+```
+incoming/comin-true/COMIN_TRUE_FULL_LT_PIX_SSOT.mp3
+npm run stage:verify
+```
 
-A minute. The build now prints all three as UNCONFIRMED AT STRIPE on every
-run and will keep printing it until you say otherwise, because the amount a
-link charges lives at Stripe and nothing here can read it. A guard now stops
-any two tiers sharing a link, so the one-keystroke mistake that sells a word
-at $7.99 can no longer ship. What it cannot do is read the amount for you.
+It has never been in version control. It is the only thing standing between
+you and: 81 corrections that fix the endings on 59 selling Elements, the 4
+defects you reported yourself, the 3 Story BUGs that block Drink OR Kiss!, and
+BLK3's boundaries. One file closes all four.
 
-Everything else below is either running without you or waiting on somebody
-who is not you.
+Not `public/` — that is the whole song served to anyone with the URL, beside
+the $7.99 passage cut out of it. The slot is server-side and has a README.
+
+Then, a minute: open the three payment links and confirm $7.99 / $4.99 / $1.99.
+The build prints them as UNCONFIRMED on every run until you do.
 
 ---
 
@@ -62,6 +67,10 @@ register and saying which are ready for 4PE is a few minutes of work.
 inside the line "And I won't waste time looking back". Thirty seconds of
 listening settles it. Three attempts to compute it all failed the same way.
 
+**The 59 endings.** Every selling Element ships with a constant widening the
+finishing profile says should be 0 for cc_governed. Re-render once the master
+lands, or rule the widening acceptable.
+
 **The 26 composed Elements.** Their text joins real words in an order the
 song never sang. Keep them composed, or re-derive to verbatim.
 
@@ -80,7 +89,8 @@ your own catalogue.
 
 ## Parked, correctly, no action
 
-- 36 Elements held on boundaries with no acoustic evidence
+- 24 Elements tagged UNPROVED_RESIDUAL_DROP — measured gap of 0.000s, so the
+  drop the rule requires was never proved. Evidence, not a score.
 - 3 Story BUGs with no rendered audio
 - 104 seed previews held — 104 of 104 fail their catalogue hash, and their
   bucket is gone. The 13 cards now offer the 15 finished HUGs instead, so the
@@ -107,6 +117,12 @@ your own catalogue.
 - 324 works: writers at 100%, unique valid ISRCs, no cover claiming GPM
   publishing. Lloyd G Miller spelled as you ruled.
 - The Nelson chronology: 87 works, 2006–2025, 29 singers.
+- 15 sellable became 74. The last 12 were held by a confidence score, not by
+  the rule; their real scores are recorded unchanged rather than raised.
+- The 4 defects you reported carry versioned trim requests and stay live, per
+  the correction queue's own policy. The show goes on.
+- Games is in the repo at last, with one concept marked yours and six marked
+  unapproved proposals.
 - Nine pages were dead ends — personal, holiday, kupid, wedding, som, supe,
   romance, d, demo. The site header had eight links and not one reached a
   player. It carries the store now, so every page is one click from all 61.
