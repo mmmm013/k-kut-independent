@@ -1,0 +1,108 @@
+{
+  "celebration_type": "Anniversary",
+  "priority": 2,
+  "canonical_title": "Awesome Anniversary",
+  "source_asset": "staging/individual-celebrations/anniversary/source/Awesome Anniversary.mp3",
+  "status": {
+    "source_asset": "PROVEN",
+    "cc_model": "DRAFT",
+    "kk_sections": "NOT_PROVEN",
+    "mk_candidates": "NOT_PROVEN",
+    "public_ready": "NO",
+    "twinkle": "NOT_PROVEN"
+  },
+  "cards": [
+    {
+      "name": "Happy Anniversary",
+      "intent": "direct anniversary greeting",
+      "feeling": [
+        "love",
+        "celebration",
+        "gratitude"
+      ],
+      "message": "Happy Anniversary. Here is a real musical moment for the story you share.",
+      "twinkle_role": "required audible HUG accent",
+      "twinkle_status": "NOT_PROVEN"
+    },
+    {
+      "name": "Still Us",
+      "intent": "relationship affirmation",
+      "feeling": [
+        "loyalty",
+        "intimacy",
+        "continuity"
+      ],
+      "message": "After everything, it is still us. That is worth a sound of its own.",
+      "twinkle_role": "required audible HUG accent",
+      "twinkle_status": "NOT_PROVEN"
+    },
+    {
+      "name": "I’d Choose You Again",
+      "intent": "romantic recommitment",
+      "feeling": [
+        "devotion",
+        "certainty",
+        "love"
+      ],
+      "message": "I would choose you again. Today, tomorrow, and through every year we get.",
+      "twinkle_role": "required audible HUG accent",
+      "twinkle_status": "NOT_PROVEN"
+    },
+    {
+      "name": "Every Year With You",
+      "intent": "gratitude for shared time",
+      "feeling": [
+        "appreciation",
+        "tenderness",
+        "reflection"
+      ],
+      "message": "Every year with you means more than words can hold.",
+      "twinkle_role": "required audible HUG accent",
+      "twinkle_status": "NOT_PROVEN"
+    },
+    {
+      "name": "Our Story",
+      "intent": "shared-history celebration",
+      "feeling": [
+        "memory",
+        "depth",
+        "belonging"
+      ],
+      "message": "Our story keeps becoming something only we could have lived.",
+      "twinkle_role": "required audible HUG accent",
+      "twinkle_status": "NOT_PROVEN"
+    },
+    {
+      "name": "Thank You for the Years",
+      "intent": "gratitude-focused anniversary note",
+      "feeling": [
+        "thankfulness",
+        "humility",
+        "love"
+      ],
+      "message": "Thank you for the years, the moments, and the life we keep building.",
+      "twinkle_role": "required audible HUG accent",
+      "twinkle_status": "NOT_PROVEN"
+    },
+    {
+      "name": "Forever Isn’t Long Enough",
+      "intent": "deep romantic expression",
+      "feeling": [
+        "devotion",
+        "longing",
+        "permanence"
+      ],
+      "message": "Forever still would not feel long enough with you.",
+      "twinkle_role": "required audible HUG accent",
+      "twinkle_status": "NOT_PROVEN"
+    }
+  ],
+  "required_audio_layers": [
+    "CC text meaning",
+    "KK song-section audio",
+    "Twinkle audible emotional marker"
+  ],
+  "optional_audio_layers": [
+    "mK / mini-KUT candidates"
+  ]
+}

@@ -1,0 +1,96 @@
+{
+  "celebration_type": "Birthday",
+  "priority": 1,
+  "canonical_title": "Best Birthday",
+  "source_asset": "staging/individual-celebrations/birthday/source/Best Birthday.wav",
+  "status": {
+    "source_asset": "PROVEN",
+    "cc_model": "DRAFT",
+    "kk_sections": "NOT_PROVEN",
+    "mk_candidates": "NOT_PROVEN",
+    "public_ready": "NO",
+    "twinkle": "NOT_PROVEN"
+  },
+  "cards": [
+    {
+      "name": "Happy Birthday",
+      "intent": "direct birthday greeting",
+      "feeling": [
+        "joy",
+        "warmth",
+        "celebration"
+      ],
+      "message": "Happy Birthday. Here is a real musical moment made to celebrate you.",
+      "twinkle_role": "required audible HUG accent",
+      "twinkle_status": "NOT_PROVEN"
+    },
+    {
+      "name": "Birthday Love",
+      "intent": "affectionate birthday message",
+      "feeling": [
+        "love",
+        "closeness",
+        "gratitude"
+      ],
+      "message": "Today is yours. I wanted you to have a song-section moment that feels personal, warm, and real.",
+      "twinkle_role": "required audible HUG accent",
+      "twinkle_status": "NOT_PROVEN"
+    },
+    {
+      "name": "Proud of You",
+      "intent": "birthday encouragement",
+      "feeling": [
+        "pride",
+        "support",
+        "admiration"
+      ],
+      "message": "Another year, another reason to say I am proud of you.",
+      "twinkle_role": "required audible HUG accent",
+      "twinkle_status": "NOT_PROVEN"
+    },
+    {
+      "name": "Another Year, Still You",
+      "intent": "personal recognition",
+      "feeling": [
+        "identity",
+        "memory",
+        "affection"
+      ],
+      "message": "Another year, still you. Still worth celebrating in a way that feels real.",
+      "twinkle_role": "required audible HUG accent",
+      "twinkle_status": "NOT_PROVEN"
+    },
+    {
+      "name": "Birthday Memory",
+      "intent": "memory-based birthday note",
+      "feeling": [
+        "nostalgia",
+        "tenderness",
+        "connection"
+      ],
+      "message": "Some birthdays become memories. This one deserves a sound of its own.",
+      "twinkle_role": "required audible HUG accent",
+      "twinkle_status": "NOT_PROVEN"
+    },
+    {
+      "name": "Birthday Smile",
+      "intent": "light playful birthday note",
+      "feeling": [
+        "fun",
+        "warmth",
+        "ease"
+      ],
+      "message": "A little birthday sound for a smile that deserves more than a plain message.",
+      "twinkle_role": "required audible HUG accent",
+      "twinkle_status": "NOT_PROVEN"
+    }
+  ],
+  "required_audio_layers": [
+    "CC text meaning",
+    "KK song-section audio",
+    "Twinkle audible emotional marker"
+  ],
+  "optional_audio_layers": [
+    "mK / mini-KUT candidates"
+  ]
+}
