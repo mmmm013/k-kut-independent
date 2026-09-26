@@ -28,3 +28,9 @@ LINE-RUNS-ANALYSIS.svg
 # Delivered to him directly; the audio never belongs in a source repo.
 IRREPLACEABLE/
 IRREPLACEABLE-PARTS/
+
+# Marking pages for the staged works — a whole song embedded in each so he can
+# set boundaries by ear. Delivered to him directly. Rebuilt from the KFI whenever
+# it is wanted, so nothing is lost by keeping 392 MB of his own audio out of a
+# source repo.
+MARK/
