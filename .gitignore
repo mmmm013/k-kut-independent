@@ -24,3 +24,7 @@ BLK-TEST-CLIPS/
 BLK-TEST-ZIPS/
 LISTEN/
 LINE-RUNS-ANALYSIS.svg
+
+# Delivered to him directly; the audio never belongs in a source repo.
+IRREPLACEABLE/
+IRREPLACEABLE-PARTS/
