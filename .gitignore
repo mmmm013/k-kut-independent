@@ -34,3 +34,8 @@ IRREPLACEABLE-PARTS/
 # it is wanted, so nothing is lost by keeping 392 MB of his own audio out of a
 # source repo.
 MARK/
+
+# VTP clicker pages — a whole song embedded in each so he can click the frame
+# his voice arrives rather than type a time. Delivered to him directly and
+# rebuilt from the KFI on demand.
+VTP/
