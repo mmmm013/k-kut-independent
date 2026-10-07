@@ -35,7 +35,12 @@ IRREPLACEABLE-PARTS/
 # source repo.
 MARK/
 
-# VTP clicker pages — a whole song embedded in each so he can click the frame
-# his voice arrives rather than type a time. Delivered to him directly and
-# rebuilt from the KFI on demand.
+# VTPP — the one listening tool, a whole song embedded per work so he taps the
+# frame his voice arrives and leaves rather than types a time. Delivered to him
+# directly and rebuilt from the KFI on demand by scripts/kkr/build-vtpp-v1.mjs.
 VTP/
+
+# A/B renders cut so his ear can settle a question arithmetic cannot — which of
+# two endings is the ending. Same class as the rest here: evidence he discards
+# once he has ruled, reproducible from the master, and never a KUT.
+TRIAGE/
