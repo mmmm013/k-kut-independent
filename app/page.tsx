@@ -330,6 +330,8 @@ export default function KKutPage() {
   const [firstFreeMode, setFirstFreeMode] = useState(false);
   const [promiseChecked, setPromiseChecked] = useState(false);
   const [userEmail, setUserEmail] = useState("");
+  const [firstFreeSaving, setFirstFreeSaving] = useState(false);
+  const [firstFreeError, setFirstFreeError] = useState<string | null>(null);
   const [audioNow, setAudioNow] = useState<string | null>(null);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -477,6 +479,7 @@ export default function KKutPage() {
 
   function useFirstFree() {
     setFirstFreeMode(true);
+    setFirstFreeError(null);
   }
 
   function startCheckout() {
@@ -491,11 +494,34 @@ export default function KKutPage() {
     }
   }
 
-  function submitFirstFree() {
-    if (!selectedItem || !promiseChecked || !userEmail.trim()) return;
-    alert(
-      `First one free recorded for ${selectedItem.title}. Follow up cadence: 3 touches in 3 weeks to ${userEmail}.`
-    );
+  async function submitFirstFree() {
+    if (!selectedItem || !promiseChecked || !userEmail.trim() || firstFreeSaving) return;
+    setFirstFreeSaving(true);
+    setFirstFreeError(null);
+
+    // Save the promise before handing over the free item: without the email
+    // there is nobody to follow up with.
+    const res = await fetch("/api/first-free", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email: userEmail,
+        itemId: selectedItem.id,
+        promisedReturn: true,
+      }),
+    }).catch(() => null);
+    const body = await res?.json().catch(() => null);
+
+    if (!res?.ok || !body?.ok) {
+      setFirstFreeSaving(false);
+      setFirstFreeError(
+        body?.code === "BAD_EMAIL"
+          ? "That email doesn’t look right. Check it and try again."
+          : "BB couldn’t save that just now. Please try again in a moment."
+      );
+      return;
+    }
+
     if (selectedItem.format === "kkut") {
       window.location.href = `/k/${selectedItem.id}`;
     } else {
@@ -892,7 +918,10 @@ export default function KKutPage() {
                         </label>
                         <input
                           value={userEmail}
-                          onChange={(e) => setUserEmail(e.target.value)}
+                          onChange={(e) => {
+                            setUserEmail(e.target.value);
+                            setFirstFreeError(null);
+                          }}
                           type="email"
                           placeholder="user@email.com"
                           className="mt-2 w-full rounded-xl border border-[#6c4625] bg-[#120d08] px-4 py-3 text-[#fff2de] outline-none"
@@ -911,11 +940,17 @@ export default function KKutPage() {
 
                       <button
                         onClick={submitFirstFree}
-                        disabled={!promiseChecked || !userEmail.trim()}
+                        disabled={!promiseChecked || !userEmail.trim() || firstFreeSaving}
                         className="mt-5 rounded-full bg-[#f0b16a] px-5 py-3 font-bold text-[#2d1809] disabled:cursor-not-allowed disabled:opacity-40"
                       >
-                        Confirm First-Free Path
+                        {firstFreeSaving ? "Saving…" : "Confirm First-Free Path"}
                       </button>
+
+                      {firstFreeError && (
+                        <p role="alert" className="mt-3 text-sm font-semibold text-[#ff9b8f]">
+                          {firstFreeError}
+                        </p>
+                      )}
                     </div>
                   )}
                 </div>
