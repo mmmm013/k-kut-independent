@@ -318,6 +318,8 @@ const purposeMeta: Record<
   },
 };
 
+const MESSENGERS = ["text", "DM", "email", "private link", "story", "gift", "self-use"];
+
 export default function KKutPage() {
   const [sentiment, setSentiment] = useState<SentimentKey | null>(null);
   const [purpose, setPurpose] = useState<Purpose>("");
@@ -374,6 +376,30 @@ export default function KKutPage() {
 
     return sorted;
   }, [sentiment, purpose, selectedFormat, selectedMessenger]);
+
+  // Formats and messengers that still have at least one match, so BB never
+  // offers a choice that leads to an empty list.
+  const purposePool = useMemo(() => {
+    if (!sentiment || !purpose) return [];
+    return previewCatalog.filter(
+      (item) => item.sentiment === sentiment && item.purposeTags.includes(purpose)
+    );
+  }, [sentiment, purpose]);
+
+  const availableFormats = useMemo(
+    () => new Set(purposePool.map((item) => item.format)),
+    [purposePool]
+  );
+
+  const availableMessengers = useMemo(() => {
+    if (!selectedFormat) return [];
+    const fits = new Set(
+      purposePool
+        .filter((item) => item.format === selectedFormat)
+        .flatMap((item) => item.messengerFit)
+    );
+    return MESSENGERS.filter((m) => fits.has(m));
+  }, [purposePool, selectedFormat]);
 
   const groupedFive = useMemo(() => {
     const start = pageIndex * 5;
@@ -587,6 +613,13 @@ export default function KKutPage() {
                     {sentimentMeta[sentiment].blurb}
                   </p>
 
+                  {mkPromos.length === 0 && (
+                    <p className="mt-5 text-sm leading-7 text-[#d7c2ab]">
+                      No mini-KUT tastes for this feeling yet. Choose a purpose below
+                      and BB will show the K-KUT options.
+                    </p>
+                  )}
+
                   <div className="mt-5 grid gap-4 md:grid-cols-2">
                     {mkPromos.map((item) => (
                       <PreviewCard
@@ -646,7 +679,8 @@ export default function KKutPage() {
                 <div className="mt-4 grid gap-3 md:grid-cols-2">
                   <button
                     onClick={() => chooseFormat("kkut")}
-                    className={`rounded-2xl border p-5 text-left transition ${
+                    disabled={!availableFormats.has("kkut")}
+                    className={`rounded-2xl border p-5 text-left transition disabled:cursor-not-allowed disabled:opacity-40 ${
                       selectedFormat === "kkut"
                         ? "border-[#dfaa73] bg-[#352215]"
                         : "border-[#4e3420] bg-[#120d08] hover:border-[#7b542f]"
@@ -661,7 +695,8 @@ export default function KKutPage() {
 
                   <button
                     onClick={() => chooseFormat("mk")}
-                    className={`rounded-2xl border p-5 text-left transition ${
+                    disabled={!availableFormats.has("mk")}
+                    className={`rounded-2xl border p-5 text-left transition disabled:cursor-not-allowed disabled:opacity-40 ${
                       selectedFormat === "mk"
                         ? "border-[#dfaa73] bg-[#352215]"
                         : "border-[#4e3420] bg-[#120d08] hover:border-[#7b542f]"
@@ -682,7 +717,7 @@ export default function KKutPage() {
                     Messenger fit
                   </div>
                   <div className="mt-4 flex flex-wrap gap-3">
-                    {["text", "DM", "email", "private link", "story", "gift", "self-use"].map(
+                    {availableMessengers.map(
                       (messenger) => (
                         <button
                           key={messenger}
@@ -818,12 +853,14 @@ export default function KKutPage() {
                       >
                         Hear It Again
                       </button>
-                      <button
-                        onClick={() => setPageIndex((p) => p + 1)}
-                        className="rounded-full border border-[#c88f59] px-5 py-3 font-bold text-[#fff2de]"
-                      >
-                        Show 5 More
-                      </button>
+                      {hasMore && (
+                        <button
+                          onClick={nextFive}
+                          className="rounded-full border border-[#c88f59] px-5 py-3 font-bold text-[#fff2de]"
+                        >
+                          Show 5 More
+                        </button>
+                      )}
                       <button
                         onClick={useFirstFree}
                         className="rounded-full border border-[#c88f59] px-5 py-3 font-bold text-[#fff2de]"
