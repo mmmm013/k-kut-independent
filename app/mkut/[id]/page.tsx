@@ -16,11 +16,29 @@
  *      must be set in Vercel env vars.
  *
  * Request body sent to play-m-kut: { mk_id: <m_kut_asset_id> }
+ *
+ * CATALOG DIRECT-PLAY: the home page funnel links here with catalog slugs
+ * (e.g. "mk-love-renews-01"), which are not m_kut_asset IDs. Those play
+ * directly from the public "tracks" bucket, mirroring /k/[id].
  */
 
 import { use, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { createClient } from '../../../lib/supabase/browser';
+
+// ── Catalog: home-page mini-KUT slugs → Storage filename + display metadata ──
+// Keep in sync with the mK entries in app/page.tsx previewCatalog.
+const BASE_TRACKS = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/tracks`;
+
+const CATALOG_AUDIO: Record<string, { filename: string; title: string; artist: string }> = {
+  'mk-love-renews-01': { filename: 'kleigh--solace.mp3',    title: 'Love Renews',       artist: 'KLEIGH' },
+  'mk-heart-tap-01':   { filename: 'perfect-day.mp3',       title: 'Heart Tap',         artist: 'KLEIGH' },
+  'mk-thank-you-01':   { filename: 'wanna-know-you.mp3',    title: 'Steady Thanks',     artist: 'G Putnam Music' },
+  'mk-apology-01':     { filename: 'jump.mp3',              title: 'Open Hands',        artist: 'G Putnam Music' },
+  'mk-energy-01':      { filename: 'kleigh--waterfall.mp3', title: 'High Energy',       artist: 'G Putnam Music' },
+  'mk-hurt-01':        { filename: 'kleigh--nightfall.mp3', title: 'Wounded & Willing', artist: 'G Putnam Music' },
+  'mk-peace-01':       { filename: 'kleigh--solace.mp3',    title: 'Melancholy Blues',  artist: 'G Putnam Music' },
+};
 
 interface MKutResponse {
   signed_url: string;
@@ -51,6 +69,33 @@ export default function MiniKutPage({ params }: { params: Promise<{ id: string }
 
   useEffect(() => {
     async function fetchSignedUrl() {
+      // ── Catalog direct-play (no edge function required) ──────────────────────
+      const catalog = CATALOG_AUDIO[id];
+      if (catalog) {
+        setData({
+          signed_url: `${BASE_TRACKS}/${catalog.filename}`,
+          expires_in: 0,
+          structure_tag: catalog.title,
+          duration_ms: null,
+          mime_type: 'audio/mpeg',
+          title: catalog.title,
+          artist: catalog.artist,
+          theme: '',
+          gift_note: null,
+          gifted_by: null,
+          meta: {
+            id,
+            variant: 'mini-KUT',
+            structure_tag: catalog.title,
+            pix_pck_id: id,
+            mime_type: 'audio/mpeg',
+            duration_ms: null,
+          },
+        });
+        setLoading(false);
+        return;
+      }
+
       try {
         const supabase = createClient();
         const { data: { session } } = await supabase.auth.getSession();
@@ -143,9 +188,11 @@ export default function MiniKutPage({ params }: { params: Promise<{ id: string }
                 </p>
               )}
 
-              <p className="text-xs text-[#C8A882]/60 text-center">
-                Link valid for {Math.round(data.expires_in / 60)} minutes
-              </p>
+              {data.expires_in > 0 && (
+                <p className="text-xs text-[#C8A882]/60 text-center">
+                  Link valid for {Math.round(data.expires_in / 60)} minutes
+                </p>
+              )}
             </div>
           )}
         </div>

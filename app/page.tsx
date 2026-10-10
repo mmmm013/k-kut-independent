@@ -318,6 +318,8 @@ const purposeMeta: Record<
   },
 };
 
+const MESSENGERS = ["text", "DM", "email", "private link", "story", "gift", "self-use"];
+
 export default function KKutPage() {
   const [sentiment, setSentiment] = useState<SentimentKey | null>(null);
   const [purpose, setPurpose] = useState<Purpose>("");
@@ -328,6 +330,8 @@ export default function KKutPage() {
   const [firstFreeMode, setFirstFreeMode] = useState(false);
   const [promiseChecked, setPromiseChecked] = useState(false);
   const [userEmail, setUserEmail] = useState("");
+  const [firstFreeSaving, setFirstFreeSaving] = useState(false);
+  const [firstFreeError, setFirstFreeError] = useState<string | null>(null);
   const [audioNow, setAudioNow] = useState<string | null>(null);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -374,6 +378,30 @@ export default function KKutPage() {
 
     return sorted;
   }, [sentiment, purpose, selectedFormat, selectedMessenger]);
+
+  // Formats and messengers that still have at least one match, so BB never
+  // offers a choice that leads to an empty list.
+  const purposePool = useMemo(() => {
+    if (!sentiment || !purpose) return [];
+    return previewCatalog.filter(
+      (item) => item.sentiment === sentiment && item.purposeTags.includes(purpose)
+    );
+  }, [sentiment, purpose]);
+
+  const availableFormats = useMemo(
+    () => new Set(purposePool.map((item) => item.format)),
+    [purposePool]
+  );
+
+  const availableMessengers = useMemo(() => {
+    if (!selectedFormat) return [];
+    const fits = new Set(
+      purposePool
+        .filter((item) => item.format === selectedFormat)
+        .flatMap((item) => item.messengerFit)
+    );
+    return MESSENGERS.filter((m) => fits.has(m));
+  }, [purposePool, selectedFormat]);
 
   const groupedFive = useMemo(() => {
     const start = pageIndex * 5;
@@ -451,6 +479,7 @@ export default function KKutPage() {
 
   function useFirstFree() {
     setFirstFreeMode(true);
+    setFirstFreeError(null);
   }
 
   function startCheckout() {
@@ -465,11 +494,34 @@ export default function KKutPage() {
     }
   }
 
-  function submitFirstFree() {
-    if (!selectedItem || !promiseChecked || !userEmail.trim()) return;
-    alert(
-      `First one free recorded for ${selectedItem.title}. Follow up cadence: 3 touches in 3 weeks to ${userEmail}.`
-    );
+  async function submitFirstFree() {
+    if (!selectedItem || !promiseChecked || !userEmail.trim() || firstFreeSaving) return;
+    setFirstFreeSaving(true);
+    setFirstFreeError(null);
+
+    // Save the promise before handing over the free item: without the email
+    // there is nobody to follow up with.
+    const res = await fetch("/api/first-free", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email: userEmail,
+        itemId: selectedItem.id,
+        promisedReturn: true,
+      }),
+    }).catch(() => null);
+    const body = await res?.json().catch(() => null);
+
+    if (!res?.ok || !body?.ok) {
+      setFirstFreeSaving(false);
+      setFirstFreeError(
+        body?.code === "BAD_EMAIL"
+          ? "That email doesn’t look right. Check it and try again."
+          : "BB couldn’t save that just now. Please try again in a moment."
+      );
+      return;
+    }
+
     if (selectedItem.format === "kkut") {
       window.location.href = `/k/${selectedItem.id}`;
     } else {
@@ -587,6 +639,13 @@ export default function KKutPage() {
                     {sentimentMeta[sentiment].blurb}
                   </p>
 
+                  {mkPromos.length === 0 && (
+                    <p className="mt-5 text-sm leading-7 text-[#d7c2ab]">
+                      No mini-KUT tastes for this feeling yet. Choose a purpose below
+                      and BB will show the K-KUT options.
+                    </p>
+                  )}
+
                   <div className="mt-5 grid gap-4 md:grid-cols-2">
                     {mkPromos.map((item) => (
                       <PreviewCard
@@ -646,7 +705,8 @@ export default function KKutPage() {
                 <div className="mt-4 grid gap-3 md:grid-cols-2">
                   <button
                     onClick={() => chooseFormat("kkut")}
-                    className={`rounded-2xl border p-5 text-left transition ${
+                    disabled={!availableFormats.has("kkut")}
+                    className={`rounded-2xl border p-5 text-left transition disabled:cursor-not-allowed disabled:opacity-40 ${
                       selectedFormat === "kkut"
                         ? "border-[#dfaa73] bg-[#352215]"
                         : "border-[#4e3420] bg-[#120d08] hover:border-[#7b542f]"
@@ -661,7 +721,8 @@ export default function KKutPage() {
 
                   <button
                     onClick={() => chooseFormat("mk")}
-                    className={`rounded-2xl border p-5 text-left transition ${
+                    disabled={!availableFormats.has("mk")}
+                    className={`rounded-2xl border p-5 text-left transition disabled:cursor-not-allowed disabled:opacity-40 ${
                       selectedFormat === "mk"
                         ? "border-[#dfaa73] bg-[#352215]"
                         : "border-[#4e3420] bg-[#120d08] hover:border-[#7b542f]"
@@ -682,7 +743,7 @@ export default function KKutPage() {
                     Messenger fit
                   </div>
                   <div className="mt-4 flex flex-wrap gap-3">
-                    {["text", "DM", "email", "private link", "story", "gift", "self-use"].map(
+                    {availableMessengers.map(
                       (messenger) => (
                         <button
                           key={messenger}
@@ -818,12 +879,14 @@ export default function KKutPage() {
                       >
                         Hear It Again
                       </button>
-                      <button
-                        onClick={() => setPageIndex((p) => p + 1)}
-                        className="rounded-full border border-[#c88f59] px-5 py-3 font-bold text-[#fff2de]"
-                      >
-                        Show 5 More
-                      </button>
+                      {hasMore && (
+                        <button
+                          onClick={nextFive}
+                          className="rounded-full border border-[#c88f59] px-5 py-3 font-bold text-[#fff2de]"
+                        >
+                          Show 5 More
+                        </button>
+                      )}
                       <button
                         onClick={useFirstFree}
                         className="rounded-full border border-[#c88f59] px-5 py-3 font-bold text-[#fff2de]"
@@ -855,7 +918,10 @@ export default function KKutPage() {
                         </label>
                         <input
                           value={userEmail}
-                          onChange={(e) => setUserEmail(e.target.value)}
+                          onChange={(e) => {
+                            setUserEmail(e.target.value);
+                            setFirstFreeError(null);
+                          }}
                           type="email"
                           placeholder="user@email.com"
                           className="mt-2 w-full rounded-xl border border-[#6c4625] bg-[#120d08] px-4 py-3 text-[#fff2de] outline-none"
@@ -874,11 +940,17 @@ export default function KKutPage() {
 
                       <button
                         onClick={submitFirstFree}
-                        disabled={!promiseChecked || !userEmail.trim()}
+                        disabled={!promiseChecked || !userEmail.trim() || firstFreeSaving}
                         className="mt-5 rounded-full bg-[#f0b16a] px-5 py-3 font-bold text-[#2d1809] disabled:cursor-not-allowed disabled:opacity-40"
                       >
-                        Confirm First-Free Path
+                        {firstFreeSaving ? "Saving…" : "Confirm First-Free Path"}
                       </button>
+
+                      {firstFreeError && (
+                        <p role="alert" className="mt-3 text-sm font-semibold text-[#ff9b8f]">
+                          {firstFreeError}
+                        </p>
+                      )}
                     </div>
                   )}
                 </div>
