@@ -24,6 +24,7 @@ import {
   lineageOf,
   nextBestAction,
   phraseTier,
+  TIER_PRICE_CENTS,
   resolveMeantType,
   tierOf,
   validateMeant,
@@ -105,6 +106,11 @@ test('known upstream defects are cloned, and flagged', () => {
   assert.ok(kk.find((a) => a.name === 'theme')?.upstreamFlag);
   const trm = MEANT_TYPES.SK.subtypes.find((s) => s.code === 'TRM');
   assert.ok(trm?.upstreamFlag);
+});
+
+test('tier prices are set: HUG 7.99, TUG 4.99, BUG 1.99', () => {
+  assert.deepEqual({ ...TIER_PRICE_CENTS }, { HUG: 799, TUG: 499, BUG: 199 });
+  assert.ok(Object.isFrozen(TIER_PRICE_CENTS));
 });
 
 test('BUGs are TRM, PHRZ under 4 words, XCLM and VSND', () => {

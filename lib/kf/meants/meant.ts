@@ -41,6 +41,13 @@ export interface TierRule {
   allowedTriggers: readonly DeliveryTrigger[];
 }
 
+/** Set prices in US cents (owner, 2026-10-20). Fixed: never discounted or varied. */
+export const TIER_PRICE_CENTS: Readonly<Record<ProductTier, number>> = Object.freeze({
+  HUG: 799,
+  TUG: 499,
+  BUG: 199,
+});
+
 export const TIER_RULES: Record<ProductTier, TierRule> = {
   HUG: {
     tier: 'HUG', rank: 1, usesThemes: true, usesEmotions: true, usesScenarios: true,

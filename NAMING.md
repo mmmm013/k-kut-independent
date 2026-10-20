@@ -74,6 +74,11 @@ to one of the kinds above:
 
 See §1: the tier is the Meant. HUG ranks 1, TUG 2 and BUG 3.
 
+Set prices (owner, 2026-10-20): **HUG $7.99, TUG $4.99, BUG $1.99**. They
+are fixed (`TIER_PRICE_CENTS` in `lib/kf/meants/meant.ts`). The live price
+codes `KUT_999`, `HOLIDAY_HUG_1499` and `TINYKUT_299` do not match these
+and have not been changed.
+
 ## 5. Still open
 
 - **ShortKUT is dropped** (owner, 2026-10-20: "drop ShortKUT. Most, if not
