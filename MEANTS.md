@@ -2,8 +2,10 @@
 
 **Meant** is the collective term for every Element. A Meant is always and only
 a full-audio copy grabbed from an original SSOT clone, sent through multiple
-Text Loops of humanizing, and defined by KKr instructions across three Product
-Tiers: **HUGs, TUGs, BUGs**.
+Text Loops of humanizing, and defined by KKr instructions. **Meants are HUGs,
+TUGs and BUGs**: a K-KUT is a HUG, a short-KUT a TUG and a mini-KUT a BUG
+(owner, 2026-10-20). The Element Types are cloned from the live registry
+snapshot in `reference/live-registry/` as well as the repo's reference schema.
 
 Code: `lib/kf/meants/` · Tests: `lib/kf/__tests__/meants.test.ts`
 
@@ -56,7 +58,8 @@ sK when upstream calls them mK forms.
 | TPs | InTP ordered; VTP inside InTP |
 | Boundaries | InTP inside the parent's bounds |
 | Multiple Text Loops | `HUMANIZED` needs ≥ 2 distinct Text Loop runs |
-| All 3 tiers | HUG, TUG and BUG each defined, each with ≥ 1 KKr strategy |
+| Tier follows kind | KK = HUG, SK = TUG, MK = BUG; DKK, NKK and naked sK are never Meants |
+| KKr plan | ≥ 1 KKr strategy |
 | Strategy granularity | `WORD → TERM → PHRASE → LINE → LINE_SET → SONG_SECTION`, limited to what the type can carry |
 | HUGs & TUGs | work with Themes, Emotions, Scenarios (at least one present) |
 | BUGs | never any Theme, Emotion or Scenario |
@@ -82,7 +85,7 @@ sK when upstream calls them mK forms.
 |---|---|---|
 | "Full audio" vs. the rule that a delivery unit is strictly less than PIX | Full audio = vocals **and** instrumentals intact inside the Meant's bounds. Never the full master. | Keeps both the owner's rule and GOVERNANCE.md §7 |
 | What "multiple" Text Loops means | ≥ 2 | Smallest number that is "multiple"; one constant to change |
-| HUG vs TUG | HUG = Tier 1, TUG = Tier 2, same sentiment rules | The repo only records TUG as "Tier 2" |
+| How tiers relate to Meants | Each Meant is one tier, fixed by its kind | Owner's choice, 2026-10-20; matches the live sK/TUG rule |
 | Strategy granularity per sK / mK subtype | e.g. `WORD_CUT`/`XCLM`/mK-noun = WORD, `HOOK`/`1LNR` = LINE, `LNPR`/`3RHYM` = LINE_SET | No upstream mapping exists; table in `catalog.ts` |
 | Parents for sK, naked sK, mK | sK ← NKK, naked sK ← NKK, mK ← naked sK | The capture-room LOCK, verbatim |
 | K-kUpId's parent | left unresolved | GOVERNANCE.md says not to guess |
@@ -94,14 +97,16 @@ sK when upstream calls them mK forms.
 |---|---|---|
 | Every Element Type, DKK and naked sK included | `MEANT_TYPES` in `catalog.ts` | `meant_types` (7 rows) |
 | Each Meant working copy, any type | `MeantClone` in `meant.ts` | `meants` |
-| Its HUG, TUG and BUG | `tiers` on `MeantClone` | `meant_tiers` |
+| Its tier and KKr plan | `tier` + `plan` on `MeantClone` | `meants.tier`, `meant_tiers` |
+| The live type registries, verbatim | `lib/kf/meants/live-registry.ts` | read from `slds_kut_type_registry`, `gpmc_sk_form_factor_ee`, `gpmc_mk_form_factor_ee` |
 | KKr strategies per tier, WORD → SONG_SECTION | `Strategy` | `meant_tier_strategies` |
 | Text Loop runs | `text_loops` | `meant_text_loops` |
 
 The draft is `reference/NOT-DEPLOYED/meants-schema/20261020000100_meants_catalog.sql`.
 The rules are enforced in SQL as well as in code: CHECKs for vocals,
 instrumentals, `VOCAL_MUSIC`, the source-audio guard, VTP inside InTP, InTP
-inside the parent's bounds, BUGs with no sentiment and `user_request` only,
+inside the parent's bounds, tier fixed by kind, BUGs with no sentiment and
+`user_request` only,
 and a trigger requiring 2 Text Loops before `HUMANIZED`. It has been run
 twice against a local scratch Postgres 16 (it is idempotent), and every rule
 rejected a violating row. A test checks that the `meant_types` seed matches

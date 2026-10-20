@@ -131,6 +131,12 @@ export const STRATEGY_GRANULARITIES = [
 
 export type StrategyGranularity = (typeof STRATEGY_GRANULARITIES)[number];
 
+// ── Product Tiers: a Meant IS a HUG, a TUG or a BUG ──────────────────────────
+
+export const PRODUCT_TIERS = ['HUG', 'TUG', 'BUG'] as const;
+
+export type ProductTier = (typeof PRODUCT_TIERS)[number];
+
 // ── Element Types ────────────────────────────────────────────────────────────
 
 /** Every Element Type, cloned. LT-PIX is the SSOT source, not a Meant. */
@@ -167,6 +173,13 @@ export interface MeantType {
   granularities: readonly StrategyGranularity[];
   attributes: readonly MeantAttribute[];
   subtypes: readonly MeantSubtype[];
+  /**
+   * The Product Tier this type is, when it is a Meant: KK = HUG, sK = TUG,
+   * mK = BUG (owner, 2026-10-20; matches gpmc_sk_form_factor_ee "sK/TUG
+   * layer; never mK/BUG"). Null = a lineage layer that is never delivered
+   * itself, or (K-kUpId) a kind whose tier is not settled.
+   */
+  tier: ProductTier | null;
   evidence: string;
   upstreamFlag?: string;
 }
@@ -287,6 +300,7 @@ const IDENTITY_ONLY: MeantAttribute[] = [
 export const MEANT_TYPES: Record<MeantTypeCode, MeantType> = {
   KK: {
     code: 'KK',
+    tier: 'HUG',
     kkrCode: 'KKr-KK',
     name: 'K-KUT',
     parent: 'LT-PIX',
@@ -299,6 +313,7 @@ export const MEANT_TYPES: Record<MeantTypeCode, MeantType> = {
   },
   DKK: {
     code: 'DKK',
+    tier: null,
     kkrCode: 'KKr-DKK',
     name: 'DKK',
     parent: 'KK',
@@ -311,6 +326,7 @@ export const MEANT_TYPES: Record<MeantTypeCode, MeantType> = {
   },
   NKK: {
     code: 'NKK',
+    tier: null,
     kkrCode: 'KKr-NKK',
     name: 'NKK',
     parent: 'DKK',
@@ -323,6 +339,7 @@ export const MEANT_TYPES: Record<MeantTypeCode, MeantType> = {
   },
   NAKED_SK: {
     code: 'NAKED_SK',
+    tier: null,
     kkrCode: 'KKr-NAKED_SK',
     name: 'naked sK',
     parent: 'NKK',
@@ -335,6 +352,7 @@ export const MEANT_TYPES: Record<MeantTypeCode, MeantType> = {
   },
   SK: {
     code: 'SK',
+    tier: 'TUG',
     kkrCode: 'KKr-SK',
     name: 'short-KUT',
     parent: 'NKK',
@@ -342,16 +360,21 @@ export const MEANT_TYPES: Record<MeantTypeCode, MeantType> = {
     status: 'CLONED',
     granularities: ['LINE_SET', 'LINE', 'PHRASE', 'TERM', 'WORD'],
     attributes: SK_ATTRIBUTES,
-    subtypes: SK_SUBTYPES.map((code) => ({
-      code,
-      label: code === '1LNR' ? 'one-liner (LineFeel / LLF)' : undefined,
-      granularity: SK_GRANULARITY[code],
-      upstreamFlag: MK_FORMS_IN_SK.has(code) ? 'Upstream calls this an mK form, not an sK form.' : undefined,
-    })),
+    subtypes: [
+      ...SK_SUBTYPES.map((code) => ({
+        code,
+        label: code === '1LNR' ? 'one-liner (LineFeel / LLF)' : undefined,
+        granularity: SK_GRANULARITY[code],
+        upstreamFlag: MK_FORMS_IN_SK.has(code) ? 'Upstream calls this an mK form, not an sK form.' : undefined,
+      })),
+      // Live gpmc_sk_form_factor_ee forms the reference schema never had.
+      { code: 'IDIOM', label: 'idiom', granularity: 'PHRASE' as const },
+    ],
     evidence: `${SK_TAX}; GOVERNANCE.md §5`,
   },
   MK: {
     code: 'MK',
+    tier: 'BUG',
     kkrCode: 'KKr-MK',
     name: 'mini-KUT',
     parent: 'NAKED_SK',
@@ -359,11 +382,18 @@ export const MEANT_TYPES: Record<MeantTypeCode, MeantType> = {
     status: 'CLONED',
     granularities: ['LINE', 'PHRASE', 'TERM', 'WORD'],
     attributes: MK_ATTRIBUTES,
-    subtypes: MK_TYPES.map((code) => ({ code, granularity: MK_GRANULARITY[code] })),
+    subtypes: [
+      ...MK_TYPES.map((code) => ({ code, granularity: MK_GRANULARITY[code] })),
+      // Live gpmc_mk_form_factor_ee forms (the tinyKUT TRMZ / EXCLM / SNDS classes).
+      { code: 'TRM', label: 'term', granularity: 'TERM' as const },
+      { code: 'XCLM', label: 'exclamation', granularity: 'WORD' as const },
+      { code: 'VSND', label: 'vocal sound', granularity: 'WORD' as const },
+    ],
     evidence: `${CORE}; GOVERNANCE.md §2 LOCK`,
   },
   KUPID: {
     code: 'KUPID',
+    tier: null,
     kkrCode: 'KKr-KUPID',
     name: 'K-kUpId',
     parent: null,
@@ -393,7 +423,23 @@ export const MEANT_TYPE_ALIASES: Record<string, { type: MeantTypeCode; subtype?:
   'LINE FEEL': { type: 'SK', subtype: '1LNR' },
   'K-KUPID': { type: 'KUPID' },
   KKUPID: { type: 'KUPID' },
+  // Live slds_kut_type_registry codes. HUG and TUG there are tiers, not types.
+  MINI_KUT: { type: 'MK' },
+  LFL: { type: 'SK', subtype: '1LNR' },
+  LINEPAIR: { type: 'SK', subtype: 'LNPR' },
+  LPR: { type: 'SK', subtype: 'LNPR' },
+  PHRZ: { type: 'SK', subtype: 'PHRZ' },
+  RIME: { type: 'SK' },
+  TRMZ: { type: 'MK', subtype: 'TRM' },
+  EXCLM: { type: 'MK', subtype: 'XCLM' },
+  SNDS: { type: 'MK', subtype: 'VSND' },
+  TINYKUT: { type: 'MK' },
 };
+
+/** A Meant's Product Tier from its type. Null = not a deliverable Meant. */
+export function tierOf(code: MeantTypeCode): ProductTier | null {
+  return MEANT_TYPES[code].tier;
+}
 
 /** Resolve a code or legacy spelling to its cloned type. */
 export function resolveMeantType(code: string): { type: MeantTypeCode; subtype?: string } | null {

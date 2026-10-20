@@ -13,9 +13,9 @@
 -- reference/NOT-DEPLOYED/kf-schema/20260921000100_kut_family_schema.sql.
 --
 --   meant_types             one row per Element Type, DKK and naked sK included
---   meants                  one row per Meant working copy, of any type
---   meant_tiers             HUG, TUG, BUG per Meant (all three required by
---                           validateMeant(); a table CHECK cannot count rows)
+--   meants                  one row per Meant. A Meant IS a HUG, TUG or BUG:
+--                           KK = HUG, sK = TUG, mK = BUG (owner, 2026-10-20)
+--   meant_tiers             the Meant's KKr plan, one row, keyed to its tier
 --   meant_tier_strategies   KKr strategies per tier, 1-word up to Song Section
 --   meant_text_loops        Text Loop runs each Meant has been through
 -- ─────────────────────────────────────────────────────────────────────────────
@@ -35,17 +35,19 @@ create table if not exists public.meant_types (
                   check (clone_status in ('CLONED', 'CLONED_IDENTITY_ONLY', 'CLONED_PARENT_UNRESOLVED')),
   granularities text[] not null
                   check (granularities <@ array['WORD', 'TERM', 'PHRASE', 'LINE', 'LINE_SET', 'SONG_SECTION']
-                         and cardinality(granularities) > 0)
+                         and cardinality(granularities) > 0),
+  -- The tier this type is when it is a Meant. Null = never a Meant itself.
+  tier          text check (tier in ('HUG', 'TUG', 'BUG'))
 );
 
-insert into public.meant_types (code, kkr_code, name, parent_code, source_table, clone_status, granularities) values
-  ('KK',       'KKr-KK',       'K-KUT',      'LT-PIX',   'k_kut_assets', 'CLONED',                   array['SONG_SECTION']),
-  ('DKK',      'KKr-DKK',      'DKK',        'KK',       null,           'CLONED_IDENTITY_ONLY',     array['SONG_SECTION']),
-  ('NKK',      'KKr-NKK',      'NKK',        'DKK',      'nkk_assets',   'CLONED',                   array['SONG_SECTION', 'LINE_SET', 'LINE']),
-  ('NAKED_SK', 'KKr-NAKED_SK', 'naked sK',   'NKK',      null,           'CLONED_IDENTITY_ONLY',     array['LINE_SET', 'LINE', 'PHRASE', 'TERM', 'WORD']),
-  ('SK',       'KKr-SK',       'short-KUT',  'NKK',      'sk_assets',    'CLONED',                   array['LINE_SET', 'LINE', 'PHRASE', 'TERM', 'WORD']),
-  ('MK',       'KKr-MK',       'mini-KUT',   'NAKED_SK', 'm_kut_assets', 'CLONED',                   array['LINE', 'PHRASE', 'TERM', 'WORD']),
-  ('KUPID',    'KKr-KUPID',    'K-kUpId',    null,       'kupid_assets', 'CLONED_PARENT_UNRESOLVED', array['SONG_SECTION', 'LINE_SET', 'LINE'])
+insert into public.meant_types (code, kkr_code, name, parent_code, source_table, clone_status, granularities, tier) values
+  ('KK',       'KKr-KK',       'K-KUT',      'LT-PIX',   'k_kut_assets', 'CLONED',                   array['SONG_SECTION'], 'HUG'),
+  ('DKK',      'KKr-DKK',      'DKK',        'KK',       null,           'CLONED_IDENTITY_ONLY',     array['SONG_SECTION'], null),
+  ('NKK',      'KKr-NKK',      'NKK',        'DKK',      'nkk_assets',   'CLONED',                   array['SONG_SECTION', 'LINE_SET', 'LINE'], null),
+  ('NAKED_SK', 'KKr-NAKED_SK', 'naked sK',   'NKK',      null,           'CLONED_IDENTITY_ONLY',     array['LINE_SET', 'LINE', 'PHRASE', 'TERM', 'WORD'], null),
+  ('SK',       'KKr-SK',       'short-KUT',  'NKK',      'sk_assets',    'CLONED',                   array['LINE_SET', 'LINE', 'PHRASE', 'TERM', 'WORD'], 'TUG'),
+  ('MK',       'KKr-MK',       'mini-KUT',   'NAKED_SK', 'm_kut_assets', 'CLONED',                   array['LINE', 'PHRASE', 'TERM', 'WORD'], 'BUG'),
+  ('KUPID',    'KKr-KUPID',    'K-kUpId',    null,       'kupid_assets', 'CLONED_PARENT_UNRESOLVED', array['SONG_SECTION', 'LINE_SET', 'LINE'], null)
 on conflict (code) do nothing;
 
 comment on table public.meant_types is
@@ -56,6 +58,8 @@ create table if not exists public.meants (
   meant_id            text primary key,
   type_code           text not null references public.meant_types(code),
   subtype             text,
+  -- A Meant IS a HUG, TUG or BUG, fixed by its type.
+  tier                text not null,
   -- A KKr working copy never carries approval.
   authority           text not null default 'KKR_WORKING_COPY'
                         check (authority = 'KKR_WORKING_COPY'),
@@ -89,6 +93,11 @@ create table if not exists public.meants (
                         check (humanizing in ('RAW', 'LOOPING', 'HUMANIZED')),
   created_at          timestamptz not null default now(),
 
+  constraint meants_tier_follows_kind
+    check ((type_code = 'KK' and tier = 'HUG')
+           or (type_code = 'SK' and tier = 'TUG')
+           or (type_code = 'MK' and tier = 'BUG')),
+  constraint meants_id_tier_unique unique (meant_id, tier),
   constraint meants_intp_ordered
     check (intp_start_seconds >= 0 and intp_end_seconds > intp_start_seconds),
   constraint meants_vtp_ordered_and_inside_intp
@@ -143,7 +152,7 @@ create trigger meants_text_loops_gate
 
 -- ── Product Tiers ────────────────────────────────────────────────────────────
 create table if not exists public.meant_tiers (
-  meant_id   text not null references public.meants(meant_id) on delete cascade,
+  meant_id   text not null,
   tier       text not null check (tier in ('HUG', 'TUG', 'BUG')),
   rank       smallint not null,
   -- Three separate fields: sentiment, emotion and scenario stay independently inspectable.
@@ -152,7 +161,10 @@ create table if not exists public.meant_tiers (
   scenarios  text[] not null default '{}',
   -- BUGs arrive ON DEMAND ONLY.
   allowed_triggers text[] not null,
-  primary key (meant_id, tier),
+  -- One plan per Meant, and its tier must be the Meant's own.
+  primary key (meant_id),
+  unique (meant_id, tier),
+  foreign key (meant_id, tier) references public.meants(meant_id, tier) on delete cascade,
 
   constraint meant_tiers_rank
     check ((tier = 'HUG' and rank = 1) or (tier = 'TUG' and rank = 2) or (tier = 'BUG' and rank = 3)),
@@ -168,7 +180,7 @@ create table if not exists public.meant_tiers (
 );
 
 comment on table public.meant_tiers is
-  'Exactly three tiers per Meant: HUG, TUG, BUG. Mirrors TIER_RULES in lib/kf/meants/meant.ts.';
+  'The KKr plan of each Meant, keyed to its one tier (KK = HUG, sK = TUG, mK = BUG). Mirrors TIER_RULES in lib/kf/meants/meant.ts.';
 
 create table if not exists public.meant_tier_strategies (
   id           uuid primary key default gen_random_uuid(),

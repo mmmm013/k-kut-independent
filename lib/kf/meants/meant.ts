@@ -1,6 +1,7 @@
 /**
  * A Meant working copy: its SSOT origin, full-audio integrity, TPs and
- * boundaries, Text Loop history, and its three Product Tiers.
+ * boundaries, Text Loop history, and its Product Tier. A Meant IS a HUG, a
+ * TUG or a BUG: KK = HUG, sK = TUG, mK = BUG.
  *
  * `validateMeant()` is the one gate every surface calls. It returns every
  * violation rather than stopping at the first, so a working copy can be fixed
@@ -11,15 +12,12 @@ import { isForbiddenSourceUrl } from '../classify';
 import {
   MEANT_TYPES,
   MeantTypeCode,
+  ProductTier,
   STRATEGY_GRANULARITIES,
   StrategyGranularity,
 } from './catalog';
 
 // ── Product Tiers ────────────────────────────────────────────────────────────
-
-export const PRODUCT_TIERS = ['HUG', 'TUG', 'BUG'] as const;
-
-export type ProductTier = (typeof PRODUCT_TIERS)[number];
 
 /** How a tier may reach a User. */
 export type DeliveryTrigger =
@@ -34,7 +32,7 @@ export type DeliveryTrigger =
 
 export interface TierRule {
   tier: ProductTier;
-  /** Tier rank. HUG is Tier 1 and TUG is Tier 2, as the repo already says. */
+  /** Tier rank: HUG (KK) 1, TUG (sK) 2, BUG (mK) 3. */
   rank: 1 | 2 | 3;
   usesThemes: boolean;
   usesEmotions: boolean;
@@ -128,7 +126,10 @@ export interface MeantClone {
   text_loops: string[];
   humanizing: 'RAW' | 'LOOPING' | 'HUMANIZED';
 
-  tiers: Record<ProductTier, TierPlan>;
+  /** Which Meant this is. Must equal the tier of its type. */
+  tier: ProductTier;
+  /** The KKr instructions for this Meant. */
+  plan: TierPlan;
 }
 
 /** "MULTIPLE Text Loops": a Meant is not humanized until at least two have run. */
@@ -208,15 +209,23 @@ export function validateMeant(m: MeantClone): MeantViolation[] {
     fail('TOO_FEW_TEXT_LOOPS', `HUMANIZED needs at least ${MIN_TEXT_LOOPS} Text Loop runs.`);
   }
 
-  // All three Product Tiers, each with its own rules.
-  for (const tier of PRODUCT_TIERS) {
-    const plan = m.tiers?.[tier];
-    if (!plan) {
-      fail('TIER_MISSING', `${tier} is not defined.`);
-      continue;
+  // The Meant IS its tier: KK = HUG, sK = TUG, mK = BUG.
+  if (type) {
+    if (type.tier === null) {
+      fail('NOT_A_MEANT_KIND', `${type.code} is not a HUG, TUG or BUG, so it cannot be a Meant.`);
+    } else if (m.tier !== type.tier) {
+      fail('TIER_MISMATCH', `A ${type.code} is a ${type.tier}, not a ${m.tier}.`);
     }
-    const rule = TIER_RULES[tier];
+  }
 
+  const tier = m.tier;
+  const rule = TIER_RULES[tier];
+  const plan = m.plan;
+  if (!rule) {
+    fail('UNKNOWN_TIER', `"${tier}" is not HUG, TUG or BUG.`);
+  } else if (!plan) {
+    fail('NO_PLAN', `${tier} has no KKr instructions.`);
+  } else {
     if (plan.strategies.length === 0) fail('NO_STRATEGY', `${tier} has no KKr strategy.`);
     for (const s of plan.strategies) {
       if (!(STRATEGY_GRANULARITIES as readonly string[]).includes(s.granularity)) {

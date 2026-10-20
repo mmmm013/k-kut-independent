@@ -23,8 +23,10 @@ import {
   lineageOf,
   nextBestAction,
   resolveMeantType,
+  tierOf,
   validateMeant,
 } from '../meants';
+import { LIVE_KUT_TYPES, LIVE_MK_FORMS, LIVE_SK_FORMS } from '../meants/live-registry';
 import { KUPID_LEVELS, MK_TYPES, SK_SUBTYPES } from '../types';
 
 const ROOT = process.cwd();
@@ -87,8 +89,8 @@ test('attribute names are unique within each type', () => {
 });
 
 test('every enum value is cloned verbatim', () => {
-  assert.deepEqual(MEANT_TYPES.SK.subtypes.map((s) => s.code), [...SK_SUBTYPES]);
-  assert.deepEqual(MEANT_TYPES.MK.subtypes.map((s) => s.code), [...MK_TYPES]);
+  assert.deepEqual(MEANT_TYPES.SK.subtypes.map((s) => s.code), [...SK_SUBTYPES, 'IDIOM']);
+  assert.deepEqual(MEANT_TYPES.MK.subtypes.map((s) => s.code), [...MK_TYPES, 'TRM', 'XCLM', 'VSND']);
   assert.deepEqual(MEANT_TYPES.KUPID.subtypes.map((s) => s.code), KUPID_LEVELS.map((l) => l.code));
 
   const variant = MEANT_TYPES.KK.attributes.find((a) => a.name === 'variant');
@@ -159,19 +161,10 @@ function meant(overrides: Partial<MeantClone> = {}): MeantClone {
     parent_bounds: { start_seconds: 20, end_seconds: 60 },
     text_loops: ['TLR_01', 'TLR_02'],
     humanizing: 'HUMANIZED',
-    tiers: {
-      HUG: {
-        strategies: [{ granularity: 'LINE', text: 'Lead with the hook line.' }],
-        themes: ['Thinking of You'], emotions: ['warmth'], scenarios: ['Long Week'],
-      },
-      TUG: {
-        strategies: [{ granularity: 'WORD', text: 'Stay.' }],
-        themes: ['Friends'], emotions: [], scenarios: [],
-      },
-      BUG: {
-        strategies: [{ granularity: 'PHRASE', text: 'Plain phrase, no framing.' }],
-        themes: [], emotions: [], scenarios: [],
-      },
+    tier: 'TUG',
+    plan: {
+      strategies: [{ granularity: 'LINE', text: 'Lead with the hook line.' }],
+      themes: ['Thinking of You'], emotions: ['warmth'], scenarios: ['Long Week'],
     },
     ...overrides,
   };
@@ -219,10 +212,37 @@ test('HUMANIZED needs multiple Text Loops', () => {
   assert.deepEqual(codes(meant({ text_loops: ['TLR_01'], humanizing: 'LOOPING' })), []);
 });
 
+/** A valid BUG: an mK with no sentiment at all. */
+function bugMeant(overrides: Partial<MeantClone> = {}): MeantClone {
+  return meant({
+    type: 'MK',
+    subtype: 'mK-noun',
+    tier: 'BUG',
+    plan: { strategies: [{ granularity: 'WORD', text: 'Home.' }], themes: [], emotions: [], scenarios: [] },
+    ...overrides,
+  });
+}
+
+test('a Meant is its tier: KK = HUG, sK = TUG, mK = BUG', () => {
+  assert.equal(tierOf('KK'), 'HUG');
+  assert.equal(tierOf('SK'), 'TUG');
+  assert.equal(tierOf('MK'), 'BUG');
+  assert.deepEqual(validateMeant(bugMeant()), []);
+  assert.ok(codes(meant({ tier: 'HUG' })).includes('TIER_MISMATCH'));
+  assert.ok(codes(bugMeant({ tier: 'TUG' })).includes('TIER_MISMATCH'));
+});
+
+test('lineage layers are never Meants themselves', () => {
+  for (const type of ['DKK', 'NKK', 'NAKED_SK'] as const) {
+    assert.equal(tierOf(type), null);
+    assert.ok(codes(meant({ type, subtype: null })).includes('NOT_A_MEANT_KIND'), type);
+  }
+});
+
 test('BUGs never use Themes, Emotions or Scenarios', () => {
-  const base = meant();
-  const bug = { ...base.tiers.BUG, themes: ['Friends'], emotions: ['joy'], scenarios: ['New Baby'] };
-  const got = codes({ ...base, tiers: { ...base.tiers, BUG: bug } });
+  const got = codes(bugMeant({
+    plan: { strategies: [{ granularity: 'WORD', text: 'Home.' }], themes: ['Friends'], emotions: ['joy'], scenarios: ['New Baby'] },
+  }));
   assert.ok(got.includes('BUG_HAS_THEMES'));
   assert.ok(got.includes('BUG_HAS_EMOTIONS'));
   assert.ok(got.includes('BUG_HAS_SCENARIOS'));
@@ -230,16 +250,14 @@ test('BUGs never use Themes, Emotions or Scenarios', () => {
 
 test('HUGs and TUGs work with Themes, Emotions or Scenarios', () => {
   const base = meant();
-  const tug = { ...base.tiers.TUG, themes: [] };
-  assert.ok(codes({ ...base, tiers: { ...base.tiers, TUG: tug } }).includes('NO_SENTIMENT'));
+  assert.ok(codes({ ...base, plan: { ...base.plan, themes: [], emotions: [], scenarios: [] } }).includes('NO_SENTIMENT'));
 });
 
-test('all three tiers are required, each with a strategy at a valid granularity', () => {
+test('every Meant has a KKr strategy at a granularity its type can carry', () => {
   const base = meant();
-  const { HUG, TUG } = base.tiers;
-  assert.ok(codes({ ...base, tiers: { HUG, TUG } as never }).includes('TIER_MISSING'));
-  const hug = { ...HUG, strategies: [{ granularity: 'SONG_SECTION' as const, text: 'Whole chorus.' }] };
-  assert.ok(codes({ ...base, tiers: { ...base.tiers, HUG: hug } }).includes('GRANULARITY_NOT_FOR_TYPE'));
+  assert.ok(codes({ ...base, plan: { ...base.plan, strategies: [] } }).includes('NO_STRATEGY'));
+  const section = [{ granularity: 'SONG_SECTION' as const, text: 'Whole chorus.' }];
+  assert.ok(codes({ ...base, plan: { ...base.plan, strategies: section } }).includes('GRANULARITY_NOT_FOR_TYPE'));
 });
 
 test('BUGs arrive on demand only', () => {
@@ -298,11 +316,11 @@ const MEANTS_SQL = readFileSync(
 
 test('meant_types seeds every Element Type exactly as the code catalog has it', () => {
   const rows = [...MEANTS_SQL.matchAll(
-    /^\s+\('([A-Z_]+)',\s+'(KKr-[A-Z_]+)',\s+'([^']+)',\s+(null|'[^']+'),\s+(null|'[^']+'),\s+'([A-Z_]+)',\s+array\[([^\]]+)\]\)/gm,
+    /^\s+\('([A-Z_]+)',\s+'(KKr-[A-Z_]+)',\s+'([^']+)',\s+(null|'[^']+'),\s+(null|'[^']+'),\s+'([A-Z_]+)',\s+array\[([^\]]+)\],\s+(null|'[A-Z]+')\)/gm,
   )];
   assert.equal(rows.length, MEANT_TYPE_CODES.length);
 
-  for (const [, code, kkr, name, parent, table, status, grans] of rows) {
+  for (const [, code, kkr, name, parent, table, status, grans, tier] of rows) {
     const type = MEANT_TYPES[code as (typeof MEANT_TYPE_CODES)[number]];
     assert.ok(type, code);
     assert.equal(kkr, type.kkrCode);
@@ -311,6 +329,7 @@ test('meant_types seeds every Element Type exactly as the code catalog has it', 
     assert.equal(table === 'null' ? null : table.slice(1, -1), type.table);
     assert.equal(status, type.status);
     assert.deepEqual(grans.split(',').map((g) => g.trim().slice(1, -1)), [...type.granularities]);
+    assert.equal(tier === 'null' ? null : tier.slice(1, -1), type.tier);
   }
 });
 
@@ -318,6 +337,7 @@ test('the Meant tables enforce the tier and full-audio rules in SQL too', () => 
   for (const name of [
     'meant_tiers_bug_no_sentiment', 'meant_tiers_hug_tug_sentiment', 'meant_tiers_triggers',
     'meants_vtp_ordered_and_inside_intp', 'meants_inside_parent_bounds', 'meants_text_loops_gate',
+    'meants_tier_follows_kind',
   ]) {
     assert.ok(MEANTS_SQL.includes(name), name);
   }
@@ -342,4 +362,33 @@ test('no page uses a retired spelling', () => {
       assert.ok(!text.includes(spelling), `${file} uses retired "${spelling}" (see NAMING.md)`);
     }
   }
+});
+
+// ── Live registry clone ──────────────────────────────────────────────────────
+
+test('the live registry clone equals its snapshot, field for field', () => {
+  const snap = JSON.parse(readFileSync(
+    join(ROOT, 'reference', 'live-registry', 'snapshot-2026-10-20.json'), 'utf8',
+  ));
+  assert.deepEqual(LIVE_KUT_TYPES, snap.kut_types);
+  assert.deepEqual(LIVE_SK_FORMS, snap.sk_forms);
+  assert.deepEqual(LIVE_MK_FORMS, snap.mk_forms);
+});
+
+test('every live type code is a tier or resolves to a Meant of the right tier', () => {
+  for (const row of LIVE_KUT_TYPES) {
+    if (row.kut_type_code === 'HUG' || row.kut_type_code === 'TUG') continue;
+    const resolved = resolveMeantType(row.kut_type_code);
+    assert.ok(resolved, `${row.kut_type_code} does not resolve`);
+    assert.ok(tierOf(resolved.type), `${row.kut_type_code} resolves to a non-Meant`);
+  }
+});
+
+test('every live sK form is a TUG subtype, every allowed mK form a BUG subtype', () => {
+  const sk = new Set(MEANT_TYPES.SK.subtypes.map((s) => s.code.toUpperCase()));
+  for (const f of LIVE_SK_FORMS) assert.ok(sk.has(f.form_key.toUpperCase()), f.form_key);
+  const mk = new Set(MEANT_TYPES.MK.subtypes.map((s) => s.code));
+  for (const f of LIVE_MK_FORMS.filter((f) => f.allowed)) assert.ok(mk.has(f.form_key), f.form_key);
+  // The live correction: 1LNR is an sK / TUG form, never an mK / BUG.
+  assert.ok(!mk.has('1LNR'));
 });

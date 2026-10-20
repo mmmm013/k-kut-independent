@@ -1,0 +1,353 @@
+/**
+ * The live type registries, cloned verbatim.
+ *
+ * GENERATED from reference/live-registry/snapshot-2026-10-20.json, a
+ * read-only copy of Supabase project vwlzubxshjjonabpeagd. The live tables
+ * are the authority for Element Types; the repo's reference schema is older.
+ * Do not hand-edit: re-take the snapshot and regenerate.
+ */
+
+export interface LiveKutType {
+  kut_type_code: string;
+  formal_name: string;
+  public_label: string;
+  internal_label: string;
+  source_requirement: string;
+  derives_from: string;
+  minimum_duration_seconds: number | null;
+  requires_lyric: boolean;
+  requires_melody: boolean;
+  requires_phrase: boolean;
+  requires_twinkle: boolean;
+  sample_required: boolean;
+  allowed_in_cc_slow_mode: boolean;
+  may_create_audio: boolean;
+  public_visible: boolean;
+  pricing_tier: string | null;
+  notes: string;
+  is_active: boolean;
+}
+
+export interface LiveFormFactor {
+  form_key: string;
+  form_label: string;
+  form_definition: string;
+  allowed: boolean;
+  notes: string;
+}
+
+/** public.slds_kut_type_registry — 11 rows. */
+export const LIVE_KUT_TYPES: readonly LiveKutType[] = [
+  {
+    "kut_type_code": "EXCLM",
+    "formal_name": "Exclamation",
+    "public_label": "tinyKUT",
+    "internal_label": "EXCLM",
+    "source_requirement": "Exclamation candidate inside approved KK or source-aligned text/audio region",
+    "derives_from": "KK",
+    "minimum_duration_seconds": null,
+    "requires_lyric": true,
+    "requires_melody": true,
+    "requires_phrase": false,
+    "requires_twinkle": false,
+    "sample_required": true,
+    "allowed_in_cc_slow_mode": false,
+    "may_create_audio": true,
+    "public_visible": true,
+    "pricing_tier": "TINYKUT_299",
+    "notes": "tinyKUT class for exclamations. Hold until tinyKUT behavior is sampled.",
+    "is_active": true
+  },
+  {
+    "kut_type_code": "HUG",
+    "formal_name": "HUG",
+    "public_label": "HUG",
+    "internal_label": "HUG",
+    "source_requirement": "Delivery container using approved inventory selected by metadata",
+    "derives_from": "DP",
+    "minimum_duration_seconds": null,
+    "requires_lyric": false,
+    "requires_melody": false,
+    "requires_phrase": false,
+    "requires_twinkle": false,
+    "sample_required": true,
+    "allowed_in_cc_slow_mode": false,
+    "may_create_audio": false,
+    "public_visible": true,
+    "pricing_tier": "HOLIDAY_HUG_1499",
+    "notes": "Container/delivery behavior. Does not own audio directly.",
+    "is_active": true
+  },
+  {
+    "kut_type_code": "KK",
+    "formal_name": "K-KUT",
+    "public_label": "KUT",
+    "internal_label": "Naked KK / K-KUT",
+    "source_requirement": "LT-PIX approved section candidate with PIX-PCK lineage",
+    "derives_from": "LT-PIX",
+    "minimum_duration_seconds": null,
+    "requires_lyric": false,
+    "requires_melody": true,
+    "requires_phrase": false,
+    "requires_twinkle": false,
+    "sample_required": true,
+    "allowed_in_cc_slow_mode": true,
+    "may_create_audio": true,
+    "public_visible": true,
+    "pricing_tier": "KUT_999",
+    "notes": "Root naked K-KUT object. KKs are first in CC Slow Mode.",
+    "is_active": true
+  },
+  {
+    "kut_type_code": "LINEFEEL",
+    "formal_name": "LineFeeL",
+    "public_label": "KUT",
+    "internal_label": "LineFeeL / LFL",
+    "source_requirement": "Approved KK or phrase-continuity region",
+    "derives_from": "KK",
+    "minimum_duration_seconds": null,
+    "requires_lyric": true,
+    "requires_melody": true,
+    "requires_phrase": true,
+    "requires_twinkle": false,
+    "sample_required": true,
+    "allowed_in_cc_slow_mode": false,
+    "may_create_audio": true,
+    "public_visible": false,
+    "pricing_tier": null,
+    "notes": "Experiential continuity object. Hold until KK behavior stabilizes.",
+    "is_active": true
+  },
+  {
+    "kut_type_code": "LINEPAIR",
+    "formal_name": "LinePair",
+    "public_label": "KUT",
+    "internal_label": "LinePair / LPR",
+    "source_requirement": "Approved lyric pair or two-line phrase inside approved KK",
+    "derives_from": "KK",
+    "minimum_duration_seconds": null,
+    "requires_lyric": true,
+    "requires_melody": true,
+    "requires_phrase": true,
+    "requires_twinkle": false,
+    "sample_required": true,
+    "allowed_in_cc_slow_mode": false,
+    "may_create_audio": true,
+    "public_visible": false,
+    "pricing_tier": null,
+    "notes": "LNPR is retired/alias to LPR. Hold until KK behavior stabilizes.",
+    "is_active": true
+  },
+  {
+    "kut_type_code": "MINI_KUT",
+    "formal_name": "mini-KUT",
+    "public_label": "ShortKUT",
+    "internal_label": "mini-KUT / mK",
+    "source_requirement": "Approved naked KK or source-aligned lyric/phrase region",
+    "derives_from": "KK",
+    "minimum_duration_seconds": null,
+    "requires_lyric": true,
+    "requires_melody": true,
+    "requires_phrase": true,
+    "requires_twinkle": false,
+    "sample_required": true,
+    "allowed_in_cc_slow_mode": false,
+    "may_create_audio": true,
+    "public_visible": true,
+    "pricing_tier": "SHORTKUT_499",
+    "notes": "Hold until naked KK layer has been sampled and approved.",
+    "is_active": true
+  },
+  {
+    "kut_type_code": "PHRZ",
+    "formal_name": "Phrase",
+    "public_label": "KUT",
+    "internal_label": "PHRZ",
+    "source_requirement": "Approved phrase inside approved KK or source-aligned phrase region",
+    "derives_from": "KK",
+    "minimum_duration_seconds": null,
+    "requires_lyric": true,
+    "requires_melody": true,
+    "requires_phrase": true,
+    "requires_twinkle": false,
+    "sample_required": true,
+    "allowed_in_cc_slow_mode": false,
+    "may_create_audio": true,
+    "public_visible": false,
+    "pricing_tier": null,
+    "notes": "Phrase-level candidate. Hold.",
+    "is_active": true
+  },
+  {
+    "kut_type_code": "RIME",
+    "formal_name": "RIME",
+    "public_label": "KUT",
+    "internal_label": "RIME",
+    "source_requirement": "Rhyme or matched-expression candidate inside approved inventory",
+    "derives_from": "KK",
+    "minimum_duration_seconds": null,
+    "requires_lyric": true,
+    "requires_melody": true,
+    "requires_phrase": true,
+    "requires_twinkle": false,
+    "sample_required": true,
+    "allowed_in_cc_slow_mode": false,
+    "may_create_audio": true,
+    "public_visible": false,
+    "pricing_tier": null,
+    "notes": "Hold until KK and phrase behavior stabilize.",
+    "is_active": true
+  },
+  {
+    "kut_type_code": "SNDS",
+    "formal_name": "Sounds",
+    "public_label": "tinyKUT",
+    "internal_label": "SNDS",
+    "source_requirement": "One-note/sound candidate inside approved KK or source-aligned audio region",
+    "derives_from": "KK",
+    "minimum_duration_seconds": null,
+    "requires_lyric": false,
+    "requires_melody": true,
+    "requires_phrase": false,
+    "requires_twinkle": false,
+    "sample_required": true,
+    "allowed_in_cc_slow_mode": false,
+    "may_create_audio": true,
+    "public_visible": true,
+    "pricing_tier": "TINYKUT_299",
+    "notes": "tinyKUT class for one-note/sound moments. Hold until tinyKUT behavior is sampled.",
+    "is_active": true
+  },
+  {
+    "kut_type_code": "TRMZ",
+    "formal_name": "Terms",
+    "public_label": "tinyKUT",
+    "internal_label": "TRMZ",
+    "source_requirement": "One-word/term candidate inside approved KK or source-aligned text/audio region",
+    "derives_from": "KK",
+    "minimum_duration_seconds": null,
+    "requires_lyric": true,
+    "requires_melody": true,
+    "requires_phrase": false,
+    "requires_twinkle": false,
+    "sample_required": true,
+    "allowed_in_cc_slow_mode": false,
+    "may_create_audio": true,
+    "public_visible": true,
+    "pricing_tier": "TINYKUT_299",
+    "notes": "tinyKUT class for terms. Hold until tinyKUT behavior is sampled.",
+    "is_active": true
+  },
+  {
+    "kut_type_code": "TUG",
+    "formal_name": "TUG",
+    "public_label": "TUG",
+    "internal_label": "TUG",
+    "source_requirement": "Delivery container using approved inventory selected by metadata",
+    "derives_from": "DP",
+    "minimum_duration_seconds": null,
+    "requires_lyric": false,
+    "requires_melody": false,
+    "requires_phrase": false,
+    "requires_twinkle": false,
+    "sample_required": true,
+    "allowed_in_cc_slow_mode": false,
+    "may_create_audio": false,
+    "public_visible": true,
+    "pricing_tier": null,
+    "notes": "Container/delivery behavior. Does not own audio directly.",
+    "is_active": true
+  }
+];
+
+/** public.gpmc_sk_form_factor_ee — 8 rows. The sK / TUG layer. */
+export const LIVE_SK_FORMS: readonly LiveFormFactor[] = [
+  {
+    "form_key": "1LNR",
+    "form_label": "1LNR",
+    "form_definition": "One-liner sK.",
+    "allowed": true,
+    "notes": "sK/TUG layer; never mK/BUG."
+  },
+  {
+    "form_key": "HOOK",
+    "form_label": "HOOK",
+    "form_definition": "Hook-level sK.",
+    "allowed": true,
+    "notes": "sK/TUG layer; never mK/BUG."
+  },
+  {
+    "form_key": "IDIOM",
+    "form_label": "IDIOM",
+    "form_definition": "Idiom-level sK.",
+    "allowed": true,
+    "notes": "sK/TUG layer; never mK/BUG."
+  },
+  {
+    "form_key": "LNTRIO",
+    "form_label": "LNTRIO",
+    "form_definition": "Three-line shortKUT sK.",
+    "allowed": true,
+    "notes": "sK/TUG layer; never mK/BUG."
+  },
+  {
+    "form_key": "PHRZ",
+    "form_label": "PHRZ",
+    "form_definition": "Phrase-level sK.",
+    "allowed": true,
+    "notes": "sK/TUG layer; never mK/BUG."
+  },
+  {
+    "form_key": "LNPR",
+    "form_label": "LNPR",
+    "form_definition": "Two-line / line-pair shortKUT.",
+    "allowed": true,
+    "notes": "Active sK/TUG form; must be considered wherever a source-aligned two-line combination makes sense."
+  },
+  {
+    "form_key": "TWST",
+    "form_label": "TWSTs",
+    "form_definition": "ShortKUT containing a meaningful lyrical turn, reversal, pivot, reframe, or setup/payoff twist.",
+    "allowed": true,
+    "notes": "Active sK/TUG form. Exhaustive compilation must consider within-line and cross-line TWSTs; never compile as mK/BUG."
+  },
+  {
+    "form_key": "MTA4",
+    "form_label": "MTa4s",
+    "form_definition": "Meaning-bearing metaphorical language whose literal image carries a distinct emotional, relational, narrative, or conceptual meaning.",
+    "allowed": true,
+    "notes": "sK/TUG semantic form. May coexist with a structural form such as PHRZ, 1LNR, LNPR, or LNTRIO. Requires semantic sense-gate confirmation; never assigned from geometry or title alone."
+  }
+];
+
+/** public.gpmc_mk_form_factor_ee — 4 rows. The mK / BUG layer. */
+export const LIVE_MK_FORMS: readonly LiveFormFactor[] = [
+  {
+    "form_key": "1LNR",
+    "form_label": "1LNR",
+    "form_definition": "One-liner is an sK form, not an mK form.",
+    "allowed": false,
+    "notes": "Governed correction 2026-09-01: route 1LNR to sK/TUG; never compile it as mK/BUG."
+  },
+  {
+    "form_key": "TRM",
+    "form_label": "TRM",
+    "form_definition": "Term / compact word or short phrase mK.",
+    "allowed": true,
+    "notes": "Allowed mK form. Must preserve source linkage, timing, display identity, and content fit."
+  },
+  {
+    "form_key": "VSND",
+    "form_label": "VSND",
+    "form_definition": "Vocal sound / non-lyric vocalized sound mK.",
+    "allowed": true,
+    "notes": "Allowed mK form. Must be content-safe and source-linked."
+  },
+  {
+    "form_key": "XCLM",
+    "form_label": "XCLM",
+    "form_definition": "Exclamation mK.",
+    "allowed": true,
+    "notes": "Allowed mK form. Do not infer holiday/theme identity."
+  }
+];
