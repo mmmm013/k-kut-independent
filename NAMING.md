@@ -55,7 +55,7 @@ to one of the kinds above:
 | `LINEPAIR` | LinePair | KUT | TUG `LNPR` |
 | `PHRZ` | Phrase | KUT | TUG `PHRZ` |
 | `RIME` | RIME | KUT | TUG |
-| `MINI_KUT` | mini-KUT | ShortKUT (retired, see §5) | TUG, through 4PE/KKr (see §5) |
+| `MINI_KUT` | mini-KUT | ShortKUT (retired, see §5) | mini-KUT → BUG (see §5) |
 | `TRMZ` | Terms | tinyKUT | mini-KUT `TRM` → BUG |
 | `EXCLM` | Exclamation | tinyKUT | mini-KUT `XCLM` → BUG |
 | `SNDS` | Sounds | tinyKUT | mini-KUT `VSND` → BUG |
@@ -81,10 +81,10 @@ See §1: the tier is the Meant. HUG ranks 1, TUG 2 and BUG 3.
   use short-KUT, ShortKUT or shortKUT. The live database still uses the word
   in three places: `MINI_KUT`'s public label "ShortKUT", its price code
   `SHORTKUT_499`, and three sK form definitions. Changing those is a
-  production write and waits for the owner's go-ahead. The owner
-  says every `MINI_KUT` warrants the TUG tier, and each one gets there by
-  going through 4PE/KKr as a working copy, not by a relabel in the
-  database. The live tinyKUT codes (`TRMZ`, `EXCLM`, `SNDS`) stay BUGs.
+  production write and waits for the owner's go-ahead. All 9,188
+  approved mini-KUTs are single words, and the owner chose to keep them
+  BUGs (2026-10-20), matching the live rule "one word is a BUG, not a TUG".
+  Only multi-word cuts that pass 4PE/KKr become TUGs.
 - **No BUG row.** The live registry has `HUG` and `TUG` rows but no `BUG`.
 - **K-kUpId's tier** is not settled.
 - **The seven kinds.** This repo names four: K-KUT, TUG, mini-KUT and

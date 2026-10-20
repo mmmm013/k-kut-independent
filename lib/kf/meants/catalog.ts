@@ -429,9 +429,9 @@ export const MEANT_TYPE_ALIASES: Record<string, { type: MeantTypeCode; subtype?:
   'K-KUPID': { type: 'KUPID' },
   KKUPID: { type: 'KUPID' },
   // Live slds_kut_type_registry codes.
-  // Owner, 2026-10-20: every live MINI_KUT warrants the TUG tier. Each one still
-  // reaches it as a KKr working copy run through 4PE, never by a relabel.
-  MINI_KUT: { type: 'SK' },
+  // Owner, 2026-10-20: live mini-KUTs are single words and stay BUGs. Only a
+  // multi-word cut that passes 4PE/KKr becomes a TUG.
+  MINI_KUT: { type: 'MK' },
   LFL: { type: 'SK', subtype: '1LNR' },
   LINEPAIR: { type: 'SK', subtype: 'LNPR' },
   LPR: { type: 'SK', subtype: 'LNPR' },

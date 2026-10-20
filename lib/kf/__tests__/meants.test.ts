@@ -127,7 +127,7 @@ test('every retired spelling in NAMING.md resolves to its one name', () => {
     linefeel: 'SK', 'line feel': 'SK', mK: 'MK', 'M-KUT': 'MK', 'MICRO-KUT': 'MK',
     'm-kut': 'MK', 'Mini KUT': 'MK', 'mini-K': 'MK', KUPID: 'KUPID', 'k-kupid': 'KUPID',
     kkupid: 'KUPID', 'short-KUT': 'SK', ShortKUT: 'SK', shortKUT: 'SK', TUG: 'SK',
-    MINI_KUT: 'SK',
+    MINI_KUT: 'MK',
   };
   for (const [spelling, code] of Object.entries(retired)) {
     assert.equal(resolveMeantType(spelling)?.type, code, spelling);
