@@ -146,7 +146,7 @@ function mapShortKut(row: Row): KfInventoryItem {
       ? String(row.line_text)
       : row.sk_subtype
         ? String(row.sk_subtype)
-        : 'short-KUT',
+        : 'TUG',
     href: blocked ? null : unitHref('sK', id),
     playable: !blocked,
     blocked_reason: blocked,

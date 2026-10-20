@@ -126,7 +126,7 @@ test('every retired spelling in NAMING.md resolves to its one name', () => {
     KUT: 'KK', 'k-kut': 'KK', sK: 'SK', 'S-KUT': 'SK', 'short-kut': 'SK', LLF: 'SK',
     linefeel: 'SK', 'line feel': 'SK', mK: 'MK', 'M-KUT': 'MK', 'MICRO-KUT': 'MK',
     'm-kut': 'MK', 'Mini KUT': 'MK', 'mini-K': 'MK', KUPID: 'KUPID', 'k-kupid': 'KUPID',
-    kkupid: 'KUPID',
+    kkupid: 'KUPID', 'short-KUT': 'SK', ShortKUT: 'SK', shortKUT: 'SK', TUG: 'SK',
   };
   for (const [spelling, code] of Object.entries(retired)) {
     assert.equal(resolveMeantType(spelling)?.type, code, spelling);
@@ -352,7 +352,7 @@ test('the Meant tables enforce the tier and full-audio rules in SQL too', () => 
 /** Spellings NAMING.md retires from public copy. Case-sensitive on purpose. */
 const RETIRED_IN_COPY = [
   'Mini KUT', 'Mini-KUT', 'mini-K ', 'M-KUT', 'MICRO-KUT', 'Micro-KUT', 'micro-KUT',
-  'mo-meant', 'S-KUT', 'SHORT-KUT', 'Short-KUT', 'K-KUPID', 'kkupid', 'K-Kupid',
+  'mo-meant', 'S-KUT', 'SHORT-KUT', 'Short-KUT', 'short-KUT', 'ShortKUT', 'shortKUT', 'K-KUPID', 'kkupid', 'K-Kupid',
 ];
 
 test('no page uses a retired spelling', () => {

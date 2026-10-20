@@ -18,7 +18,7 @@ Each Meant is exactly one of the three, fixed by the kind it is cut as:
 | Meant | Cut as | Code | Rule |
 |---|---|---|---|
 | **HUG** | K-KUT, an exact song section | `KK` | Themes, Emotions, Scenarios |
-| **TUG** | short-KUT, a line, pair, hook or saying | `SK` | Themes, Emotions, Scenarios |
+| **TUG** | an sK: a line, pair, hook or saying | `SK` | Themes, Emotions, Scenarios |
 | **BUG** | mini-KUT, a word up to a short phrase | `MK` | None of them. On demand only |
 
 This matches the live rule in `gpmc_sk_form_factor_ee`: "sK/TUG layer; never
@@ -41,7 +41,7 @@ mK/BUG".
 | Public name | Code | What it is | Retired spellings |
 |---|---|---|---|
 | **K-KUT** | `KK` | An exact song section, full audio | KUT, K-kut, k-kut |
-| **short-KUT** | `SK` | Less than a section: a line, pair, hook, saying… | sK, S-KUT, SHORT-KUT, s-kut, and LineFeel / LLF / line feel (a one-liner is just short-KUT subtype `1LNR`, not its own kind) |
+| **TUG** | `SK` | Less than a section: a line, pair, hook, saying… | short-KUT, ShortKUT, shortKUT, sK (in public copy), S-KUT, SHORT-KUT, s-kut, and LineFeel / LLF / line feel (a one-liner is just TUG subtype `1LNR`, not its own kind) |
 | **mini-KUT** | `MK` | Word- to phrase-size, from a single word to a hook | mK, M-KUT, MICRO-KUT, m-kut, Mini KUT, mini-K |
 | **K-kUpId** | `KUPID` | Signed for a romance level (Interest → Forever). Its tier is not settled, so it is not yet a Meant | KUPID, k-kupid, kkupid, K-KUPID |
 
@@ -51,11 +51,11 @@ to one of the kinds above:
 | Live code | Live formal name | Live public label | Resolves to |
 |---|---|---|---|
 | `KK` | K-KUT | KUT | K-KUT → HUG |
-| `LINEFEEL` | LineFeeL | KUT | short-KUT `1LNR` → TUG |
-| `LINEPAIR` | LinePair | KUT | short-KUT `LNPR` → TUG |
-| `PHRZ` | Phrase | KUT | short-KUT `PHRZ` → TUG |
-| `RIME` | RIME | KUT | short-KUT → TUG |
-| `MINI_KUT` | mini-KUT | **ShortKUT** | mini-KUT → BUG |
+| `LINEFEEL` | LineFeeL | KUT | TUG `1LNR` |
+| `LINEPAIR` | LinePair | KUT | TUG `LNPR` |
+| `PHRZ` | Phrase | KUT | TUG `PHRZ` |
+| `RIME` | RIME | KUT | TUG |
+| `MINI_KUT` | mini-KUT | ShortKUT (retired, see §5) | mini-KUT → BUG |
 | `TRMZ` | Terms | tinyKUT | mini-KUT `TRM` → BUG |
 | `EXCLM` | Exclamation | tinyKUT | mini-KUT `XCLM` → BUG |
 | `SNDS` | Sounds | tinyKUT | mini-KUT `VSND` → BUG |
@@ -66,7 +66,7 @@ to one of the kinds above:
 | Name | Code | Role |
 |---|---|---|
 | DKK | `DKK` | Lineage layer between K-KUT and NKK |
-| NKK | `NKK` | Parent of short-KUTs and naked sKs |
+| NKK | `NKK` | Parent of TUGs and naked sKs |
 | naked sK | `NAKED_SK` | Parent of mini-KUTs |
 | LT-PIX | — | The master. Never sold, never a Meant |
 
@@ -76,15 +76,18 @@ See §1: the tier is the Meant. HUG ranks 1, TUG 2 and BUG 3.
 
 ## 5. Still open
 
-- **ShortKUT clash.** The live registry labels mini-KUT (`MINI_KUT`) as
-  "ShortKUT" and prices it `SHORTKUT_499`. The live sK forms call sK
-  "shortKUT". The same word names both a BUG and a TUG, so one of them has to
-  change.
+- **ShortKUT is dropped** (owner, 2026-10-20: "drop ShortKUT. Most, if not
+  all, will become TUGs"). The repo now calls an sK a TUG, and no page may
+  use short-KUT, ShortKUT or shortKUT. The live database still uses the word
+  in three places: `MINI_KUT`'s public label "ShortKUT", its price code
+  `SHORTKUT_499`, and three sK form definitions. Changing those is a
+  production write and waits for the owner's go-ahead. Whether today's
+  `MINI_KUT` rows should become TUGs is a data question for the owner too.
 - **No BUG row.** The live registry has `HUG` and `TUG` rows but no `BUG`.
 - **K-kUpId's tier** is not settled.
-- **The seven kinds.** This repo names four: K-KUT, short-KUT, mini-KUT and
+- **The seven kinds.** This repo names four: K-KUT, TUG, mini-KUT and
   K-kUpId. The other three are not named anywhere in the repo. LineFeel is
-  not one of them: it is a short-KUT one-liner.
+  not one of them: it is a TUG one-liner.
 - **mini-KUT and full audio.** `/invention` calls a mini-KUT "text
   micro-assets (NOT audio)", and `types.ts` says its audio comes from a parent
   K-KUT. A Meant is always full audio, so the copy on `/invention` needs
@@ -96,7 +99,7 @@ These are not legal advice, and no search or clearance has been done here.
 
 - Applications are filed with the USPTO: https://www.uspto.gov/trademarks/apply.
 - Coined marks are the strongest candidates: **K-KUT**, **K-kUpId**,
-  **mini-KUT**, **short-KUT**.
+  **mini-KUT**. short-KUT is dropped, so it is not a candidate.
 - **MEANT** and **HUG** / **TUG** / **BUG** are ordinary English words. Expect
   descriptiveness or likelihood-of-confusion questions, so a knockout search
   first is worth it.

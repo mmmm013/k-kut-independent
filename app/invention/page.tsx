@@ -9,7 +9,7 @@
  *   3. K-kUpId — romance/gifting invention (5 levels)
  *
  * Closes with the KUT Family kinds the inventory at /kf is built from.
- * LineFeel (LLF) is a short-KUT one-liner, not a parallel kind, so it is
+ * LineFeel (LLF) is a TUG one-liner, not a parallel kind, so it is
  * not listed separately.
  */
 
@@ -31,7 +31,7 @@ const MK_TYPES = [
 const KF_UNITS = [
   { unit: 'KUT',   name: 'K-KUT',     color: '#D4A017', desc: 'Exact contiguous section audio', table: 'k_kut_assets' },
   { unit: 'mK',    name: 'mini-KUT',  color: '#C8A882', desc: 'Text micro-assets from lyrics',  table: 'm_kut_assets' },
-  { unit: 'sK',    name: 'short-KUT', color: '#8B5CF6', desc: 'Less than a section: a line, pair, hook or saying', table: 'sk_assets' },
+  { unit: 'sK',    name: 'TUG',       color: '#8B5CF6', desc: 'Less than a section: a line, pair, hook or saying', table: 'sk_assets' },
   { unit: 'KUPID', name: 'K-kUpId',   color: '#E07B54', desc: 'A KUT signed for a romance level', table: 'kupid_assets' },
 ];
 

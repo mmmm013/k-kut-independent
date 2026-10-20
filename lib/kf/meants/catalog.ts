@@ -354,7 +354,7 @@ export const MEANT_TYPES: Record<MeantTypeCode, MeantType> = {
     code: 'SK',
     tier: 'TUG',
     kkrCode: 'KKr-SK',
-    name: 'short-KUT',
+    name: 'TUG',
     parent: 'NKK',
     table: 'sk_assets',
     status: 'CLONED',
@@ -415,6 +415,11 @@ export const MEANT_TYPE_ALIASES: Record<string, { type: MeantTypeCode; subtype?:
   'K-KUT': { type: 'KK' },
   'S-KUT': { type: 'SK' },
   'SHORT-KUT': { type: 'SK' },
+  SHORTKUT: { type: 'SK' },
+  // The public names. Tier follows kind, so each tier names exactly one type.
+  HUG: { type: 'KK' },
+  TUG: { type: 'SK' },
+  BUG: { type: 'MK' },
   'M-KUT': { type: 'MK' },
   'MICRO-KUT': { type: 'MK' },
   'MINI-KUT': { type: 'MK' },
@@ -423,7 +428,7 @@ export const MEANT_TYPE_ALIASES: Record<string, { type: MeantTypeCode; subtype?:
   'LINE FEEL': { type: 'SK', subtype: '1LNR' },
   'K-KUPID': { type: 'KUPID' },
   KKUPID: { type: 'KUPID' },
-  // Live slds_kut_type_registry codes. HUG and TUG there are tiers, not types.
+  // Live slds_kut_type_registry codes.
   MINI_KUT: { type: 'MK' },
   LFL: { type: 'SK', subtype: '1LNR' },
   LINEPAIR: { type: 'SK', subtype: 'LNPR' },

@@ -3,7 +3,7 @@
 **Meant** is the collective term for every Element. A Meant is always and only
 a full-audio copy grabbed from an original SSOT clone, sent through multiple
 Text Loops of humanizing, and defined by KKr instructions. **Meants are HUGs,
-TUGs and BUGs**: a K-KUT is a HUG, a short-KUT a TUG and a mini-KUT a BUG
+TUGs and BUGs**: a K-KUT is a HUG, an sK a TUG and a mini-KUT a BUG
 (owner, 2026-10-20). The Element Types are cloned from the live registry
 snapshot in `reference/live-registry/` as well as the repo's reference schema.
 
@@ -27,7 +27,7 @@ reference schema and fails if the clone is missing a column or invents one.
 | `KKr-DKK` | DKK | KK | GOVERNANCE.md §2, no schema | 7 (lineage identity + bounds) | — |
 | `KKr-NKK` | NKK | DKK | `nkk_assets` | 21 | — |
 | `KKr-NAKED_SK` | naked sK | NKK | GOVERNANCE.md §2, no schema | 7 (lineage identity + bounds) | — |
-| `KKr-SK` | short-KUT | NKK | `sk_assets` | 25 | 20 (TWST … OTHER) |
+| `KKr-SK` | TUG | NKK | `sk_assets` | 25 | 20 (TWST … OTHER) |
 | `KKr-MK` | mini-KUT | naked sK | `m_kut_assets` | 20 | 8 (mK-verb … mK-hook) |
 | `KKr-KUPID` | K-kUpId | **unresolved** | `kupid_assets` | 24 | 5 levels (INT … FVR) |
 

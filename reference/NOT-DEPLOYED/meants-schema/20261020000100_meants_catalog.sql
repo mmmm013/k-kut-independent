@@ -45,7 +45,7 @@ insert into public.meant_types (code, kkr_code, name, parent_code, source_table,
   ('DKK',      'KKr-DKK',      'DKK',        'KK',       null,           'CLONED_IDENTITY_ONLY',     array['SONG_SECTION'], null),
   ('NKK',      'KKr-NKK',      'NKK',        'DKK',      'nkk_assets',   'CLONED',                   array['SONG_SECTION', 'LINE_SET', 'LINE'], null),
   ('NAKED_SK', 'KKr-NAKED_SK', 'naked sK',   'NKK',      null,           'CLONED_IDENTITY_ONLY',     array['LINE_SET', 'LINE', 'PHRASE', 'TERM', 'WORD'], null),
-  ('SK',       'KKr-SK',       'short-KUT',  'NKK',      'sk_assets',    'CLONED',                   array['LINE_SET', 'LINE', 'PHRASE', 'TERM', 'WORD'], 'TUG'),
+  ('SK',       'KKr-SK',       'TUG',        'NKK',      'sk_assets',    'CLONED',                   array['LINE_SET', 'LINE', 'PHRASE', 'TERM', 'WORD'], 'TUG'),
   ('MK',       'KKr-MK',       'mini-KUT',   'NAKED_SK', 'm_kut_assets', 'CLONED',                   array['LINE', 'PHRASE', 'TERM', 'WORD'], 'BUG'),
   ('KUPID',    'KKr-KUPID',    'K-kUpId',    null,       'kupid_assets', 'CLONED_PARENT_UNRESOLVED', array['SONG_SECTION', 'LINE_SET', 'LINE'], null)
 on conflict (code) do nothing;
