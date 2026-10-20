@@ -55,7 +55,7 @@ to one of the kinds above:
 | `LINEPAIR` | LinePair | KUT | TUG `LNPR` |
 | `PHRZ` | Phrase | KUT | under 4 words: BUG `PHRZ`; 4+ words: TUG |
 | `RIME` | RIME | KUT | TUG |
-| `MINI_KUT` | mini-KUT | ShortKUT (retired, see §5) | mini-KUT → BUG (see §5) |
+| `MINI_KUT` | mini-KUT | BUG (was ShortKUT until 2026-10-20) | mini-KUT → BUG (see §5) |
 | `TRMZ` | Terms | tinyKUT | mini-KUT `TRM` → BUG |
 | `EXCLM` | Exclamation | tinyKUT | mini-KUT `XCLM` → BUG |
 | `SNDS` | Sounds | tinyKUT | mini-KUT `VSND` → BUG |
@@ -78,8 +78,9 @@ See §1: the tier is the Meant. HUG ranks 1, TUG 2 and BUG 3.
 
 - **ShortKUT is dropped** (owner, 2026-10-20: "drop ShortKUT. Most, if not
   all, will become TUGs"). The repo now calls an sK a TUG, and no page may
-  use short-KUT, ShortKUT or shortKUT. The live database still uses the word
-  in three places: `MINI_KUT`'s public label "ShortKUT", its price code
+  use short-KUT, ShortKUT or shortKUT. The live `MINI_KUT` public label was
+  changed from "ShortKUT" to "BUG" on the owner's go (2026-10-20). The word
+  is still in its price code
   `SHORTKUT_499`, and three sK form definitions. Changing those is a
   production write and waits for the owner's go-ahead. All 9,188
   approved mini-KUTs are single words, and the owner chose to keep them
