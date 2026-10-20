@@ -276,3 +276,41 @@ test('no app page uses sales-rep language', () => {
     assert.deepEqual(findSalesLanguage(readFileSync(file, 'utf8')), [], file);
   }
 });
+
+// ── Draft catalog tables ─────────────────────────────────────────────────────
+
+const MEANTS_SQL = readFileSync(
+  join(ROOT, 'reference', 'NOT-DEPLOYED', 'meants-schema', '20261020000100_meants_catalog.sql'),
+  'utf8',
+);
+
+test('meant_types seeds every Element Type exactly as the code catalog has it', () => {
+  const rows = [...MEANTS_SQL.matchAll(
+    /^\s+\('([A-Z_]+)',\s+'(KKr-[A-Z_]+)',\s+'([^']+)',\s+(null|'[^']+'),\s+(null|'[^']+'),\s+'([A-Z_]+)',\s+array\[([^\]]+)\]\)/gm,
+  )];
+  assert.equal(rows.length, MEANT_TYPE_CODES.length);
+
+  for (const [, code, kkr, name, parent, table, status, grans] of rows) {
+    const type = MEANT_TYPES[code as (typeof MEANT_TYPE_CODES)[number]];
+    assert.ok(type, code);
+    assert.equal(kkr, type.kkrCode);
+    assert.equal(name, type.name);
+    assert.equal(parent === 'null' ? null : parent.slice(1, -1), type.parent);
+    assert.equal(table === 'null' ? null : table.slice(1, -1), type.table);
+    assert.equal(status, type.status);
+    assert.deepEqual(grans.split(',').map((g) => g.trim().slice(1, -1)), [...type.granularities]);
+  }
+});
+
+test('the Meant tables enforce the tier and full-audio rules in SQL too', () => {
+  for (const name of [
+    'meant_tiers_bug_no_sentiment', 'meant_tiers_hug_tug_sentiment', 'meant_tiers_triggers',
+    'meants_vtp_ordered_and_inside_intp', 'meants_inside_parent_bounds', 'meants_text_loops_gate',
+  ]) {
+    assert.ok(MEANTS_SQL.includes(name), name);
+  }
+  assert.match(MEANTS_SQL, /has_vocals\s+boolean not null check \(has_vocals\)/);
+  assert.match(MEANTS_SQL, /has_instrumentals\s+boolean not null check \(has_instrumentals\)/);
+  assert.match(MEANTS_SQL, /check \(variant = 'VOCAL_MUSIC'\)/);
+  assert.match(MEANTS_SQL, /array\['user_request'\]\)/);
+});

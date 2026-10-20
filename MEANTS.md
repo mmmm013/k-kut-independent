@@ -88,10 +88,31 @@ sK when upstream calls them mK forms.
 | K-kUpId's parent | left unresolved | GOVERNANCE.md says not to guess |
 | Themes / Emotions / Scenarios vocab | free strings, three separate fields | Upstream holds 38 Themes and 74 sentiment keys; none are in this repo |
 
-## 5. What this does not do
+## 5. Where each Meant is cataloged
 
-- No database writes, no migrations, no seed rows — the freeze blocks
-  candidate generation and this repo is a publication mirror.
+| What | Code | Draft table (not applied) |
+|---|---|---|
+| Every Element Type, DKK and naked sK included | `MEANT_TYPES` in `catalog.ts` | `meant_types` (7 rows) |
+| Each Meant working copy, any type | `MeantClone` in `meant.ts` | `meants` |
+| Its HUG, TUG and BUG | `tiers` on `MeantClone` | `meant_tiers` |
+| KKr strategies per tier, WORD → SONG_SECTION | `Strategy` | `meant_tier_strategies` |
+| Text Loop runs | `text_loops` | `meant_text_loops` |
+
+The draft is `reference/NOT-DEPLOYED/meants-schema/20261020000100_meants_catalog.sql`.
+The rules are enforced in SQL as well as in code: CHECKs for vocals,
+instrumentals, `VOCAL_MUSIC`, the source-audio guard, VTP inside InTP, InTP
+inside the parent's bounds, BUGs with no sentiment and `user_request` only,
+and a trigger requiring 2 Text Loops before `HUMANIZED`. It has been run
+twice against a local scratch Postgres 16 (it is idempotent), and every rule
+rejected a violating row. A test checks that the `meant_types` seed matches
+`MEANT_TYPES`. It depends on `kf_is_forbidden_source_url()` from the
+kf-schema core file.
+
+## 6. What this does not do
+
+- Nothing is applied to any database, and no Meant rows are seeded. The freeze
+  blocks candidate generation and this repo is a publication mirror. The
+  draft tables wait for the owner's go-ahead.
 - No route is switched over yet. Next step: have `/api/hug/[id]` call
   `validateMeant()` and `canDeliverTier()` once real Meant rows exist.
 - The actual Text Loop mechanics and KKr instruction content live upstream.
