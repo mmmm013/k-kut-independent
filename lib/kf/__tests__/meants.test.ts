@@ -326,3 +326,20 @@ test('the Meant tables enforce the tier and full-audio rules in SQL too', () => 
   assert.match(MEANTS_SQL, /check \(variant = 'VOCAL_MUSIC'\)/);
   assert.match(MEANTS_SQL, /array\['user_request'\]\)/);
 });
+
+// ── Poka-yoke: retired spellings cannot reach a page ─────────────────────────
+
+/** Spellings NAMING.md retires from public copy. Case-sensitive on purpose. */
+const RETIRED_IN_COPY = [
+  'Mini KUT', 'Mini-KUT', 'mini-K ', 'M-KUT', 'MICRO-KUT', 'Micro-KUT', 'micro-KUT',
+  'mo-meant', 'S-KUT', 'SHORT-KUT', 'Short-KUT', 'K-KUPID', 'kkupid', 'K-Kupid',
+];
+
+test('no page uses a retired spelling', () => {
+  for (const file of walk(join(ROOT, 'app'))) {
+    const text = readFileSync(file, 'utf8');
+    for (const spelling of RETIRED_IN_COPY) {
+      assert.ok(!text.includes(spelling), `${file} uses retired "${spelling}" (see NAMING.md)`);
+    }
+  }
+});

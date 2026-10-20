@@ -12,6 +12,18 @@ names below.
 |---|---|
 | **Meant** / **Meants** | Element, "song mo-meant", "mo-meant" (GOVERNANCE.md §8), "delivery unit" in public copy |
 
+## 1b. How names are kept uniform
+
+- **Outward in.** The public name comes first, from what the User sees. Code
+  and database names follow it.
+- **Codes never change.** `KK`, `SK`, `MK`, `KUPID` and the rest stay fixed
+  even if a public name changes, so a rename is a one-line edit here, not a
+  data migration.
+- **One registry.** Old spellings are accepted when reading
+  (`resolveMeantType`) and never written.
+- **Poka-yoke.** `npm test` fails if any page in `app/` uses a retired
+  spelling.
+
 ## 2. What a User can get (public names)
 
 | Public name | Code | What it is | Retired spellings |
