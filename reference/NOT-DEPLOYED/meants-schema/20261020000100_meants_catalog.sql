@@ -2,8 +2,8 @@
 -- Meants — catalog tables (DRAFT, NOT DEPLOYED)
 --
 -- Where every Meant and every Element Type is cataloged, mirroring
--- lib/kf/meants/. Kept under reference/NOT-DEPLOYED on purpose: nothing here
--- may be applied while the BLK/KK text-generation freeze is ACTIVE, and this
+-- lib/kf/meants/. The owner lifted the BLK/KK text-generation freeze for
+-- Meants only on 2026-10-20. It stays under reference/NOT-DEPLOYED because this
 -- Supabase project is a publication mirror of GPMC, not an authority
 -- (GOVERNANCE.md §1). Apply only on the owner's explicit go-ahead.
 --

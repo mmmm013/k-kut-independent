@@ -29,13 +29,20 @@ rollback locator and retention decision, one entry per file.
 
 | Rank | Source | State |
 |---|---|---|
-| 1 | `config/blk-kk-text-generation-freeze.v1.json` | `ACTIVE_OWNER_AUTHORIZED_FREEZE` |
+| 1 | `config/blk-kk-text-generation-freeze.v1.json` | `ACTIVE_OWNER_AUTHORIZED_FREEZE` — **lifted for Meants only** by the owner, 2026-10-20 |
 | 2 | ontology · worksheet · exception registry · review gate | all `DRAFT_PENDING_OWNER_LOCK` |
 | 3 | `lib/publication-bridge/approvedPublicOptions.ts` | governed runtime eligibility gate |
 | 4 | `data/publication-bridge/public-option-records.generated.json` | input only |
 | 5 | `data/production/first-production-canary-v1.json` | 2 TRIAGE · **0 STAGE** |
 
 The governed catalog authorizes **zero** public IIs. That is correct, not a gap.
+
+**Meants carve-out (owner decision, 2026-10-20).** The freeze no longer covers
+Meant work: the catalog in `lib/kf/meants/` and the draft tables in
+`meants-schema/`. It stays in force for every other BLK/KK text generation
+and promotion, including `kf-schema/seed.sql`. The upstream freeze file lives
+in the GPMx tooling and should be updated to record the same carve-out.
+Applying `meants-schema` to the live project is still a separate go-ahead.
 
 ## What is still worth reading here
 

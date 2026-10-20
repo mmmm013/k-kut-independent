@@ -8,8 +8,8 @@ Tiers: **HUGs, TUGs, BUGs**.
 Code: `lib/kf/meants/` · Tests: `lib/kf/__tests__/meants.test.ts`
 
 This is types and rules only. It creates no rows, touches no database, and
-originates nothing. GPMC stays the write authority (GOVERNANCE.md §1) and the
-BLK/KK text-generation freeze stays in force.
+originates nothing. GPMC stays the write authority (GOVERNANCE.md §1). The
+BLK/KK text-generation freeze is lifted for Meants only (owner, 2026-10-20).
 
 ---
 
@@ -110,9 +110,10 @@ kf-schema core file.
 
 ## 6. What this does not do
 
-- Nothing is applied to any database, and no Meant rows are seeded. The freeze
-  blocks candidate generation and this repo is a publication mirror. The
-  draft tables wait for the owner's go-ahead.
+- Nothing is applied to any database, and no Meant rows are seeded. On
+  2026-10-20 the owner lifted the BLK/KK text freeze for Meants only. The
+  freeze still covers every other BLK/KK generation. Applying the draft tables
+  to the live project is a separate go-ahead.
 - No route is switched over yet. Next step: have `/api/hug/[id]` call
   `validateMeant()` and `canDeliverTier()` once real Meant rows exist.
 - The actual Text Loop mechanics and KKr instruction content live upstream.

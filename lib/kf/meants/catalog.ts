@@ -9,8 +9,8 @@
  * is still cloned and carries an `upstreamFlag` saying so.
  *
  * This is types and rules only. It creates no rows, touches no database and
- * originates nothing: GPMC stays the write authority and the BLK/KK
- * text-generation freeze stays in force.
+ * originates nothing: GPMC stays the write authority. The BLK/KK
+ * text-generation freeze was lifted for Meants only by the owner on 2026-10-20.
  */
 
 import { KUPID_LEVELS, MK_TYPES, SECTION_ORDER, SK_SUBTYPES } from '../types';
