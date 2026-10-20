@@ -1,5 +1,5 @@
 -- ─────────────────────────────────────────────────────────────────────────────
--- Meants — catalog tables (DRAFT, NOT DEPLOYED)
+-- Meants — catalog tables (APPLIED to the live database 2026-10-20)
 --
 -- Where every Meant and every Element Type is cataloged, mirroring
 -- lib/kf/meants/. The owner lifted the BLK/KK text-generation freeze for
@@ -7,6 +7,7 @@
 -- Supabase project is a publication mirror of GPMC, not an authority
 -- (GOVERNANCE.md §1). The owner gave the go-ahead to apply it to the live
 -- database on 2026-10-20 ("apply the Meant tables to the live database").
+-- Applied as migrations meants_01 … meants_06 on project vwlzubxshjjonabpeagd.
 --
 -- Additive and standalone: new tables only, no changes to anything existing,
 -- no seed of Meant rows. The only rows inserted are the seven Element Types

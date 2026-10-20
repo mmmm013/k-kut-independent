@@ -76,8 +76,10 @@ See §1: the tier is the Meant. HUG ranks 1, TUG 2 and BUG 3.
 
 Set prices (owner, 2026-10-20): **HUG $7.99, TUG $4.99, BUG $1.99**. They
 are fixed (`TIER_PRICE_CENTS` in `lib/kf/meants/meant.ts`). The live price
-codes `KUT_999`, `HOLIDAY_HUG_1499` and `TINYKUT_299` do not match these
-and have not been changed.
+codes `KUT_999` and `HOLIDAY_HUG_1499` do not match these and have not been
+changed. `TINYKUT_299` was removed: the three tinyKUT BUGs are now `BUG_199`
+(owner, 2026-10-20: "Stripe is right"). The live `meant_tier_prices` table
+holds the three set prices with their Stripe price ids.
 
 ## 5. Still open
 
@@ -86,8 +88,7 @@ and have not been changed.
   use short-KUT, ShortKUT or shortKUT. The live `MINI_KUT` type is a TUG at
   4.99 (owner, 2026-10-20): its public label is now "TUG" and its price code
   `TUG_499` (it was ShortKUT / `SHORTKUT_499`). BUGs are single words at
-  1.99. The live tinyKUT BUG codes are still priced `TINYKUT_299`, which
-  does not match 1.99 yet. Also, the three sK form definitions
+  1.99, and the tinyKUT BUG codes are now `BUG_199`. Also, the three sK form definitions
   that said shortKUT now say TUG (owner: "change all"). No live type or form
   row uses the word any more. All 9,188
   approved mini-KUTs are single words, and the owner chose to keep them
