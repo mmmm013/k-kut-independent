@@ -449,9 +449,9 @@ export const MEANT_TYPE_ALIASES: Record<string, { type: MeantTypeCode; subtype?:
   'K-KUPID': { type: 'KUPID' },
   KKUPID: { type: 'KUPID' },
   // Live slds_kut_type_registry codes.
-  // Owner, 2026-10-20: live mini-KUTs are single words and stay BUGs. Only a
-  // multi-word cut that passes 4PE/KKr becomes a TUG.
-  MINI_KUT: { type: 'MK' },
+  // Owner, 2026-10-20: the live MINI_KUT type (once labelled ShortKUT) is a
+  // TUG at 4.99. Single-word cuts are TRMs, which are BUGs.
+  MINI_KUT: { type: 'SK' },
   LFL: { type: 'SK', subtype: '1LNR' },
   LINEPAIR: { type: 'SK', subtype: 'LNPR' },
   LPR: { type: 'SK', subtype: 'LNPR' },
