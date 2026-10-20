@@ -79,10 +79,10 @@ See §1: the tier is the Meant. HUG ranks 1, TUG 2 and BUG 3.
 - **ShortKUT is dropped** (owner, 2026-10-20: "drop ShortKUT. Most, if not
   all, will become TUGs"). The repo now calls an sK a TUG, and no page may
   use short-KUT, ShortKUT or shortKUT. The live `MINI_KUT` public label was
-  changed from "ShortKUT" to "BUG" on the owner's go (2026-10-20). The word
-  is still in its price code
-  `SHORTKUT_499`, and three sK form definitions. Changing those is a
-  production write and waits for the owner's go-ahead. All 9,188
+  changed from "ShortKUT" to "BUG" on the owner's go (2026-10-20). Its price
+  code `SHORTKUT_499` became `BUG_499`, and the three sK form definitions
+  that said shortKUT now say TUG (owner: "change all"). No live type or form
+  row uses the word any more. All 9,188
   approved mini-KUTs are single words, and the owner chose to keep them
   BUGs (2026-10-20), matching the live rule "one word is a BUG, not a TUG".
   Only multi-word cuts that pass 4PE/KKr become TUGs.
