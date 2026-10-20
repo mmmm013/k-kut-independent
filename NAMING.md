@@ -80,7 +80,9 @@ Other set prices: **Holiday $14.99, Promo $11.99, and Note & Story $0.99**
 (an add-on to a BUG). There is no $9.99 (`OFFER_PRICE_CENTS`). K-KUT's live code
 `KUT_999` became `HUG_799` (owner, 2026-10-20), since a K-KUT is a HUG.
 `HOLIDAY_HUG_1499` is correct. The live `meant_offer_prices` table holds the
-three offer prices; none has a Stripe price yet. `TINYKUT_299` was removed: the three tinyKUT BUGs are now `BUG_199`
+three offer prices with their Stripe price ids (Holiday
+`price_1USkbnRBP1Y9IAbLoyDeqLrg`, Promo `price_1USkd9RBP1Y9IAbLYaD6GuYX`, Note & Story
+`price_1USketRBP1Y9IAbLxwlnvBZT`; created by the owner and linked 2026-10-20). `TINYKUT_299` was removed: the three tinyKUT BUGs are now `BUG_199`
 (owner, 2026-10-20: "Stripe is right"). The live `meant_tier_prices` table
 holds the three set prices with their Stripe price ids.
 
