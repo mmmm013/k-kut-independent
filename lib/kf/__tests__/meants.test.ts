@@ -14,6 +14,7 @@ import { join } from 'node:path';
 import test from 'node:test';
 
 import {
+  BUG_FORMS,
   MEANT_TYPE_CODES,
   MEANT_TYPES,
   MeantClone,
@@ -22,6 +23,7 @@ import {
   honorUserVerdict,
   lineageOf,
   nextBestAction,
+  phraseTier,
   resolveMeantType,
   tierOf,
   validateMeant,
@@ -90,7 +92,7 @@ test('attribute names are unique within each type', () => {
 
 test('every enum value is cloned verbatim', () => {
   assert.deepEqual(MEANT_TYPES.SK.subtypes.map((s) => s.code), [...SK_SUBTYPES, 'IDIOM']);
-  assert.deepEqual(MEANT_TYPES.MK.subtypes.map((s) => s.code), [...MK_TYPES, 'TRM', 'XCLM', 'VSND']);
+  assert.deepEqual(MEANT_TYPES.MK.subtypes.map((s) => s.code), [...MK_TYPES, 'TRM', 'XCLM', 'VSND', 'PHRZ']);
   assert.deepEqual(MEANT_TYPES.KUPID.subtypes.map((s) => s.code), KUPID_LEVELS.map((l) => l.code));
 
   const variant = MEANT_TYPES.KK.attributes.find((a) => a.name === 'variant');
@@ -103,6 +105,17 @@ test('known upstream defects are cloned, and flagged', () => {
   assert.ok(kk.find((a) => a.name === 'theme')?.upstreamFlag);
   const trm = MEANT_TYPES.SK.subtypes.find((s) => s.code === 'TRM');
   assert.ok(trm?.upstreamFlag);
+});
+
+test('BUGs are TRM, PHRZ under 4 words, XCLM and VSND', () => {
+  const mk = new Set(MEANT_TYPES.MK.subtypes.map((s) => s.code));
+  for (const form of BUG_FORMS) assert.ok(mk.has(form), form);
+  assert.deepEqual(resolveMeantType('PHRZ'), { type: 'MK', subtype: 'PHRZ' });
+  assert.deepEqual(resolveMeantType('TRMZ'), { type: 'MK', subtype: 'TRM' });
+  assert.equal(phraseTier(1), 'BUG');
+  assert.equal(phraseTier(3), 'BUG');
+  assert.equal(phraseTier(4), 'TUG');
+  assert.ok(MEANT_TYPES.SK.subtypes.find((s) => s.code === 'PHRZ')?.upstreamFlag);
 });
 
 test('lineage follows the capture-room LOCK', () => {

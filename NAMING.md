@@ -19,9 +19,9 @@ Each Meant is exactly one of the three, fixed by the kind it is cut as:
 |---|---|---|---|
 | **HUG** | K-KUT, an exact song section | `KK` | Themes, Emotions, Scenarios |
 | **TUG** | an sK: a line, pair, hook or saying | `SK` | Themes, Emotions, Scenarios |
-| **BUG** | mini-KUT, a word up to a short phrase | `MK` | None of them. On demand only |
+| **BUG** | mini-KUT: a TRM (one word), a PHRZ of fewer than 4 words, an XCLM or a VSND | `MK` | None of them. On demand only |
 
-This matches the live rule in `gpmc_sk_form_factor_ee`: "sK/TUG layer; never
+A phrase of 4 or more words is a TUG (owner, 2026-10-20). This matches the live rule in `gpmc_sk_form_factor_ee`: "sK/TUG layer; never
 mK/BUG".
 
 ## 1b. How names are kept uniform
@@ -53,7 +53,7 @@ to one of the kinds above:
 | `KK` | K-KUT | KUT | K-KUT → HUG |
 | `LINEFEEL` | LineFeeL | KUT | TUG `1LNR` |
 | `LINEPAIR` | LinePair | KUT | TUG `LNPR` |
-| `PHRZ` | Phrase | KUT | TUG `PHRZ` |
+| `PHRZ` | Phrase | KUT | under 4 words: BUG `PHRZ`; 4+ words: TUG |
 | `RIME` | RIME | KUT | TUG |
 | `MINI_KUT` | mini-KUT | ShortKUT (retired, see §5) | mini-KUT → BUG (see §5) |
 | `TRMZ` | Terms | tinyKUT | mini-KUT `TRM` → BUG |

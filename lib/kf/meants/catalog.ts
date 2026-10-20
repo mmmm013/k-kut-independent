@@ -137,6 +137,20 @@ export const PRODUCT_TIERS = ['HUG', 'TUG', 'BUG'] as const;
 
 export type ProductTier = (typeof PRODUCT_TIERS)[number];
 
+/**
+ * The BUG forms (owner, 2026-10-20): TRM (one word), PHRZ (fewer than 4
+ * words), XCLM and VSND. Everything else below a section is a TUG.
+ */
+export const BUG_FORMS = ['TRM', 'PHRZ', 'XCLM', 'VSND'] as const;
+
+/** A phrase of this many words or fewer is a BUG; one word longer is a TUG. */
+export const BUG_PHRASE_MAX_WORDS = 3;
+
+/** Tier of a phrase-sized cut by its word count. One word is a TRM, a BUG. */
+export function phraseTier(words: number): 'BUG' | 'TUG' {
+  return words <= BUG_PHRASE_MAX_WORDS ? 'BUG' : 'TUG';
+}
+
 // ── Element Types ────────────────────────────────────────────────────────────
 
 /** Every Element Type, cloned. LT-PIX is the SSOT source, not a Meant. */
@@ -365,7 +379,11 @@ export const MEANT_TYPES: Record<MeantTypeCode, MeantType> = {
         code,
         label: code === '1LNR' ? 'one-liner (LineFeel / LLF)' : undefined,
         granularity: SK_GRANULARITY[code],
-        upstreamFlag: MK_FORMS_IN_SK.has(code) ? 'Upstream calls this an mK form, not an sK form.' : undefined,
+        upstreamFlag: MK_FORMS_IN_SK.has(code)
+          ? 'Upstream calls this an mK form, not an sK form.'
+          : code === 'PHRZ'
+            ? `Under ${BUG_PHRASE_MAX_WORDS + 1} words a phrase is a BUG (mK PHRZ), not a TUG.`
+            : undefined,
       })),
       // Live gpmc_sk_form_factor_ee forms the reference schema never had.
       { code: 'IDIOM', label: 'idiom', granularity: 'PHRASE' as const },
@@ -388,6 +406,8 @@ export const MEANT_TYPES: Record<MeantTypeCode, MeantType> = {
       { code: 'TRM', label: 'term', granularity: 'TERM' as const },
       { code: 'XCLM', label: 'exclamation', granularity: 'WORD' as const },
       { code: 'VSND', label: 'vocal sound', granularity: 'WORD' as const },
+      // Owner, 2026-10-20: a phrase of fewer than 4 words is a BUG.
+      { code: 'PHRZ', label: 'phrase, fewer than 4 words', granularity: 'PHRASE' as const },
     ],
     evidence: `${CORE}; GOVERNANCE.md §2 LOCK`,
   },
@@ -435,7 +455,8 @@ export const MEANT_TYPE_ALIASES: Record<string, { type: MeantTypeCode; subtype?:
   LFL: { type: 'SK', subtype: '1LNR' },
   LINEPAIR: { type: 'SK', subtype: 'LNPR' },
   LPR: { type: 'SK', subtype: 'LNPR' },
-  PHRZ: { type: 'SK', subtype: 'PHRZ' },
+  // Live PHRZ is the BUG phrase. A phrase of 4+ words is a TUG (SK PHRZ_LNG).
+  PHRZ: { type: 'MK', subtype: 'PHRZ' },
   RIME: { type: 'SK' },
   TRMZ: { type: 'MK', subtype: 'TRM' },
   EXCLM: { type: 'MK', subtype: 'XCLM' },
