@@ -17,8 +17,7 @@ names below.
 | Public name | Code | What it is | Retired spellings |
 |---|---|---|---|
 | **K-KUT** | `KK` | An exact song section, full audio | KUT, K-kut, k-kut |
-| **short-KUT** | `SK` | Less than a section: a line, pair, hook, saying… | sK, S-KUT, SHORT-KUT, s-kut |
-| **LineFeel** | `SK` · `1LNR` | One lyric line. A kind of short-KUT | LLF, linefeel, line feel |
+| **short-KUT** | `SK` | Less than a section: a line, pair, hook, saying… | sK, S-KUT, SHORT-KUT, s-kut, and LineFeel / LLF / line feel (a one-liner is just short-KUT subtype `1LNR`, not its own kind) |
 | **mini-KUT** | `MK` | Word- to phrase-size, from a single word to a hook | mK, M-KUT, MICRO-KUT, m-kut, Mini KUT, mini-K |
 | **K-kUpId** | `KUPID` | A Meant signed for a romance level (Interest → Forever) | KUPID, k-kupid, kkupid, K-KUPID |
 
@@ -41,10 +40,9 @@ names below.
 
 ## 5. Still open
 
-- **The seven kinds.** This repo documents three inventions (K-KUT,
-  mini-KUT, K-kUpId on `/invention`) and two more public names (short-KUT,
-  LineFeel). That makes five. The other two are not named anywhere in the
-  repo.
+- **The seven kinds.** This repo names four: K-KUT, short-KUT, mini-KUT and
+  K-kUpId. The other three are not named anywhere in the repo. LineFeel is
+  not one of them: it is a short-KUT one-liner.
 - **mini-KUT and full audio.** `/invention` calls a mini-KUT "text
   micro-assets (NOT audio)", and `types.ts` says its audio comes from a parent
   K-KUT. A Meant is always full audio, so the copy on `/invention` needs
@@ -55,7 +53,7 @@ names below.
 These are not legal advice, and no search or clearance has been done here.
 
 - Applications are filed with the USPTO: https://www.uspto.gov/trademarks/apply.
-- Coined marks are the strongest candidates: **K-KUT**, **K-kUpId**, **LineFeel**,
+- Coined marks are the strongest candidates: **K-KUT**, **K-kUpId**,
   **mini-KUT**, **short-KUT**.
 - **MEANT** and **HUG** / **TUG** / **BUG** are ordinary English words. Expect
   descriptiveness or likelihood-of-confusion questions, so a knockout search
