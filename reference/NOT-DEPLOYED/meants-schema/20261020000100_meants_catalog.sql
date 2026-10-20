@@ -5,12 +5,13 @@
 -- lib/kf/meants/. The owner lifted the BLK/KK text-generation freeze for
 -- Meants only on 2026-10-20. It stays under reference/NOT-DEPLOYED because this
 -- Supabase project is a publication mirror of GPMC, not an authority
--- (GOVERNANCE.md §1). Apply only on the owner's explicit go-ahead.
+-- (GOVERNANCE.md §1). The owner gave the go-ahead to apply it to the live
+-- database on 2026-10-20 ("apply the Meant tables to the live database").
 --
 -- Additive and standalone: new tables only, no changes to anything existing,
--- no seed of Meant rows. The only rows inserted are the seven Element Types.
--- Depends on public.kf_is_forbidden_source_url() from
--- reference/NOT-DEPLOYED/kf-schema/20260921000100_kut_family_schema.sql.
+-- no seed of Meant rows. The only rows inserted are the seven Element Types
+-- and the three set tier prices. Creates public.kf_is_forbidden_source_url()
+-- if it is missing (same body as kf-schema/20260921000100).
 --
 --   meant_types             one row per Element Type, DKK and naked sK included
 --   meants                  one row per Meant. A Meant IS a HUG, TUG or BUG:
@@ -18,7 +19,29 @@
 --   meant_tiers             the Meant's KKr plan, one row, keyed to its tier
 --   meant_tier_strategies   KKr strategies per tier, 1-word up to Song Section
 --   meant_text_loops        Text Loop runs each Meant has been through
+--   meant_tier_prices       the set price of each tier, matching Stripe
 -- ─────────────────────────────────────────────────────────────────────────────
+
+-- ── Forbidden source audio (master / PIX / full track) ───────────────────────
+create or replace function public.kf_is_forbidden_source_url(url text)
+returns boolean
+language sql
+immutable
+as $$
+  select case
+    when url is null or btrim(url) = '' then true
+    else (
+      strpos(lower(url), '/tracks/')                > 0 or
+      strpos(lower(url), 'pix')                     > 0 or
+      strpos(lower(url), 'gpmc')                    > 0 or
+      strpos(lower(url), 'source')                  > 0 or
+      strpos(lower(url), 'flagship')                > 0 or
+      strpos(lower(url), 'full')                    > 0 or
+      strpos(lower(url), 'a%20love%20like%20that')  > 0 or
+      strpos(lower(url), 'a love like that')        > 0
+    )
+  end;
+$$;
 
 -- ── Element Types ────────────────────────────────────────────────────────────
 create table if not exists public.meant_types (
@@ -89,6 +112,9 @@ create table if not exists public.meants (
   parent_start_seconds numeric,
   parent_end_seconds   numeric,
 
+  -- Words in the cut. Decides BUG vs TUG for phrases (owner, 2026-10-20).
+  word_count          integer check (word_count is null or word_count >= 1),
+
   humanizing          text not null default 'RAW'
                         check (humanizing in ('RAW', 'LOOPING', 'HUMANIZED')),
   created_at          timestamptz not null default now(),
@@ -98,6 +124,12 @@ create table if not exists public.meants (
            or (type_code = 'SK' and tier = 'TUG')
            or (type_code = 'MK' and tier = 'BUG')),
   constraint meants_id_tier_unique unique (meant_id, tier),
+  -- BUGs are TRM (one word), PHRZ (fewer than 4 words), XCLM and VSND.
+  -- A phrase of 4 or more words is a TUG.
+  constraint meants_bug_tug_word_rule
+    check ((type_code <> 'MK' or subtype is distinct from 'TRM' or word_count = 1)
+           and (type_code <> 'MK' or subtype is distinct from 'PHRZ' or word_count between 1 and 3)
+           and (type_code <> 'SK' or subtype not in ('PHRZ', 'PHRZ_LNG') or word_count >= 4)),
   constraint meants_intp_ordered
     check (intp_start_seconds >= 0 and intp_end_seconds > intp_start_seconds),
   constraint meants_vtp_ordered_and_inside_intp
@@ -195,9 +227,31 @@ create table if not exists public.meant_tier_strategies (
 
 create index if not exists meant_tier_strategies_idx on public.meant_tier_strategies (meant_id, tier);
 
+-- ── Set tier prices (owner, 2026-10-20). Stripe is the source of truth. ──────
+create table if not exists public.meant_tier_prices (
+  tier             text primary key check (tier in ('HUG', 'TUG', 'BUG')),
+  price_cents      integer not null,
+  currency         text not null default 'usd' check (currency = 'usd'),
+  stripe_price_id  text not null unique,
+  constraint meant_tier_prices_set
+    check ((tier = 'HUG' and price_cents = 799)
+           or (tier = 'TUG' and price_cents = 499)
+           or (tier = 'BUG' and price_cents = 199))
+);
+
+insert into public.meant_tier_prices (tier, price_cents, stripe_price_id) values
+  ('HUG', 799, 'price_1UMTrBRBP1Y9IAbL0ibTkeFx'),
+  ('TUG', 499, 'price_1UNYr6RBP1Y9IAbLr1Q9Exb7'),
+  ('BUG', 199, 'price_1UNYr6RBP1Y9IAbLTaBZM8mn')
+on conflict (tier) do nothing;
+
+comment on table public.meant_tier_prices is
+  'Set price per tier: HUG 7.99, TUG 4.99, BUG 1.99. Mirrors TIER_PRICE_CENTS in lib/kf/meants/meant.ts.';
+
 -- ── RLS: server-only, like first_free_signups. No client policy. ─────────────
 alter table public.meant_types            enable row level security;
 alter table public.meants                 enable row level security;
 alter table public.meant_text_loops       enable row level security;
 alter table public.meant_tiers            enable row level security;
 alter table public.meant_tier_strategies  enable row level security;
+alter table public.meant_tier_prices      enable row level security;

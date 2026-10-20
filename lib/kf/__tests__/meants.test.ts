@@ -109,6 +109,9 @@ test('known upstream defects are cloned, and flagged', () => {
 });
 
 test('tier prices are set: HUG 7.99, TUG 4.99, BUG 1.99', () => {
+  for (const [tier, cents] of Object.entries(TIER_PRICE_CENTS)) {
+    assert.match(MEANTS_SQL, new RegExp(`\\('${tier}', ${cents}, 'price_`), tier);
+  }
   assert.deepEqual({ ...TIER_PRICE_CENTS }, { HUG: 799, TUG: 499, BUG: 199 });
   assert.ok(Object.isFrozen(TIER_PRICE_CENTS));
 });
@@ -358,6 +361,8 @@ test('the Meant tables enforce the tier and full-audio rules in SQL too', () => 
     'meant_tiers_bug_no_sentiment', 'meant_tiers_hug_tug_sentiment', 'meant_tiers_triggers',
     'meants_vtp_ordered_and_inside_intp', 'meants_inside_parent_bounds', 'meants_text_loops_gate',
     'meants_tier_follows_kind',
+    'meants_bug_tug_word_rule',
+    'meant_tier_prices_set',
   ]) {
     assert.ok(MEANTS_SQL.includes(name), name);
   }
