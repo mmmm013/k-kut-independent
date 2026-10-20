@@ -119,6 +119,18 @@ test('legacy spellings resolve to a cloned type, never a new one', () => {
   assert.equal(resolveMeantType('LT-PIX'), null);
 });
 
+test('every retired spelling in NAMING.md resolves to its one name', () => {
+  const retired: Record<string, string> = {
+    KUT: 'KK', 'k-kut': 'KK', sK: 'SK', 'S-KUT': 'SK', 'short-kut': 'SK', LLF: 'SK',
+    linefeel: 'SK', 'line feel': 'SK', mK: 'MK', 'M-KUT': 'MK', 'MICRO-KUT': 'MK',
+    'm-kut': 'MK', 'Mini KUT': 'MK', 'mini-K': 'MK', KUPID: 'KUPID', 'k-kupid': 'KUPID',
+    kkupid: 'KUPID',
+  };
+  for (const [spelling, code] of Object.entries(retired)) {
+    assert.equal(resolveMeantType(spelling)?.type, code, spelling);
+  }
+});
+
 // ── The Meant gate ───────────────────────────────────────────────────────────
 
 const SHA_A = 'a'.repeat(64);

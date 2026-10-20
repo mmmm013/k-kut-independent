@@ -3,7 +3,7 @@
 /**
  * K-KUT — Demo Page
  *
- * User journey: Browse → Select Path (K-KUT or mini-K) → Resolve Link → K-kUpId delivered.
+ * User journey: Browse → Select Path (K-KUT or mini-KUT) → Resolve Link → K-kUpId delivered.
  *
  * This page demonstrates the K-KUT code-redemption flow conceptually.
  * Actual playback requires a valid K-KUT code and Supabase edge function (play-k-kut).
@@ -23,7 +23,7 @@ const STEPS: { id: Step; label: string; desc: string }[] = [
   {
     id: 'select',
     label: '2. Select Path',
-    desc: 'Choose K-KUT (audio excerpt) or mini-K (text micro-asset).',
+    desc: 'Choose K-KUT (audio excerpt) or mini-KUT (text micro-asset).',
   },
   {
     id: 'resolve',

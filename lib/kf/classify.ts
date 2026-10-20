@@ -113,7 +113,7 @@ export function publicPhrase(unit: KfUnitType): string {
     case 'KUPID':
       return 'K-kUpId option';
     case 'mK':
-      return 'Mini KUT option';
+      return 'mini-KUT option';
     default:
       return 'KUT option';
   }

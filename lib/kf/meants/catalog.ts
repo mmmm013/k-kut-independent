@@ -388,6 +388,11 @@ export const MEANT_TYPE_ALIASES: Record<string, { type: MeantTypeCode; subtype?:
   'M-KUT': { type: 'MK' },
   'MICRO-KUT': { type: 'MK' },
   'MINI-KUT': { type: 'MK' },
+  'MINI KUT': { type: 'MK' },
+  'MINI-K': { type: 'MK' },
+  'LINE FEEL': { type: 'SK', subtype: '1LNR' },
+  'K-KUPID': { type: 'KUPID' },
+  KKUPID: { type: 'KUPID' },
 };
 
 /** Resolve a code or legacy spelling to its cloned type. */
