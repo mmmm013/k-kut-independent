@@ -48,6 +48,16 @@ export const TIER_PRICE_CENTS: Readonly<Record<ProductTier, number>> = Object.fr
   BUG: 199,
 });
 
+/**
+ * Other set prices in US cents (owner, 2026-10-20). There is no $9.99.
+ * NOTE_AND_STORY is an add-on to a BUG, never sold on its own.
+ */
+export const OFFER_PRICE_CENTS: Readonly<Record<'HOLIDAY' | 'PROMO' | 'NOTE_AND_STORY', number>> = Object.freeze({
+  HOLIDAY: 1499,
+  PROMO: 1199,
+  NOTE_AND_STORY: 99,
+});
+
 export const TIER_RULES: Record<ProductTier, TierRule> = {
   HUG: {
     tier: 'HUG', rank: 1, usesThemes: true, usesEmotions: true, usesScenarios: true,

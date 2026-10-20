@@ -24,6 +24,7 @@ import {
   lineageOf,
   nextBestAction,
   phraseTier,
+  OFFER_PRICE_CENTS,
   TIER_PRICE_CENTS,
   resolveMeantType,
   tierOf,
@@ -106,6 +107,18 @@ test('known upstream defects are cloned, and flagged', () => {
   assert.ok(kk.find((a) => a.name === 'theme')?.upstreamFlag);
   const trm = MEANT_TYPES.SK.subtypes.find((s) => s.code === 'TRM');
   assert.ok(trm?.upstreamFlag);
+});
+
+test('offer prices are set, and there is no 9.99', () => {
+  assert.deepEqual({ ...OFFER_PRICE_CENTS }, { HOLIDAY: 1499, PROMO: 1199, NOTE_AND_STORY: 99 });
+  const all = [...Object.values(TIER_PRICE_CENTS), ...Object.values(OFFER_PRICE_CENTS)];
+  assert.ok(!all.includes(999));
+  const sql = readFileSync(
+    join(ROOT, 'reference', 'NOT-DEPLOYED', 'meants-schema', '20261020000200_meant_offer_prices.sql'), 'utf8',
+  );
+  for (const [offer, cents] of Object.entries(OFFER_PRICE_CENTS)) {
+    assert.match(sql, new RegExp(`\\('${offer}',\\s+${cents},`), offer);
+  }
 });
 
 test('tier prices are set: HUG 7.99, TUG 4.99, BUG 1.99', () => {
