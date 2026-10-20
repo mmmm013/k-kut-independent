@@ -77,9 +77,10 @@ See §1: the tier is the Meant. HUG ranks 1, TUG 2 and BUG 3.
 Set prices (owner, 2026-10-20): **HUG $7.99, TUG $4.99, BUG $1.99**. They
 are fixed (`TIER_PRICE_CENTS` in `lib/kf/meants/meant.ts`). The live price
 Other set prices: **Holiday $14.99, Promo $11.99, and Note & Story $0.99**
-(an add-on to a BUG). There is no $9.99 (`OFFER_PRICE_CENTS`). The live code
-`KUT_999` on K-KUT is wrong, since a K-KUT is a HUG at $7.99; it has not been
-changed yet. `HOLIDAY_HUG_1499` is correct. `TINYKUT_299` was removed: the three tinyKUT BUGs are now `BUG_199`
+(an add-on to a BUG). There is no $9.99 (`OFFER_PRICE_CENTS`). K-KUT's live code
+`KUT_999` became `HUG_799` (owner, 2026-10-20), since a K-KUT is a HUG.
+`HOLIDAY_HUG_1499` is correct. The live `meant_offer_prices` table holds the
+three offer prices; none has a Stripe price yet. `TINYKUT_299` was removed: the three tinyKUT BUGs are now `BUG_199`
 (owner, 2026-10-20: "Stripe is right"). The live `meant_tier_prices` table
 holds the three set prices with their Stripe price ids.
 

@@ -1,5 +1,5 @@
 -- ─────────────────────────────────────────────────────────────────────────────
--- Meant offer prices (DRAFT, NOT APPLIED)
+-- Meant offer prices (APPLIED to the live database 2026-10-20 as meants_07)
 --
 -- The owner's set prices beyond the three tiers (2026-10-20): Holiday $14.99,
 -- Promo $11.99, and the Note & Story add-on to a BUG at $0.99. There is no
