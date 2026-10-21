@@ -55,7 +55,7 @@ to one of the kinds above:
 | `LINEPAIR` | LinePair | KUT | TUG `LNPR` |
 | `PHRZ` | Phrase | KUT | under 4 words: BUG `PHRZ`; 4+ words: TUG |
 | `RIME` | RIME | KUT | TUG |
-| `MINI_KUT` | mini-KUT | TUG (was ShortKUT until 2026-10-20) | TUG, priced `TUG_499` (see §5) |
+| `MINI_KUT` | TUG (was "mini-KUT" until 2026-10-21; internal label "TUG (former ShortKUT)") | TUG (was ShortKUT until 2026-10-20) | TUG, priced `TUG_499` (see §5). "mini-KUT" names only the BUG (owner, 2026-10-21) |
 | `TRMZ` | Terms | tinyKUT | mini-KUT `TRM` → BUG |
 | `EXCLM` | Exclamation | tinyKUT | mini-KUT `XCLM` → BUG |
 | `SNDS` | Sounds | tinyKUT | mini-KUT `VSND` → BUG |
