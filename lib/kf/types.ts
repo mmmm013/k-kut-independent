@@ -7,7 +7,7 @@
  * agree on these four unit types and on how they are gated.
  *
  *   KUT    — exact contiguous section audio (the K-KUT invention)
- *   sK     — short-KUT: everything that is neither a KK nor an mK
+ *   sK     — TUG: everything that is neither a KK nor an mK
  *   mK     — mini-KUT text micro-assets, audio resolved from a parent KUT
  *   KUPID  — K-kUpId, a KUT curated and signed for a romance level
  */
@@ -15,7 +15,7 @@
 /**
  * The KUT Family unit types, in canonical display order.
  *
- * sK is short-KUT: everything that is neither a KK nor an mK. LineFeel (LLF)
+ * sK is a TUG: everything that is neither a KK nor an mK. LineFeel (LLF)
  * is a one-liner (1LNR), which is an sK — it is a subtype, not a peer
  * container, so it no longer appears here.
  */

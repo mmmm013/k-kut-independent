@@ -16,6 +16,9 @@
 > effective 2026-08-30). It blocks mass candidate creation and automated
 > promotion. `supabase/seed.sql` creates mass candidates and is squarely inside
 > the blocked scope. All four unlock prerequisites are `DRAFT_PENDING_OWNER_LOCK`.
+> On 2026-10-20 the owner lifted the freeze **for Meants only**
+> (`lib/kf/meants/`, `reference/NOT-DEPLOYED/meants-schema/`). Everything
+> else above still holds.
 >
 > **The governed catalog authorizes ZERO public IIs** — 2 canary records, both
 > `TRIAGE`, `0 STAGE`. The storefront correctly offers nothing.

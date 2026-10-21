@@ -1,0 +1,258 @@
+-- ─────────────────────────────────────────────────────────────────────────────
+-- Meants — catalog tables (APPLIED to the live database 2026-10-20)
+--
+-- Where every Meant and every Element Type is cataloged, mirroring
+-- lib/kf/meants/. The owner lifted the BLK/KK text-generation freeze for
+-- Meants only on 2026-10-20. It stays under reference/NOT-DEPLOYED because this
+-- Supabase project is a publication mirror of GPMC, not an authority
+-- (GOVERNANCE.md §1). The owner gave the go-ahead to apply it to the live
+-- database on 2026-10-20 ("apply the Meant tables to the live database").
+-- Applied as migrations meants_01 … meants_06 on project vwlzubxshjjonabpeagd.
+--
+-- Additive and standalone: new tables only, no changes to anything existing,
+-- no seed of Meant rows. The only rows inserted are the seven Element Types
+-- and the three set tier prices. Creates public.kf_is_forbidden_source_url()
+-- if it is missing (same body as kf-schema/20260921000100).
+--
+--   meant_types             one row per Element Type, DKK and naked sK included
+--   meants                  one row per Meant. A Meant IS a HUG, TUG or BUG:
+--                           KK = HUG, sK = TUG, mK = BUG (owner, 2026-10-20)
+--   meant_tiers             the Meant's KKr plan, one row, keyed to its tier
+--   meant_tier_strategies   KKr strategies per tier, 1-word up to Song Section
+--   meant_text_loops        Text Loop runs each Meant has been through
+--   meant_tier_prices       the set price of each tier, matching Stripe
+-- ─────────────────────────────────────────────────────────────────────────────
+
+-- ── Forbidden source audio (master / PIX / full track) ───────────────────────
+create or replace function public.kf_is_forbidden_source_url(url text)
+returns boolean
+language sql
+immutable
+as $$
+  select case
+    when url is null or btrim(url) = '' then true
+    else (
+      strpos(lower(url), '/tracks/')                > 0 or
+      strpos(lower(url), 'pix')                     > 0 or
+      strpos(lower(url), 'gpmc')                    > 0 or
+      strpos(lower(url), 'source')                  > 0 or
+      strpos(lower(url), 'flagship')                > 0 or
+      strpos(lower(url), 'full')                    > 0 or
+      strpos(lower(url), 'a%20love%20like%20that')  > 0 or
+      strpos(lower(url), 'a love like that')        > 0
+    )
+  end;
+$$;
+
+-- ── Element Types ────────────────────────────────────────────────────────────
+create table if not exists public.meant_types (
+  code          text primary key
+                  check (code in ('KK', 'DKK', 'NKK', 'NAKED_SK', 'SK', 'MK', 'KUPID')),
+  kkr_code      text not null unique check (kkr_code = 'KKr-' || code),
+  name          text not null,
+  -- Lineage parent under the capture-room LOCK. Null = unresolved (K-kUpId).
+  parent_code   text check (parent_code is null or parent_code = 'LT-PIX'
+                            or parent_code in ('KK', 'DKK', 'NKK', 'NAKED_SK', 'SK', 'MK', 'KUPID')),
+  -- Source asset table, or null when no schema exists (DKK, naked sK).
+  source_table  text,
+  clone_status  text not null
+                  check (clone_status in ('CLONED', 'CLONED_IDENTITY_ONLY', 'CLONED_PARENT_UNRESOLVED')),
+  granularities text[] not null
+                  check (granularities <@ array['WORD', 'TERM', 'PHRASE', 'LINE', 'LINE_SET', 'SONG_SECTION']
+                         and cardinality(granularities) > 0),
+  -- The tier this type is when it is a Meant. Null = never a Meant itself.
+  tier          text check (tier in ('HUG', 'TUG', 'BUG'))
+);
+
+insert into public.meant_types (code, kkr_code, name, parent_code, source_table, clone_status, granularities, tier) values
+  ('KK',       'KKr-KK',       'K-KUT',      'LT-PIX',   'k_kut_assets', 'CLONED',                   array['SONG_SECTION'], 'HUG'),
+  ('DKK',      'KKr-DKK',      'DKK',        'KK',       null,           'CLONED_IDENTITY_ONLY',     array['SONG_SECTION'], null),
+  ('NKK',      'KKr-NKK',      'NKK',        'DKK',      'nkk_assets',   'CLONED',                   array['SONG_SECTION', 'LINE_SET', 'LINE'], null),
+  ('NAKED_SK', 'KKr-NAKED_SK', 'naked sK',   'NKK',      null,           'CLONED_IDENTITY_ONLY',     array['LINE_SET', 'LINE', 'PHRASE', 'TERM', 'WORD'], null),
+  ('SK',       'KKr-SK',       'TUG',        'NKK',      'sk_assets',    'CLONED',                   array['LINE_SET', 'LINE', 'PHRASE', 'TERM', 'WORD'], 'TUG'),
+  ('MK',       'KKr-MK',       'mini-KUT',   'NAKED_SK', 'm_kut_assets', 'CLONED',                   array['LINE', 'PHRASE', 'TERM', 'WORD'], 'BUG'),
+  ('KUPID',    'KKr-KUPID',    'K-kUpId',    null,       'kupid_assets', 'CLONED_PARENT_UNRESOLVED', array['SONG_SECTION', 'LINE_SET', 'LINE'], null)
+on conflict (code) do nothing;
+
+comment on table public.meant_types is
+  'Every GPM Element Type as a KKr working-copy type. Mirrors MEANT_TYPES in lib/kf/meants/catalog.ts.';
+
+-- ── Meants ───────────────────────────────────────────────────────────────────
+create table if not exists public.meants (
+  meant_id            text primary key,
+  type_code           text not null references public.meant_types(code),
+  subtype             text,
+  -- A Meant IS a HUG, TUG or BUG, fixed by its type.
+  tier                text not null,
+  -- A KKr working copy never carries approval.
+  authority           text not null default 'KKR_WORKING_COPY'
+                        check (authority = 'KKR_WORKING_COPY'),
+
+  -- SSOT origin: by object id and SHA-256, never by title.
+  ssot_clone_id       text not null,
+  ssot_clone_sha256   text not null check (ssot_clone_sha256 ~ '^[0-9a-f]{64}$'),
+  lt_pix_id           text not null,
+  authority_src_id    text not null,
+  parent_id           text,
+  parent_sha256       text not null check (parent_sha256 ~ '^[0-9a-f]{64}$'),
+  matched_by          text not null default 'object_id_and_sha256'
+                        check (matched_by = 'object_id_and_sha256'),
+
+  -- Full audio: vocals and instrumentals both, always. Never the master.
+  has_vocals          boolean not null check (has_vocals),
+  has_instrumentals   boolean not null check (has_instrumentals),
+  variant             text not null default 'VOCAL_MUSIC' check (variant = 'VOCAL_MUSIC'),
+  audio_url           text check (audio_url is null or not public.kf_is_forbidden_source_url(audio_url)),
+
+  -- TPs: InTP is the original boundary, VTP the verified one inside it.
+  intp_start_seconds  numeric not null,
+  intp_end_seconds    numeric not null,
+  vtp_start_seconds   numeric,
+  vtp_end_seconds     numeric,
+  -- The parent's bounds. A Meant may never escape them.
+  parent_start_seconds numeric,
+  parent_end_seconds   numeric,
+
+  -- Words in the cut. Decides BUG vs TUG for phrases (owner, 2026-10-20).
+  word_count          integer check (word_count is null or word_count >= 1),
+
+  humanizing          text not null default 'RAW'
+                        check (humanizing in ('RAW', 'LOOPING', 'HUMANIZED')),
+  created_at          timestamptz not null default now(),
+
+  constraint meants_tier_follows_kind
+    check ((type_code = 'KK' and tier = 'HUG')
+           or (type_code = 'SK' and tier = 'TUG')
+           or (type_code = 'MK' and tier = 'BUG')),
+  constraint meants_id_tier_unique unique (meant_id, tier),
+  -- BUGs are TRM (one word), PHRZ (fewer than 4 words), XCLM and VSND.
+  -- A phrase of 4 or more words is a TUG.
+  constraint meants_bug_tug_word_rule
+    check ((type_code <> 'MK' or subtype is distinct from 'TRM' or word_count = 1)
+           and (type_code <> 'MK' or subtype is distinct from 'PHRZ' or word_count between 1 and 3)
+           and (type_code <> 'SK' or subtype not in ('PHRZ', 'PHRZ_LNG') or word_count >= 4)),
+  constraint meants_intp_ordered
+    check (intp_start_seconds >= 0 and intp_end_seconds > intp_start_seconds),
+  constraint meants_vtp_ordered_and_inside_intp
+    check ((vtp_start_seconds is null and vtp_end_seconds is null)
+           or (vtp_start_seconds is not null and vtp_end_seconds is not null
+               and vtp_end_seconds > vtp_start_seconds
+               and vtp_start_seconds >= intp_start_seconds
+               and vtp_end_seconds <= intp_end_seconds)),
+  constraint meants_inside_parent_bounds
+    check ((parent_start_seconds is null and parent_end_seconds is null)
+           or (parent_start_seconds is not null and parent_end_seconds is not null
+               and intp_start_seconds >= parent_start_seconds
+               and intp_end_seconds <= parent_end_seconds))
+);
+
+create index if not exists meants_type_idx   on public.meants (type_code);
+create index if not exists meants_ltpix_idx  on public.meants (lt_pix_id);
+create index if not exists meants_ssot_idx   on public.meants (ssot_clone_id, ssot_clone_sha256);
+
+comment on table public.meants is
+  'One row per Meant working copy, any Element Type. Mirrors MeantClone in lib/kf/meants/meant.ts.';
+
+-- ── Text Loops ───────────────────────────────────────────────────────────────
+create table if not exists public.meant_text_loops (
+  meant_id          text not null references public.meants(meant_id) on delete cascade,
+  text_loop_run_id  text not null,
+  seq               integer not null check (seq >= 1),
+  ran_at            timestamptz not null default now(),
+  primary key (meant_id, text_loop_run_id),
+  unique (meant_id, seq)
+);
+
+-- HUMANIZED needs at least 2 Text Loop runs (MIN_TEXT_LOOPS). Cross-table, so a trigger.
+create or replace function public.meants_assert_text_loops()
+returns trigger
+language plpgsql
+as $$
+begin
+  if new.humanizing = 'HUMANIZED'
+     and (select count(*) from public.meant_text_loops l where l.meant_id = new.meant_id) < 2 then
+    raise exception 'Meant % is HUMANIZED with fewer than 2 Text Loop runs', new.meant_id
+      using errcode = 'check_violation';
+  end if;
+  return new;
+end
+$$;
+
+drop trigger if exists meants_text_loops_gate on public.meants;
+create trigger meants_text_loops_gate
+  before insert or update of humanizing on public.meants
+  for each row execute function public.meants_assert_text_loops();
+
+-- ── Product Tiers ────────────────────────────────────────────────────────────
+create table if not exists public.meant_tiers (
+  meant_id   text not null,
+  tier       text not null check (tier in ('HUG', 'TUG', 'BUG')),
+  rank       smallint not null,
+  -- Three separate fields: sentiment, emotion and scenario stay independently inspectable.
+  themes     text[] not null default '{}',
+  emotions   text[] not null default '{}',
+  scenarios  text[] not null default '{}',
+  -- BUGs arrive ON DEMAND ONLY.
+  allowed_triggers text[] not null,
+  -- One plan per Meant, and its tier must be the Meant's own.
+  primary key (meant_id),
+  unique (meant_id, tier),
+  foreign key (meant_id, tier) references public.meants(meant_id, tier) on delete cascade,
+
+  constraint meant_tiers_rank
+    check ((tier = 'HUG' and rank = 1) or (tier = 'TUG' and rank = 2) or (tier = 'BUG' and rank = 3)),
+  -- BUGs never carry Themes, Emotions or Scenarios.
+  constraint meant_tiers_bug_no_sentiment
+    check (tier <> 'BUG' or (cardinality(themes) = 0 and cardinality(emotions) = 0 and cardinality(scenarios) = 0)),
+  -- HUGs and TUGs work with Themes, Emotions, Scenarios.
+  constraint meant_tiers_hug_tug_sentiment
+    check (tier = 'BUG' or cardinality(themes) + cardinality(emotions) + cardinality(scenarios) > 0),
+  constraint meant_tiers_triggers
+    check (allowed_triggers <@ array['user_request', 'platform_suggestion', 'follow_up', 'scheduled']
+           and (tier <> 'BUG' or allowed_triggers = array['user_request']))
+);
+
+comment on table public.meant_tiers is
+  'The KKr plan of each Meant, keyed to its one tier (KK = HUG, sK = TUG, mK = BUG). Mirrors TIER_RULES in lib/kf/meants/meant.ts.';
+
+create table if not exists public.meant_tier_strategies (
+  id           uuid primary key default gen_random_uuid(),
+  meant_id     text not null,
+  tier         text not null,
+  granularity  text not null
+                 check (granularity in ('WORD', 'TERM', 'PHRASE', 'LINE', 'LINE_SET', 'SONG_SECTION')),
+  strategy     text not null check (btrim(strategy) <> ''),
+  created_at   timestamptz not null default now(),
+  foreign key (meant_id, tier) references public.meant_tiers(meant_id, tier) on delete cascade
+);
+
+create index if not exists meant_tier_strategies_idx on public.meant_tier_strategies (meant_id, tier);
+
+-- ── Set tier prices (owner, 2026-10-20). Stripe is the source of truth. ──────
+create table if not exists public.meant_tier_prices (
+  tier             text primary key check (tier in ('HUG', 'TUG', 'BUG')),
+  price_cents      integer not null,
+  currency         text not null default 'usd' check (currency = 'usd'),
+  stripe_price_id  text not null unique,
+  constraint meant_tier_prices_set
+    check ((tier = 'HUG' and price_cents = 799)
+           or (tier = 'TUG' and price_cents = 499)
+           or (tier = 'BUG' and price_cents = 199))
+);
+
+insert into public.meant_tier_prices (tier, price_cents, stripe_price_id) values
+  ('HUG', 799, 'price_1UMTrBRBP1Y9IAbL0ibTkeFx'),
+  ('TUG', 499, 'price_1UNYr6RBP1Y9IAbLr1Q9Exb7'),
+  ('BUG', 199, 'price_1UNYr6RBP1Y9IAbLTaBZM8mn')
+on conflict (tier) do nothing;
+
+comment on table public.meant_tier_prices is
+  'Set price per tier: HUG 7.99, TUG 4.99, BUG 1.99. Mirrors TIER_PRICE_CENTS in lib/kf/meants/meant.ts.';
+
+-- ── RLS: server-only, like first_free_signups. No client policy. ─────────────
+alter table public.meant_types            enable row level security;
+alter table public.meants                 enable row level security;
+alter table public.meant_text_loops       enable row level security;
+alter table public.meant_tiers            enable row level security;
+alter table public.meant_tier_strategies  enable row level security;
+alter table public.meant_tier_prices      enable row level security;

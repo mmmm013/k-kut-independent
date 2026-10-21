@@ -109,11 +109,11 @@ export function classifyUnitType(row: Row): KfUnitType {
 export function publicPhrase(unit: KfUnitType): string {
   switch (unit) {
     case 'sK':
-      return 'short-KUT option';
+      return 'TUG option';
     case 'KUPID':
       return 'K-kUpId option';
     case 'mK':
-      return 'Mini KUT option';
+      return 'mini-KUT option';
     default:
       return 'KUT option';
   }
@@ -123,7 +123,7 @@ export function publicPhrase(unit: KfUnitType): string {
 export function unitLabel(unit: KfUnitType): string {
   switch (unit) {
     case 'sK':
-      return 'short-KUT';
+      return 'TUG';
     case 'KUPID':
       return 'K-kUpId';
     case 'mK':

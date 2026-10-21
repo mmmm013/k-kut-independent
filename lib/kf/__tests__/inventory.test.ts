@@ -148,7 +148,7 @@ test('the floor comes from data, and one unit does not satisfy a floor of 13', a
   assert.deepEqual(love.required, { KUT: 13, sK: 13, mK: 13, KUPID: 0 });
   assert.deepEqual(love.shortfall, { KUT: 12, sK: 12, mK: 12, KUPID: 0 });
   assert.equal(love.satisfied, false);
-  assert.equal(love.still_needed, 'K-KUT needs 12, short-KUT needs 12, mini-KUT needs 12');
+  assert.equal(love.still_needed, 'K-KUT needs 12, TUG needs 12, mini-KUT needs 12');
   assert.deepEqual(strict.satisfied_themes, []);
 });
 
@@ -160,7 +160,7 @@ test('a theme backed only by held units is not satisfied', async () => {
   // source audio. Neither is playable, so hope is short in every container.
   assert.deepEqual(hope.containers, { KUT: 0, sK: 0, mK: 0, KUPID: 0 });
   assert.equal(hope.satisfied, false);
-  assert.equal(hope.still_needed, 'K-KUT needs 1, short-KUT needs 1, mini-KUT needs 1');
+  assert.equal(hope.still_needed, 'K-KUT needs 1, TUG needs 1, mini-KUT needs 1');
 });
 
 test('all seven themes are always reported, gaps included', async () => {

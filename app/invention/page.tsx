@@ -8,9 +8,9 @@
  *   2. mini-KUT (mK) — text micro-assets (NOT audio)
  *   3. K-kUpId — romance/gifting invention (5 levels)
  *
- * Closes with the four KUT Family delivery unit types, which is what the
- * inventory at /kf is built from. LineFeel (LLF) is a delivery unit, not a
- * fourth invention — it belongs here rather than above.
+ * Closes with the KUT Family kinds the inventory at /kf is built from.
+ * LineFeel (LLF) is a TUG one-liner, not a parallel kind, so it is
+ * not listed separately.
  */
 
 import Link from 'next/link';
@@ -31,7 +31,7 @@ const MK_TYPES = [
 const KF_UNITS = [
   { unit: 'KUT',   name: 'K-KUT',     color: '#D4A017', desc: 'Exact contiguous section audio', table: 'k_kut_assets' },
   { unit: 'mK',    name: 'mini-KUT',  color: '#C8A882', desc: 'Text micro-assets from lyrics',  table: 'm_kut_assets' },
-  { unit: 'LLF',   name: 'LineFeel',  color: '#8B5CF6', desc: 'One lyric line as audio',        table: 'llf_assets' },
+  { unit: 'sK',    name: 'TUG',       color: '#8B5CF6', desc: 'Less than a section: a line, pair, hook or saying', table: 'sk_assets' },
   { unit: 'KUPID', name: 'K-kUpId',   color: '#E07B54', desc: 'A KUT signed for a romance level', table: 'kupid_assets' },
 ];
 

@@ -1,0 +1,432 @@
+/**
+ * Meants tests.
+ *
+ * The catalog is a STRICT clone, so the first tests read the reference schema
+ * itself and fail if any column of any Element Type is missing from the
+ * clone. The rest cover the Meant gate, the tier rules and platform conduct.
+ *
+ * Run with `npm test`.
+ */
+
+import assert from 'node:assert/strict';
+import { readdirSync, readFileSync, statSync } from 'node:fs';
+import { join } from 'node:path';
+import test from 'node:test';
+
+import {
+  BUG_FORMS,
+  MEANT_TYPE_CODES,
+  MEANT_TYPES,
+  MeantClone,
+  canDeliverTier,
+  findSalesLanguage,
+  honorUserVerdict,
+  lineageOf,
+  nextBestAction,
+  phraseTier,
+  OFFER_PRICE_CENTS,
+  TIER_PRICE_CENTS,
+  resolveMeantType,
+  tierOf,
+  validateMeant,
+} from '../meants';
+import { LIVE_KUT_TYPES, LIVE_MK_FORMS, LIVE_SK_FORMS } from '../meants/live-registry';
+import { KUPID_LEVELS, MK_TYPES, SK_SUBTYPES } from '../types';
+
+const ROOT = process.cwd();
+const SCHEMA_DIR = join(ROOT, 'reference', 'NOT-DEPLOYED', 'kf-schema');
+const sql = readdirSync(SCHEMA_DIR)
+  .filter((f) => f.endsWith('.sql') && f !== 'seed.sql')
+  .map((f) => readFileSync(join(SCHEMA_DIR, f), 'utf8'))
+  .join('\n');
+
+const COLUMN = /^\s+([a-z_0-9]+)\s+(text|uuid|integer|smallint|numeric|boolean|timestamptz|public\.[a-z_]+)\b/;
+
+/** Every column the reference schema gives a table, from all migrations. */
+function schemaColumns(table: string): Set<string> {
+  const cols = new Set<string>();
+
+  const create = new RegExp(`create table if not exists public\\.${table} \\(([\\s\\S]*?)\\n\\);`);
+  const body = sql.match(create)?.[1] ?? '';
+  for (const line of body.split('\n')) {
+    const m = line.match(COLUMN);
+    if (m && !line.trim().startsWith('constraint')) cols.add(m[1]);
+  }
+
+  const alter = new RegExp(`alter table public\\.${table}\\s+([\\s\\S]*?);`, 'g');
+  for (const block of sql.matchAll(alter)) {
+    for (const m of block[1].matchAll(/add column if not exists ([a-z_0-9]+)/g)) cols.add(m[1]);
+  }
+
+  // The governed-lineage loop adds the lineage identity to every listed table.
+  const loop = sql.match(/foreach target in array array\[([\s\S]*?)\]([\s\S]*?)end loop/);
+  if (loop && loop[1].includes(`'${table}'`)) {
+    for (const m of loop[2].matchAll(/add column if not exists ([a-z_0-9]+)/g)) cols.add(m[1]);
+  }
+
+  return cols;
+}
+
+test('every schema-backed Element Type clones every one of its columns', () => {
+  for (const code of MEANT_TYPE_CODES) {
+    const type = MEANT_TYPES[code];
+    if (!type.table) continue;
+
+    const expected = schemaColumns(type.table);
+    assert.ok(expected.size > 5, `${type.table}: schema not found`);
+
+    const cloned = new Set(type.attributes.map((a) => a.name));
+    for (const col of expected) {
+      assert.ok(cloned.has(col), `${type.kkrCode} is missing ${type.table}.${col}`);
+    }
+    for (const col of cloned) {
+      assert.ok(expected.has(col), `${type.kkrCode} invents ${col}, which ${type.table} lacks`);
+    }
+  }
+});
+
+test('attribute names are unique within each type', () => {
+  for (const code of MEANT_TYPE_CODES) {
+    const names = MEANT_TYPES[code].attributes.map((a) => a.name);
+    assert.equal(new Set(names).size, names.length, code);
+  }
+});
+
+test('every enum value is cloned verbatim', () => {
+  assert.deepEqual(MEANT_TYPES.SK.subtypes.map((s) => s.code), [...SK_SUBTYPES, 'IDIOM']);
+  assert.deepEqual(MEANT_TYPES.MK.subtypes.map((s) => s.code), [...MK_TYPES, 'TRM', 'XCLM', 'VSND', 'PHRZ']);
+  assert.deepEqual(MEANT_TYPES.KUPID.subtypes.map((s) => s.code), KUPID_LEVELS.map((l) => l.code));
+
+  const variant = MEANT_TYPES.KK.attributes.find((a) => a.name === 'variant');
+  assert.deepEqual(variant?.values, ['VOCAL_MUSIC', 'MUSIC_ONLY']);
+});
+
+test('known upstream defects are cloned, and flagged', () => {
+  const kk = MEANT_TYPES.KK.attributes;
+  assert.ok(kk.find((a) => a.name === 'keenness_score')?.upstreamFlag);
+  assert.ok(kk.find((a) => a.name === 'theme')?.upstreamFlag);
+  const trm = MEANT_TYPES.SK.subtypes.find((s) => s.code === 'TRM');
+  assert.ok(trm?.upstreamFlag);
+});
+
+test('offer prices are set, and there is no 9.99', () => {
+  assert.deepEqual({ ...OFFER_PRICE_CENTS }, { HOLIDAY: 1499, PROMO: 1199, NOTE_AND_STORY: 99 });
+  const all = [...Object.values(TIER_PRICE_CENTS), ...Object.values(OFFER_PRICE_CENTS)];
+  assert.ok(!all.includes(999));
+  const sql = readFileSync(
+    join(ROOT, 'reference', 'NOT-DEPLOYED', 'meants-schema', '20261020000200_meant_offer_prices.sql'), 'utf8',
+  );
+  for (const [offer, cents] of Object.entries(OFFER_PRICE_CENTS)) {
+    assert.match(sql, new RegExp(`\\('${offer}',\\s+${cents},`), offer);
+  }
+});
+
+test('tier prices are set: HUG 7.99, TUG 4.99, BUG 1.99', () => {
+  for (const [tier, cents] of Object.entries(TIER_PRICE_CENTS)) {
+    assert.match(MEANTS_SQL, new RegExp(`\\('${tier}', ${cents}, 'price_`), tier);
+  }
+  assert.deepEqual({ ...TIER_PRICE_CENTS }, { HUG: 799, TUG: 499, BUG: 199 });
+  assert.ok(Object.isFrozen(TIER_PRICE_CENTS));
+});
+
+test('BUGs are TRM, PHRZ under 4 words, XCLM and VSND', () => {
+  const mk = new Set(MEANT_TYPES.MK.subtypes.map((s) => s.code));
+  for (const form of BUG_FORMS) assert.ok(mk.has(form), form);
+  assert.deepEqual(resolveMeantType('PHRZ'), { type: 'MK', subtype: 'PHRZ' });
+  assert.deepEqual(resolveMeantType('TRMZ'), { type: 'MK', subtype: 'TRM' });
+  assert.equal(phraseTier(1), 'BUG');
+  assert.equal(phraseTier(3), 'BUG');
+  assert.equal(phraseTier(4), 'TUG');
+  assert.ok(MEANT_TYPES.SK.subtypes.find((s) => s.code === 'PHRZ')?.upstreamFlag);
+});
+
+test('lineage follows the capture-room LOCK', () => {
+  assert.deepEqual(lineageOf('MK'), ['NAKED_SK', 'NKK', 'DKK', 'KK', 'LT-PIX']);
+  assert.deepEqual(lineageOf('SK'), ['NKK', 'DKK', 'KK', 'LT-PIX']);
+  // Never LT-PIX -> sK or LT-PIX -> mK directly.
+  assert.notEqual(MEANT_TYPES.SK.parent, 'LT-PIX');
+  assert.notEqual(MEANT_TYPES.MK.parent, 'LT-PIX');
+  assert.equal(MEANT_TYPES.KUPID.parent, null);
+});
+
+test('legacy spellings resolve to a cloned type, never a new one', () => {
+  assert.deepEqual(resolveMeantType('LLF'), { type: 'SK', subtype: '1LNR' });
+  assert.deepEqual(resolveMeantType('KKr-NKK'), { type: 'NKK' });
+  assert.deepEqual(resolveMeantType('mini-kut'), { type: 'MK' });
+  assert.equal(resolveMeantType('LT-PIX'), null);
+});
+
+test('every retired spelling in NAMING.md resolves to its one name', () => {
+  const retired: Record<string, string> = {
+    KUT: 'KK', 'k-kut': 'KK', sK: 'SK', 'S-KUT': 'SK', 'short-kut': 'SK', LLF: 'SK',
+    linefeel: 'SK', 'line feel': 'SK', mK: 'MK', 'M-KUT': 'MK', 'MICRO-KUT': 'MK',
+    'm-kut': 'MK', 'Mini KUT': 'MK', 'mini-K': 'MK', KUPID: 'KUPID', 'k-kupid': 'KUPID',
+    kkupid: 'KUPID', 'short-KUT': 'SK', ShortKUT: 'SK', shortKUT: 'SK', TUG: 'SK',
+    MINI_KUT: 'SK',
+  };
+  for (const [spelling, code] of Object.entries(retired)) {
+    assert.equal(resolveMeantType(spelling)?.type, code, spelling);
+  }
+});
+
+// ── The Meant gate ───────────────────────────────────────────────────────────
+
+const SHA_A = 'a'.repeat(64);
+const SHA_B = 'b'.repeat(64);
+
+function meant(overrides: Partial<MeantClone> = {}): MeantClone {
+  return {
+    authority: 'KKR_WORKING_COPY',
+    meant_id: 'MEANT_000001',
+    type: 'SK',
+    subtype: 'HOOK',
+    ssot: {
+      clone_id: 'GPMCC_sK_000001',
+      clone_sha256: SHA_A,
+      lt_pix_id: 'LT-PIX_0001',
+      authority_src_id: 'SRC_0001',
+      parent_id: 'NKK_000001',
+      parent_sha256: SHA_B,
+      matched_by: 'object_id_and_sha256',
+    },
+    audio: { vocals: true, instrumentals: true, variant: 'VOCAL_MUSIC', url: null },
+    tps: {
+      intp: { start_seconds: 30, end_seconds: 38 },
+      vtp: { start_seconds: 31, end_seconds: 37 },
+    },
+    parent_bounds: { start_seconds: 20, end_seconds: 60 },
+    text_loops: ['TLR_01', 'TLR_02'],
+    humanizing: 'HUMANIZED',
+    tier: 'TUG',
+    plan: {
+      strategies: [{ granularity: 'LINE', text: 'Lead with the hook line.' }],
+      themes: ['Thinking of You'], emotions: ['warmth'], scenarios: ['Long Week'],
+    },
+    ...overrides,
+  };
+}
+
+const codes = (m: MeantClone) => validateMeant(m).map((v) => v.code);
+
+test('a complete Meant working copy passes', () => {
+  assert.deepEqual(validateMeant(meant()), []);
+});
+
+test('vocals and instrumentals are never lost', () => {
+  assert.ok(codes(meant({ audio: { vocals: false, instrumentals: true, variant: 'VOCAL_MUSIC', url: null } }))
+    .includes('VOCALS_LOST'));
+  assert.ok(codes(meant({ audio: { vocals: true, instrumentals: false, variant: 'VOCAL_MUSIC', url: null } }))
+    .includes('INSTRUMENTALS_LOST'));
+  assert.ok(codes(meant({ audio: { vocals: true, instrumentals: true, variant: 'MUSIC_ONLY', url: null } }))
+    .includes('NOT_FULL_AUDIO'));
+});
+
+test('full audio is never the full master', () => {
+  const url = 'https://x.supabase.co/storage/v1/object/public/tracks/song.mp3';
+  assert.ok(codes(meant({ audio: { vocals: true, instrumentals: true, variant: 'VOCAL_MUSIC', url } }))
+    .includes('FORBIDDEN_SOURCE_AUDIO'));
+});
+
+test('identity is by hash and object id, never by title', () => {
+  const base = meant();
+  assert.ok(codes({ ...base, ssot: { ...base.ssot, parent_sha256: 'nope' } })
+    .includes('MISSING_OR_INVALID_PARENT_SHA256'));
+  assert.ok(codes({ ...base, ssot: { ...base.ssot, matched_by: 'title' as never } })
+    .includes('TITLE_MATCHED'));
+});
+
+test('TPs and boundaries: VTP inside InTP, InTP inside the parent', () => {
+  assert.ok(codes(meant({
+    tps: { intp: { start_seconds: 30, end_seconds: 38 }, vtp: { start_seconds: 29, end_seconds: 37 } },
+  })).includes('APPROVED_BOUNDARY_OUTSIDE_SOURCE_KK'));
+  assert.ok(codes(meant({ parent_bounds: { start_seconds: 32, end_seconds: 60 } }))
+    .includes('ESCAPES_PARENT_BOUNDS'));
+});
+
+test('HUMANIZED needs multiple Text Loops', () => {
+  assert.ok(codes(meant({ text_loops: ['TLR_01'] })).includes('TOO_FEW_TEXT_LOOPS'));
+  assert.deepEqual(codes(meant({ text_loops: ['TLR_01'], humanizing: 'LOOPING' })), []);
+});
+
+/** A valid BUG: an mK with no sentiment at all. */
+function bugMeant(overrides: Partial<MeantClone> = {}): MeantClone {
+  return meant({
+    type: 'MK',
+    subtype: 'mK-noun',
+    tier: 'BUG',
+    plan: { strategies: [{ granularity: 'WORD', text: 'Home.' }], themes: [], emotions: [], scenarios: [] },
+    ...overrides,
+  });
+}
+
+test('a Meant is its tier: KK = HUG, sK = TUG, mK = BUG', () => {
+  assert.equal(tierOf('KK'), 'HUG');
+  assert.equal(tierOf('SK'), 'TUG');
+  assert.equal(tierOf('MK'), 'BUG');
+  assert.deepEqual(validateMeant(bugMeant()), []);
+  assert.ok(codes(meant({ tier: 'HUG' })).includes('TIER_MISMATCH'));
+  assert.ok(codes(bugMeant({ tier: 'TUG' })).includes('TIER_MISMATCH'));
+});
+
+test('lineage layers are never Meants themselves', () => {
+  for (const type of ['DKK', 'NKK', 'NAKED_SK'] as const) {
+    assert.equal(tierOf(type), null);
+    assert.ok(codes(meant({ type, subtype: null })).includes('NOT_A_MEANT_KIND'), type);
+  }
+});
+
+test('BUGs never use Themes, Emotions or Scenarios', () => {
+  const got = codes(bugMeant({
+    plan: { strategies: [{ granularity: 'WORD', text: 'Home.' }], themes: ['Friends'], emotions: ['joy'], scenarios: ['New Baby'] },
+  }));
+  assert.ok(got.includes('BUG_HAS_THEMES'));
+  assert.ok(got.includes('BUG_HAS_EMOTIONS'));
+  assert.ok(got.includes('BUG_HAS_SCENARIOS'));
+});
+
+test('HUGs and TUGs work with Themes, Emotions or Scenarios', () => {
+  const base = meant();
+  assert.ok(codes({ ...base, plan: { ...base.plan, themes: [], emotions: [], scenarios: [] } }).includes('NO_SENTIMENT'));
+});
+
+test('every Meant has a KKr strategy at a granularity its type can carry', () => {
+  const base = meant();
+  assert.ok(codes({ ...base, plan: { ...base.plan, strategies: [] } }).includes('NO_STRATEGY'));
+  const section = [{ granularity: 'SONG_SECTION' as const, text: 'Whole chorus.' }];
+  assert.ok(codes({ ...base, plan: { ...base.plan, strategies: section } }).includes('GRANULARITY_NOT_FOR_TYPE'));
+});
+
+test('BUGs arrive on demand only', () => {
+  assert.equal(canDeliverTier('BUG', 'user_request'), true);
+  assert.equal(canDeliverTier('BUG', 'platform_suggestion'), false);
+  assert.equal(canDeliverTier('BUG', 'follow_up'), false);
+  assert.equal(canDeliverTier('BUG', 'scheduled'), false);
+  assert.equal(canDeliverTier('HUG', 'platform_suggestion'), true);
+});
+
+// ── Platform conduct ─────────────────────────────────────────────────────────
+
+test('the platform never sells: no action is a sale', () => {
+  assert.equal(nextBestAction({}), 'GUIDE');
+  assert.equal(nextBestAction({ leery: true }), 'GIVE_FREE');
+  assert.equal(nextBestAction({ leery: true, hadFreeAlready: true }), 'GIVE_FREE');
+  assert.equal(nextBestAction({ reportedIssue: true }), 'REPLACE_FREE');
+  assert.equal(nextBestAction({ reportedIssue: true, askedToStop: true }), 'STEP_BACK');
+});
+
+test('the User / Recipient is always right', () => {
+  for (const v of ['LOVE_IT', 'NOT_QUITE', 'WRONG_THEME', 'AUDIO_ISSUE', 'DOES_NOT_SAY_WHAT_I_MEAN', 'NO_THANKS'] as const) {
+    const r = honorUserVerdict(v);
+    assert.equal(r.accepted, true);
+    assert.equal(r.recordAsVoc, true);
+  }
+  assert.equal(honorUserVerdict('AUDIO_ISSUE').action, 'REPLACE_FREE');
+  assert.equal(honorUserVerdict('NO_THANKS').action, 'STEP_BACK');
+});
+
+test('sales-rep language is caught; guiding language is not', () => {
+  assert.deepEqual(findSalesLanguage('Hear it again, or take the first one free.'), []);
+  assert.deepEqual(findSalesLanguage('Guide to Purchase'), []);
+  assert.ok(findSalesLanguage('Buy now — only 3 left!').length >= 2);
+});
+
+function walk(dir: string): string[] {
+  return readdirSync(dir).flatMap((name) => {
+    const path = join(dir, name);
+    return statSync(path).isDirectory() ? walk(path) : path.endsWith('.tsx') ? [path] : [];
+  });
+}
+
+test('no app page uses sales-rep language', () => {
+  for (const file of walk(join(ROOT, 'app'))) {
+    assert.deepEqual(findSalesLanguage(readFileSync(file, 'utf8')), [], file);
+  }
+});
+
+// ── Draft catalog tables ─────────────────────────────────────────────────────
+
+const MEANTS_SQL = readFileSync(
+  join(ROOT, 'reference', 'NOT-DEPLOYED', 'meants-schema', '20261020000100_meants_catalog.sql'),
+  'utf8',
+);
+
+test('meant_types seeds every Element Type exactly as the code catalog has it', () => {
+  const rows = [...MEANTS_SQL.matchAll(
+    /^\s+\('([A-Z_]+)',\s+'(KKr-[A-Z_]+)',\s+'([^']+)',\s+(null|'[^']+'),\s+(null|'[^']+'),\s+'([A-Z_]+)',\s+array\[([^\]]+)\],\s+(null|'[A-Z]+')\)/gm,
+  )];
+  assert.equal(rows.length, MEANT_TYPE_CODES.length);
+
+  for (const [, code, kkr, name, parent, table, status, grans, tier] of rows) {
+    const type = MEANT_TYPES[code as (typeof MEANT_TYPE_CODES)[number]];
+    assert.ok(type, code);
+    assert.equal(kkr, type.kkrCode);
+    assert.equal(name, type.name);
+    assert.equal(parent === 'null' ? null : parent.slice(1, -1), type.parent);
+    assert.equal(table === 'null' ? null : table.slice(1, -1), type.table);
+    assert.equal(status, type.status);
+    assert.deepEqual(grans.split(',').map((g) => g.trim().slice(1, -1)), [...type.granularities]);
+    assert.equal(tier === 'null' ? null : tier.slice(1, -1), type.tier);
+  }
+});
+
+test('the Meant tables enforce the tier and full-audio rules in SQL too', () => {
+  for (const name of [
+    'meant_tiers_bug_no_sentiment', 'meant_tiers_hug_tug_sentiment', 'meant_tiers_triggers',
+    'meants_vtp_ordered_and_inside_intp', 'meants_inside_parent_bounds', 'meants_text_loops_gate',
+    'meants_tier_follows_kind',
+    'meants_bug_tug_word_rule',
+    'meant_tier_prices_set',
+  ]) {
+    assert.ok(MEANTS_SQL.includes(name), name);
+  }
+  assert.match(MEANTS_SQL, /has_vocals\s+boolean not null check \(has_vocals\)/);
+  assert.match(MEANTS_SQL, /has_instrumentals\s+boolean not null check \(has_instrumentals\)/);
+  assert.match(MEANTS_SQL, /check \(variant = 'VOCAL_MUSIC'\)/);
+  assert.match(MEANTS_SQL, /array\['user_request'\]\)/);
+});
+
+// ── Poka-yoke: retired spellings cannot reach a page ─────────────────────────
+
+/** Spellings NAMING.md retires from public copy. Case-sensitive on purpose. */
+const RETIRED_IN_COPY = [
+  'Mini KUT', 'Mini-KUT', 'mini-K ', 'M-KUT', 'MICRO-KUT', 'Micro-KUT', 'micro-KUT',
+  'mo-meant', 'S-KUT', 'SHORT-KUT', 'Short-KUT', 'short-KUT', 'ShortKUT', 'shortKUT', 'K-KUPID', 'kkupid', 'K-Kupid',
+];
+
+test('no page uses a retired spelling', () => {
+  for (const file of walk(join(ROOT, 'app'))) {
+    const text = readFileSync(file, 'utf8');
+    for (const spelling of RETIRED_IN_COPY) {
+      assert.ok(!text.includes(spelling), `${file} uses retired "${spelling}" (see NAMING.md)`);
+    }
+  }
+});
+
+// ── Live registry clone ──────────────────────────────────────────────────────
+
+test('the live registry clone equals its snapshot, field for field', () => {
+  const snap = JSON.parse(readFileSync(
+    join(ROOT, 'reference', 'live-registry', 'snapshot-2026-10-20.json'), 'utf8',
+  ));
+  assert.deepEqual(LIVE_KUT_TYPES, snap.kut_types);
+  assert.deepEqual(LIVE_SK_FORMS, snap.sk_forms);
+  assert.deepEqual(LIVE_MK_FORMS, snap.mk_forms);
+});
+
+test('every live type code is a tier or resolves to a Meant of the right tier', () => {
+  for (const row of LIVE_KUT_TYPES) {
+    if (row.kut_type_code === 'HUG' || row.kut_type_code === 'TUG') continue;
+    const resolved = resolveMeantType(row.kut_type_code);
+    assert.ok(resolved, `${row.kut_type_code} does not resolve`);
+    assert.ok(tierOf(resolved.type), `${row.kut_type_code} resolves to a non-Meant`);
+  }
+});
+
+test('every live sK form is a TUG subtype, every allowed mK form a BUG subtype', () => {
+  const sk = new Set(MEANT_TYPES.SK.subtypes.map((s) => s.code.toUpperCase()));
+  for (const f of LIVE_SK_FORMS) assert.ok(sk.has(f.form_key.toUpperCase()), f.form_key);
+  const mk = new Set(MEANT_TYPES.MK.subtypes.map((s) => s.code));
+  for (const f of LIVE_MK_FORMS.filter((f) => f.allowed)) assert.ok(mk.has(f.form_key), f.form_key);
+  // The live correction: 1LNR is an sK / TUG form, never an mK / BUG.
+  assert.ok(!mk.has('1LNR'));
+});

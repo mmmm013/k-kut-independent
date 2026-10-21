@@ -486,7 +486,7 @@ export default function KKutPage() {
     if (!selectedItem) return;
     // Route directly to the K-KUT or mini-KUT playback page.
     // K-KUT catalog slugs (e.g. kkut-love-01) play directly from Storage.
-    // Mini-KUT catalog slugs go to the mkut page (edge function path).
+    // Catalog slugs for a mini-KUT go to the mkut page (edge function path).
     if (selectedItem.format === "kkut") {
       window.location.href = `/k/${selectedItem.id}`;
     } else {
