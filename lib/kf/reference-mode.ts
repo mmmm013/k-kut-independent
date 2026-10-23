@@ -16,9 +16,10 @@
  * would do the same, against a live project holding 34,251 m_kut_assets rows.
  *
  * The governed catalog currently authorizes ZERO public IIs — two canary
- * records, both TRIAGE, none STAGE — and a BLK/KK text-generation freeze is
- * ACTIVE. So these surfaces are OFF unless deliberately enabled for local
- * inspection, and they must never be enabled in a deployed environment.
+ * records, both TRIAGE, none STAGE. So these surfaces are OFF unless
+ * deliberately enabled for local inspection, and they must never be enabled in
+ * a deployed environment. (This is not the Aug 30 freeze, which holds nothing:
+ * owner, 2026-10-23. These surfaces would bypass STAGE, which is the reason.)
  *
  * Enable locally only:  NEXT_PUBLIC_KF_REFERENCE_UI=1 npm run dev
  */
@@ -32,7 +33,6 @@ export const KF_REFERENCE_NOTICE = {
   message:
     'This KUT Family surface is a reference implementation and is not connected ' +
     'to the governed publication bridge. It reads asset tables directly and ' +
-    'would present held candidates as if they were releasable. The governed ' +
-    'catalog authorizes zero public IIs, and a BLK/KK text-generation freeze ' +
-    'is active. Nothing is served here.',
+    'would present held candidates as if they were releasable, bypassing ' +
+    'STAGE. Nothing is served here.',
 } as const;

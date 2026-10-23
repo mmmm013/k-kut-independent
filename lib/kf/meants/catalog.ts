@@ -10,7 +10,8 @@
  *
  * This is types and rules only. It creates no rows, touches no database and
  * originates nothing: GPMC stays the write authority. The BLK/KK
- * text-generation freeze was lifted for Meants only by the owner on 2026-10-20.
+ * text-generation freeze holds nothing (owner, 2026-10-23: the only hold is
+ * Halloween, until Nov 2).
  */
 
 import { KUPID_LEVELS, MK_TYPES, SECTION_ORDER, SK_SUBTYPES } from '../types';
