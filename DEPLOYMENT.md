@@ -12,13 +12,12 @@
 > | `m_kut_assets` | **34,251 live rows** | migrations 400/500 `ALTER` it, adding columns to production data |
 > | `llf_assets` | unknown | migration 600 issues `drop table ... cascade` |
 >
-> **A `BLK/KK text generation` freeze is ACTIVE** (`ACTIVE_OWNER_AUTHORIZED_FREEZE`,
-> effective 2026-08-30). It blocks mass candidate creation and automated
-> promotion. `supabase/seed.sql` creates mass candidates and is squarely inside
-> the blocked scope. All four unlock prerequisites are `DRAFT_PENDING_OWNER_LOCK`.
-> On 2026-10-20 the owner lifted the freeze **for Meants only**
-> (`lib/kf/meants/`, `reference/NOT-DEPLOYED/meants-schema/`). Everything
-> else above still holds.
+> **The 2026-08-30 `BLK/KK text generation` freeze holds nothing.** The GPMx
+> tooling lifted it on 2026-09-08 (`FREEZE_LIFTED_ALL_PREREQUISITES_LOCKED`, all
+> four prerequisites `LOCKED_OWNER_AUTHORIZED`). Owner ruling 2026-10-23T13:18Z:
+> "Halloween was lone hold til NOV 2. All else must work." The only hold is the
+> Halloween freeze, until 2026-11-02. The live-schema danger in the table above
+> is a separate, technical reason not to run `db push`, and still stands.
 >
 > **The governed catalog authorizes ZERO public IIs** — 2 canary records, both
 > `TRIAGE`, `0 STAGE`. The storefront correctly offers nothing.
@@ -195,7 +194,7 @@ was available and every step of it is now known to be wrong:
 - `supabase db push` is unsafe (see the STOP notice)
 - "tag each with a theme" conflates theme with element identity, which the
   GPMx model explicitly forbids
-- nothing may be released while the freeze is active and zero IIs reach STAGE
+- releases go through STAGE (the Aug 30 freeze no longer holds anything; owner, 2026-10-23)
 
 The owner's own controlled sequence governs instead: contain the direct routes,
 test in a rollback-only transaction, obtain separate explicit authorization,

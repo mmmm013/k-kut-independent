@@ -92,6 +92,11 @@ The KK review room agrees: `SK_PROCESSING: DEFERRED`, `FULL_KKs ONLY`.
 today. sK creation is gated behind mK freeze, which is gated behind KK freeze.
 The floor is a target; the pipeline is a queue.
 
+> 2026-10-23 note: "freeze" in this table means the per-object lineage lock in
+> the upstream script, not the owner's Aug 30 BLK/KK freeze. That freeze holds
+> nothing (owner ruling 2026-10-23: the only hold is Halloween, until Nov 2), and
+> TUGs (sK) are being cut by 4PE today. The table records the old script as found.
+
 **The floor itself** lives in `public.kf_theme_minimums` — 13 per theme for
 KUT, sK and mK — never as a constant in code. Raise a row and the shortfall
 recomputes with no deploy. A theme with no row (Holidays) requires nothing and

@@ -29,20 +29,18 @@ rollback locator and retention decision, one entry per file.
 
 | Rank | Source | State |
 |---|---|---|
-| 1 | `config/blk-kk-text-generation-freeze.v1.json` | `ACTIVE_OWNER_AUTHORIZED_FREEZE` — **lifted for Meants only** by the owner, 2026-10-20 |
-| 2 | ontology · worksheet · exception registry · review gate | all `DRAFT_PENDING_OWNER_LOCK` |
+| 1 | `config/blk-kk-text-generation-freeze.v1.json` | `FREEZE_LIFTED_ALL_PREREQUISITES_LOCKED` (2026-09-08). Owner ruling 2026-10-23: it holds nothing; the only hold is Halloween, until Nov 2 |
+| 2 | ontology · worksheet · exception registry · review gate | all `LOCKED_OWNER_AUTHORIZED` (2026-09-08) |
 | 3 | `lib/publication-bridge/approvedPublicOptions.ts` | governed runtime eligibility gate |
 | 4 | `data/publication-bridge/public-option-records.generated.json` | input only |
 | 5 | `data/production/first-production-canary-v1.json` | 2 TRIAGE · **0 STAGE** |
 
 The governed catalog authorizes **zero** public IIs. That is correct, not a gap.
 
-**Meants carve-out (owner decision, 2026-10-20).** The freeze no longer covers
-Meant work: the catalog in `lib/kf/meants/` and the draft tables in
-`meants-schema/`. It stays in force for every other BLK/KK text generation
-and promotion, including `kf-schema/seed.sql`. The upstream freeze file lives
-in the GPMx tooling and should be updated to record the same carve-out.
-Applying `meants-schema` to the live project is still a separate go-ahead.
+**Freeze ruling (owner, 2026-10-23T13:18Z).** "Halloween was lone hold til NOV 2.
+All else must work." The Aug 30 freeze holds nothing, for Meants or anything
+else; the upstream freeze file in k-kut records the ruling. `kf-schema/seed.sql`
+stays out because it was written for an empty database, not because of a freeze.
 
 ## What is still worth reading here
 
